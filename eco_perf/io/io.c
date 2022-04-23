@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-char *_str_append(char *destination, char const *src)
+char *str_append(char *destination, char const *src)
 {
     while (*src)
     {
@@ -14,11 +14,10 @@ char *_str_append(char *destination, char const *src)
 
 char *_apply_format(char *destination, char const *str, char const *init_format, char const *final_format)
 {
-    char *first = destination;
-    destination = _str_append(destination, init_format);
-    destination = _str_append(destination, str);
-    _str_append(destination, final_format);
-    return first;
+    destination = str_append(destination, init_format);
+    destination = str_append(destination, str);
+    destination = str_append(destination, final_format);
+    return destination;
 }
 
 char *apply_foreground_color(char *destination, char const *str, term_color_t color)

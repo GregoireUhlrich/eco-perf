@@ -43,7 +43,8 @@ void clear_end_line()
 
 void clear_terminal()
 {
-    printf("\033[2J");
+    // printf("\033c");
+    printf("\033[2J\033[1;1H");
 }
 
 void clear_lines_up(int n_lines)
