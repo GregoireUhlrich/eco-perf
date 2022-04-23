@@ -3,6 +3,7 @@ add_library(eco_perf
 )
 set_target_properties(eco_perf PROPERTIES LINKER_LANGUAGE C)
 
-target_link_libraries(eco_perf metrics)
+target_link_libraries(eco_perf metrics io)
 
 add_subdirectory(metrics)
+add_subdirectory(io)

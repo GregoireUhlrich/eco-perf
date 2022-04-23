@@ -6,6 +6,29 @@
 
 extern int errno;
 
+void init_cpu_data(cpu_data_t *cpu_data)
+{
+    cpu_data->n_cpus = 0;
+    cpu_data->core_data = NULL;
+}
+
+void set_n_cpus(cpu_data_t *cpu_data, int n_cpus)
+{
+    if (cpu_data->core_data != NULL)
+    {
+        if (cpu_data->n_cpus == n_cpus)
+        {
+            return;
+        }
+        free(cpu_data->core_data);
+    }
+    if (n_cpus > 0)
+    {
+        cpu_data->n_cpus = n_cpus;
+        cpu_data->core_data = malloc(n_cpus * sizeof(cpu_core_data_t));
+    }
+}
+
 int _count_cpu_data(FILE *file)
 {
     int n_cpu = 0;
@@ -45,11 +68,9 @@ void _read_cpu_core_data_line(FILE *file, cpu_core_data_t *core_data)
 void _read_cpu_data(FILE *file, cpu_data_t *cpu_data)
 {
     int n_cpu = _count_cpu_data(file);
-    cpu_data->n_cpus = n_cpu;
-    printf("%d CPUs\n", n_cpu);
+    set_n_cpus(cpu_data, n_cpu);
     if (n_cpu > 0)
     {
-        cpu_data->core_data = (cpu_core_data_t *)malloc(n_cpu * sizeof(cpu_core_data_t));
         cpu_core_data_t core_data;
         _read_cpu_core_data_line(file, &core_data);
         for (int i = 0; i != n_cpu; ++i)
@@ -87,6 +108,7 @@ void print_cpu_data(cpu_data_t const *cpu_data)
 void free_cpu_data(cpu_data_t *cpu_data)
 {
     free(cpu_data->core_data);
+    init_cpu_data(cpu_data);
 }
 
 void diff_cpu_data(
@@ -106,19 +128,37 @@ void diff_cpu_data(
         perror(error);
         exit(1);
     }
-    if (first->n_cpus == 0)
+    if (first->n_cpus <= 0)
     {
         errno = EINVAL;
-        perror("Diff cannot be calculated on empty cpu data.");
+        perror("Diff cannot be calculated for a non-positive cpu number.");
         exit(1);
     }
-    diff->n_cpus = first->n_cpus;
-    diff->core_data = (cpu_core_data_t *)malloc(first->n_cpus * sizeof(cpu_core_data_t));
+    set_n_cpus(diff, first->n_cpus);
     for (int i = 0; i != diff->n_cpus; ++i)
     {
         diff->core_data[i].sys_time =
             last->core_data[i].sys_time - first->core_data[i].sys_time;
         diff->core_data[i].user_time =
             last->core_data[i].user_time - first->core_data[i].user_time;
+    }
+}
+
+void calculate_ratio(cpu_data_t const *cpu_data, cpu_data_t *ratio, double n_sec)
+{
+    if (cpu_data->n_cpus > 0)
+    {
+        set_n_cpus(ratio, cpu_data->n_cpus);
+        for (int i = 0; i != ratio->n_cpus; ++i)
+        {
+            ratio->core_data[i].user_ratio = cpu_data->core_data[i].user_time / n_sec;
+            ratio->core_data[i].sys_ratio = cpu_data->core_data[i].sys_time / n_sec;
+        }
+    }
+    else
+    {
+        errno = EINVAL;
+        perror("Cannot calculate ratio for a non-positive cpu number.");
+        exit(1);
     }
 }
