@@ -1,4 +1,4 @@
-# ECO-PERF
+# Eco-Perf
 
 ## Purpose
 
