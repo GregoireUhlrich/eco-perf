@@ -18,21 +18,29 @@ void set_cursor_position(int i_line, int i_column)
 
 void move_cursor_left(int n_columns)
 {
+    if (!n_columns)
+        return;
     printf("\033[%dD", n_columns);
 }
 
 void move_cursor_right(int n_columns)
 {
+    if (!n_columns)
+        return;
     printf("\033[%dC", n_columns);
 }
 
 void move_cursor_down(int n_lines)
 {
+    if (!n_lines)
+        return;
     printf("\033[%dB", n_lines);
 }
 
 void move_cursor_up(int n_lines)
 {
+    if (!n_lines)
+        return;
     printf("\033[%dA", n_lines);
 }
 

@@ -48,7 +48,7 @@ void add_percent_data(
     double ratio,
     term_color_t color);
 
-char *create_percent_bar(
+int create_percent_bar(
     char *buffer,
     percent_bar_data_t const *data,
     percent_bar_config_t const *config);

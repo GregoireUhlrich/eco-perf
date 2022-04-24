@@ -2,6 +2,8 @@
 #include "eco_perf/graphics/term_drawable.h"
 #include "eco_perf/io/terminal_cursor.h"
 #include <stdio.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
 
 void print_drawable(term_drawable_t *drawable)
 {
@@ -90,7 +92,13 @@ int main()
 
     free_term_drawable(&terminal);
 
-    test_boxes();
+    struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+
+    printf("lines %d\n", w.ws_row);
+    printf("columns %d\n", w.ws_col);
+
+    // test_boxes();
 
     return 0;
 }

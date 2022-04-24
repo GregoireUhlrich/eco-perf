@@ -2,6 +2,7 @@
 #include "../io/io.h"
 #include <math.h>
 #include <stdio.h>
+#include <string.h>
 
 void load_default_bar_config(percent_bar_config_t *config)
 {
@@ -28,7 +29,7 @@ void add_percent_data(
     ++data->n_data;
 }
 
-char *create_percent_bar(
+int create_percent_bar(
     char *destination,
     percent_bar_data_t const *data,
     percent_bar_config_t const *config)
@@ -59,13 +60,15 @@ char *create_percent_bar(
     fill_str(buffer, config->empty, n_blank);
     destination = str_append(destination, buffer);
     destination = apply_format(destination, config->right, BOLD);
+    int str_size = 2 + config->bar_size;
     if (config->percent_mode == PERCENT_OUT)
     {
         double final_percentage = value_tot * 100. / config->bar_size;
         if (final_percentage > 100)
             final_percentage = 100;
-        sprintf(buffer, " %.1f%%", final_percentage);
+        sprintf(buffer, " %.1f%% ", final_percentage);
+        str_size += strlen(buffer);
         destination = str_append(destination, buffer);
     }
-    return destination;
+    return str_size;
 }

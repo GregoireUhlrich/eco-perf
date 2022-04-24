@@ -12,9 +12,11 @@ void init_term_vector(term_vector_t *vector)
     vector->y = 0;
 }
 
-void _default_parent_update(
-    term_drawable_t *drawable,
-    term_drawable_t const *parent)
+void _default_update(term_drawable_t *drawable)
+{
+}
+
+int _default_draw(term_drawable_t const *drawable)
 {
 }
 
@@ -29,33 +31,43 @@ void init_term_drawable(term_drawable_t *drawable)
     drawable->hidden = 0;
     init_term_vector(&drawable->pos);
     init_term_vector(&drawable->size);
-    init_term_vector(&drawable->stretch);
+    init_term_vector(&drawable->fixed_size);
     drawable->n_children = 0;
     drawable->_memory_size = 0;
     drawable->children = NULL;
     drawable->config = NULL;
 
     drawable->get_origin = _default_get_origin;
-    drawable->parent_update = _default_parent_update;
-    drawable->draw_self = NULL;
+    drawable->update = _default_update;
+    drawable->draw_self = _default_draw;
 }
 
 term_vector_t get_default_term_origin()
 {
-    term_vector_t origin = {0, 1};
+    term_vector_t origin = {0, 0};
     return origin;
 }
 
+void update_term_drawable(term_drawable_t *drawable)
+{
+    drawable->update(drawable);
+    for (int i = 0; i != drawable->n_children; ++i)
+    {
+        update_term_drawable(drawable->children[i]);
+    }
+}
+
+#include <unistd.h>
 int draw_term_drawable(term_drawable_t *drawable)
 {
     if (drawable && drawable->draw_self && !drawable->hidden)
     {
-        drawable->draw_self(drawable);
         term_vector_t origin = drawable->get_origin(drawable);
         const int offset_x = drawable->pos.x + origin.x;
         const int offset_y = drawable->pos.y + origin.y;
         move_cursor_right(offset_x);
         move_cursor_down(offset_y);
+        drawable->draw_self(drawable);
         for (int i = 0; i != drawable->n_children; ++i)
         {
             draw_term_drawable(drawable->children[i]);

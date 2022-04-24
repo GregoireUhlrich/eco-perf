@@ -10,19 +10,30 @@ typedef struct TermVector
 typedef struct TermDrawable
 {
     int hidden;
-    term_vector_t pos;
-    term_vector_t size;
-    term_vector_t stretch;
+    union
+    {
+        term_vector_t pos;
+        unsigned int pos_v[2];
+    };
+    union
+    {
+        term_vector_t size;
+        unsigned int size_v[2];
+    };
+    union
+    {
+        term_vector_t fixed_size;
+        unsigned int fixed_size_v[2];
+    };
 
     int n_children;
     int _memory_size;
     struct TermDrawable **children;
 
-    void *config;
+    void *config; // possible additional config
+    void *data;   // possible additional data
 
-    void (*parent_update)(
-        struct TermDrawable *drawable,
-        struct TermDrawable const *parent);
+    void (*update)(struct TermDrawable *drawable);
 
     term_vector_t (*get_origin)(
         struct TermDrawable const *drawable);
@@ -34,6 +45,8 @@ void init_term_vector(term_vector_t *vector);
 void init_term_drawable(term_drawable_t *drawable);
 
 term_vector_t get_default_term_origin();
+
+void update_term_drawable(term_drawable_t *drawable);
 
 int draw_term_drawable(term_drawable_t *drawable);
 
