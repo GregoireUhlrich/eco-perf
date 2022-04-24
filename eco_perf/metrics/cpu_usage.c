@@ -63,6 +63,7 @@ void _read_cpu_core_data_line(FILE *file, cpu_core_data_t *core_data)
            &io_wait, &ireq, &softirq, &steal, &guest, &guest_nice);
     core_data->sys_time = system_time / 100.;
     core_data->user_time = user_time / 100.;
+    core_data->nice_time = nice_time / 100.;
 }
 
 void _read_cpu_data(FILE *file, cpu_data_t *cpu_data)
@@ -98,10 +99,11 @@ void print_cpu_data(cpu_data_t const *cpu_data)
     for (int i = 0; i != cpu_data->n_cpus; ++i)
     {
         printf(
-            "  -> cpu %d: sys=%.2f, usr=%.2f\n",
+            "  -> cpu %d: sys=%.2f, usr=%.2f, nice=%.2f\n",
             i,
             cpu_data->core_data[i].sys_time,
-            cpu_data->core_data[i].user_time);
+            cpu_data->core_data[i].user_time,
+            cpu_data->core_data[i].nice_time);
     }
 }
 
@@ -141,6 +143,8 @@ void diff_cpu_data(
             last->core_data[i].sys_time - first->core_data[i].sys_time;
         diff->core_data[i].user_time =
             last->core_data[i].user_time - first->core_data[i].user_time;
+        diff->core_data[i].nice_time =
+            last->core_data[i].nice_time - first->core_data[i].nice_time;
     }
 }
 
@@ -153,6 +157,7 @@ void calculate_ratio(cpu_data_t const *cpu_data, cpu_data_t *ratio, double n_sec
         {
             ratio->core_data[i].user_ratio = cpu_data->core_data[i].user_time / n_sec;
             ratio->core_data[i].sys_ratio = cpu_data->core_data[i].sys_time / n_sec;
+            ratio->core_data[i].nice_ratio = cpu_data->core_data[i].nice_time / n_sec;
         }
     }
     else

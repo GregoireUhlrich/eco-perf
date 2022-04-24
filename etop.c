@@ -18,6 +18,7 @@ void display_ratio(cpu_core_data_t const *ratio, char const *cpu_name)
     init_percent_bar_data(&data);
     add_percent_data(&data, ratio->user_ratio, GREEN);
     add_percent_data(&data, ratio->sys_ratio, BLUE);
+    add_percent_data(&data, ratio->nice_ratio, YELLOW);
     create_percent_bar(buffer, &data, &config);
     printf("%s\n", buffer);
 }

@@ -13,6 +13,12 @@ typedef struct CPUCoreData
         double sys_time;  // in s
         double sys_ratio; // in [0, 1]
     };
+    union
+    {
+        double nice_time;  // in s
+        double nice_ratio; // in [0, 1]
+    };
+
 } cpu_core_data_t;
 
 typedef struct CPUData

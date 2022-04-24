@@ -35,15 +35,23 @@ char *create_percent_bar(
 {
     char buffer[MAX_PERCENT_BAR_SIZE];
     destination = apply_format(destination, config->left, BOLD);
+    double value_tot = 0;
     int n_tot = 0;
     for (int i = 0; i != data->n_data; ++i)
     {
-        const int n_chars = round(data->data[i] * config->bar_size);
+        const double value = data->data[i] * config->bar_size;
+        int n_chars = ceil(value);
+        value_tot += value;
+        n_tot += n_chars;
+        if (n_tot >= config->bar_size)
+        {
+            n_chars -= (n_tot - config->bar_size);
+            n_tot = config->bar_size;
+        }
         if (n_chars == 0)
             continue;
         fill_str(buffer, config->fill, n_chars);
         destination = apply_foreground_color(destination, buffer, data->colors[i]);
-        n_tot += n_chars;
     }
     int n_blank = config->bar_size - n_tot;
     if (n_blank < 0)
@@ -53,7 +61,10 @@ char *create_percent_bar(
     destination = apply_format(destination, config->right, BOLD);
     if (config->percent_mode == PERCENT_OUT)
     {
-        sprintf(buffer, " %.1f%%", n_tot * 100. / config->bar_size);
+        double final_percentage = value_tot * 100. / config->bar_size;
+        if (final_percentage > 100)
+            final_percentage = 100;
+        sprintf(buffer, " %.1f%%", final_percentage);
         destination = str_append(destination, buffer);
     }
     return destination;
