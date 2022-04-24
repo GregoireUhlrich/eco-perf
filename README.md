@@ -10,6 +10,9 @@ users to have an information about processes that consumed,
 cumulatively, a lot of resources during a long time (and not only a
 snap-shot of resource consumption such as in `htop`).
 
+Applications are built using `term-widgets`, a library providing a simple
+interface to create and manipulate widgets inside a terminal.
+
 ## Setup instructions
 
 Clone the repository
