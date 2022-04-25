@@ -1,9 +1,6 @@
-add_library(eco_perf
-    cross_os_std.h
-)
-set_target_properties(eco_perf PROPERTIES LINKER_LANGUAGE C)
+add_library(eco_perf INTERFACE)
 
-target_link_libraries(eco_perf metrics terminal_interface)
+target_link_libraries(eco_perf INTERFACE metrics terminal_interface)
 
 add_subdirectory(metrics)
 add_subdirectory(terminal_interface)
