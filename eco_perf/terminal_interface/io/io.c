@@ -1,26 +1,7 @@
 #include "io.h"
+#include "string_utils.h"
 #include <stdio.h>
 #include <string.h>
-
-char *str_append(char *destination, char const *src)
-{
-    while (*src)
-    {
-        *destination++ = *src++;
-    }
-    *destination = '\0';
-    return destination;
-}
-
-char *fill_str(char *destination, char filler, int n_repeat)
-{
-    for (int i = 0; i != n_repeat; ++i)
-    {
-        destination[i] = filler;
-    }
-    destination[n_repeat] = '\0';
-    return destination;
-}
 
 char *_apply_format(char *destination, char const *str, char const *init_format, char const *final_format)
 {

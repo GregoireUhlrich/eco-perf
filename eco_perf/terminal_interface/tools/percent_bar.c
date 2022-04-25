@@ -1,5 +1,6 @@
 #include "percent_bar.h"
 #include "../io/io.h"
+#include "../io/string_utils.h"
 #include <math.h>
 #include <stdio.h>
 #include <string.h>

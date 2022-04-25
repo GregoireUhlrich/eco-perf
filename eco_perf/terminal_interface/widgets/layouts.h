@@ -22,7 +22,7 @@ typedef struct LayoutTWidgetConfig
     int auto_children_resize;
 } layout_twidget_config_t;
 
-layout_twidget_config_t get_default_term_layout_config();
+layout_twidget_config_t get_default_layout_twidget_config();
 
 void init_hlayout_twidget(
     hlayout_twidget_t *layout,

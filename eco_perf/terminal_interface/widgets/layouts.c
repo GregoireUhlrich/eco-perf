@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-layout_twidget_config_t get_default_term_layout_config()
+layout_twidget_config_t get_default_layout_twidget_config()
 {
     layout_twidget_config_t config;
     config.align_mode = TERM_LAYOUT_TOPLEFT;

@@ -1,5 +1,6 @@
 #include "box.h"
 #include "../io/io.h"
+#include "../io/string_utils.h"
 #include "../terminal/cursor.h"
 #include <stdio.h>
 

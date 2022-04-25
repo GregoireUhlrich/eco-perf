@@ -39,7 +39,7 @@ void display_cpu_data()
 
     terminal_twidget_t terminal;
     hlayout_twidget_t main_widget;
-    layout_twidget_config_t default_layout_config = get_default_term_layout_config();
+    layout_twidget_config_t default_layout_config = get_default_layout_twidget_config();
     init_hlayout_twidget(&main_widget, &default_layout_config);
     init_terminal_twidget(&terminal, &main_widget);
 
@@ -47,7 +47,7 @@ void display_cpu_data()
     layout_twidget_config_t vlayouts_configs[3];
     for (int i = 0; i != 3; ++i)
     {
-        vlayouts_configs[i] = get_default_term_layout_config();
+        vlayouts_configs[i] = get_default_layout_twidget_config();
         vlayouts_configs[i].align_mode = TERM_LAYOUT_TOPLEFT + i;
         if (i == 1)
         {
