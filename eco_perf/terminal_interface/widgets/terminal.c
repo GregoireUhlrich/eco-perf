@@ -33,11 +33,13 @@ int _draw_terminal(terminal_twidget_t const *terminal)
 
 void init_terminal_twidget(
     terminal_twidget_t *terminal,
-    twidget_t *main_drawable)
+    twidget_t *main_widget)
 {
     init_twidget(terminal);
-    add_twidget_child(terminal, main_drawable);
+    add_twidget_child(terminal, main_widget);
     terminal->update = _update_terminal;
-    terminal->update(terminal);
     terminal->draw_self = _draw_terminal;
+
+    terminal->update(terminal);
+    main_widget->size = terminal->size;
 }
