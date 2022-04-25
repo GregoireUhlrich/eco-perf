@@ -20,7 +20,7 @@ void _update_terminal(terminal_twidget_t *terminal)
     else
     {
         errno = EINVAL;
-        perror("Terminal should have one and one drawable child only.");
+        perror("Terminal should have one and one widget child only.");
         exit(1);
     }
 }

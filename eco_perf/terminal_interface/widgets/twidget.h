@@ -28,21 +28,21 @@ typedef struct TWidget
     void *config; // possible additional config
     void *data;   // possible additional data
 
-    void (*update)(struct TWidget *drawable);
+    void (*update)(struct TWidget *widget);
 
     terminal_vector_t (*get_origin)(
-        struct TWidget const *drawable);
+        struct TWidget const *widget);
 
-    int (*draw_self)(struct TWidget const *drawable);
+    int (*draw_self)(struct TWidget const *widget);
 } twidget_t;
 
-void init_twidget(twidget_t *drawable);
+void init_twidget(twidget_t *widget);
 
 terminal_vector_t get_default_twidget_origin();
 
-void update_twidget(twidget_t *drawable);
+void update_twidget(twidget_t *widget);
 
-int draw_twidget(twidget_t *drawable);
+int draw_twidget(twidget_t *widget);
 
 void add_twidget_child(
     twidget_t *parent,
@@ -57,6 +57,6 @@ void remove_twidget_child(
     twidget_t *child,
     int release_child);
 
-void free_twidget(twidget_t *drawable);
+void free_twidget(twidget_t *widget);
 
 #endif

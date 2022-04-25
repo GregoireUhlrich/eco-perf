@@ -1,7 +1,4 @@
-#include "eco_perf/cross_os_std.h"
 #include "eco_perf/metrics/cpu_usage.h"
-#include "eco_perf/terminal_interface/io/io.h"
-#include "eco_perf/terminal_interface/terminal/cursor.h"
 #include "eco_perf/terminal_interface/tools/percent_bar.h"
 #include "eco_perf/terminal_interface/widgets/layouts.h"
 #include "eco_perf/terminal_interface/widgets/percent_bar.h"
@@ -9,6 +6,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 void update_cpu_data(
     percent_bar_twidget_t *percent_bar,
