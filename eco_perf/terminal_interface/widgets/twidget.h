@@ -2,6 +2,7 @@
 #define ECO_PERF_TERM_DRAWABLE_H_INCLUDED
 
 #include "../terminal/vector.h"
+#include "../tools/twidget_array.h"
 typedef struct TWidget
 {
     int hidden;
@@ -21,9 +22,7 @@ typedef struct TWidget
         unsigned int fixed_size_v[2];
     };
 
-    int n_children;
-    int _memory_size;
-    struct TWidget **children;
+    twidget_array_t children;
 
     void *config; // possible additional config
     void *data;   // possible additional data
@@ -55,7 +54,7 @@ int twidget_child_index(
 void remove_twidget_child(
     twidget_t *parent,
     twidget_t *child,
-    int release_child);
+    int free_child);
 
 void free_twidget(twidget_t *widget);
 

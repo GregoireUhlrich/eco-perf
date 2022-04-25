@@ -8,12 +8,12 @@
 void print_drawable(twidget_t *drawable)
 {
     printf("Drawable with %d children (mem_size=%d)\n",
-           drawable->n_children,
-           drawable->_memory_size);
-    for (int i = 0; i != drawable->n_children; ++i)
+           drawable->children.size,
+           drawable->children._memory_size);
+    for (int i = 0; i != drawable->children.size; ++i)
     {
         printf(" -> child %d: ", i);
-        print_drawable(drawable->children[i]);
+        print_drawable(drawable->children.widgets[i]);
     }
 }
 
