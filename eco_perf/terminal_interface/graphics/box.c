@@ -1,4 +1,4 @@
-#include "term_box.h"
+#include "box.h"
 #include "../io/io.h"
 #include "../terminal/cursor.h"
 #include <stdio.h>
@@ -34,7 +34,7 @@ int _draw_box(term_box_t const *box)
     char background = ' ';
     if (box->config)
     {
-        background = ((term_box_config_t *)box->config)->background;
+        background = ((box_twidget_t *)box->config)->background;
     }
     _set_box_cursor_pos(box->pos);
     const int lx = box->size.x;
@@ -58,7 +58,7 @@ int _draw_box(term_box_t const *box)
     return 1;
 }
 
-void init_term_box(
+void init_box_twidget(
     term_box_t *box,
     term_vector_t pos,
     term_vector_t size)
@@ -70,9 +70,9 @@ void init_term_box(
     box->get_origin = _get_box_origin;
 }
 
-void set_config(
+void set_box_twidget_config(
     term_box_t *box,
-    term_box_config_t *config)
+    box_twidget_t *config)
 {
     box->config = (void *)config;
 }

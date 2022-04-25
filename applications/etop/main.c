@@ -1,8 +1,8 @@
 #include "eco_perf/cross_os_std.h"
 #include "eco_perf/metrics/cpu_usage.h"
-#include "eco_perf/terminal_interface/graphics/drawable_percent_bar.h"
+#include "eco_perf/terminal_interface/graphics/percent_bar.h"
 #include "eco_perf/terminal_interface/graphics/term_layouts.h"
-#include "eco_perf/terminal_interface/graphics/terminal_twidget.h"
+#include "eco_perf/terminal_interface/graphics/terminal.h"
 #include "eco_perf/terminal_interface/io/io.h"
 #include "eco_perf/terminal_interface/terminal/cursor.h"
 #include "eco_perf/terminal_interface/tools/percent_bar.h"
@@ -11,7 +11,7 @@
 #include <stdlib.h>
 
 void update_cpu_data(
-    drawable_percent_bar_t *percent_bar,
+    percent_bar_widget_t *percent_bar,
     cpu_core_data_t const *ratio)
 {
     percent_bar_data_t *data = (percent_bar_data_t *)(percent_bar->data);
@@ -57,14 +57,14 @@ void display_cpu_data()
         add_twidget_child(&main_widget, &test_vlayouts[i]);
     }
 
-    drawable_percent_bar_t *cpu_bars = malloc(3 * n_cpus * sizeof(drawable_percent_bar_t));
+    percent_bar_widget_t *cpu_bars = malloc(3 * n_cpus * sizeof(percent_bar_widget_t));
     percent_bar_config_t *cpu_configs = malloc(3 * n_cpus * sizeof(percent_bar_config_t));
     percent_bar_data_t *cpu_datas = malloc(3 * n_cpus * sizeof(percent_bar_data_t));
     for (int i = 0; i != 3 * first.n_cpus; ++i)
     {
         load_default_bar_config(&cpu_configs[i]);
         init_percent_bar_data(&cpu_datas[i]);
-        init_drawable_percent_bar(
+        init_percent_bar_twidget(
             &cpu_bars[i],
             &cpu_datas[i],
             &cpu_configs[i]);

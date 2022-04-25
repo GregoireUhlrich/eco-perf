@@ -4,10 +4,10 @@
 #include "../tools/percent_bar.h"
 #include "twidget.h"
 
-typedef twidget_t drawable_percent_bar_t;
+typedef twidget_t percent_bar_widget_t;
 
-void init_drawable_percent_bar(
-    drawable_percent_bar_t *percent_bar,
+void init_percent_bar_twidget(
+    percent_bar_widget_t *percent_bar,
     percent_bar_data_t *data,
     percent_bar_config_t *config);
 

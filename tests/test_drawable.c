@@ -1,4 +1,4 @@
-#include "eco_perf/terminal_interface/graphics/term_box.h"
+#include "eco_perf/terminal_interface/graphics/box.h"
 #include "eco_perf/terminal_interface/graphics/twidget.h"
 #include "eco_perf/terminal_interface/terminal/cursor.h"
 #include <stdio.h>
@@ -25,7 +25,7 @@ void test_boxes()
     pos.y = 5;
     size.x = 100;
     size.y = 100;
-    init_term_box(&bigger_box, pos, size);
+    init_box_twidget(&bigger_box, pos, size);
 
     clear_terminal();
     term_box_t box1, box2, box3;
@@ -34,12 +34,12 @@ void test_boxes()
     pos.y = 1;
     size.x = 5;
     size.y = 5;
-    init_term_box(&box1, pos, size);
+    init_box_twidget(&box1, pos, size);
 
     pos.x += 10;
     size.x += 30;
-    term_box_config_t config_box2;
-    init_term_box(&box2, pos, size);
+    box_twidget_t config_box2;
+    init_box_twidget(&box2, pos, size);
     config_box2.background = 'x';
     box2.config = (void *)(&config_box2);
 
@@ -47,9 +47,9 @@ void test_boxes()
     pos.y = 4;
     size.x = 20;
     size.y = 10;
-    term_box_config_t config_box3;
+    box_twidget_t config_box3;
     config_box3.background = '*';
-    init_term_box(&box3, pos, size);
+    init_box_twidget(&box3, pos, size);
     box3.config = (void *)(&config_box3);
 
     add_twidget_child(&bigger_box, &box1);

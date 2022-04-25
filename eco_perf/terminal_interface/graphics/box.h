@@ -5,18 +5,18 @@
 
 typedef twidget_t term_box_t;
 
-typedef struct TermBoxConfig
+typedef struct BoxTWidgetConfig
 {
     char background;
-} term_box_config_t;
+} box_twidget_t;
 
-void init_term_box(
+void init_box_twidget(
     term_box_t *box,
     term_vector_t pos,
     term_vector_t size);
 
-void set_config(
+void set_box_twidget_config(
     term_box_t *box,
-    term_box_config_t *config);
+    box_twidget_t *config);
 
 #endif

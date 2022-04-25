@@ -1,4 +1,4 @@
-#include "terminal_twidget.h"
+#include "terminal.h"
 #include "../terminal/cursor.h"
 #include "../terminal/window.h"
 #include <errno.h>
