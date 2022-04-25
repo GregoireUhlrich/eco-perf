@@ -1,11 +1,11 @@
 #include "eco_perf/cross_os_std.h"
 #include "eco_perf/metrics/cpu_usage.h"
 #include "eco_perf/terminal_interface/graphics/drawable_percent_bar.h"
-#include "eco_perf/terminal_interface/graphics/percent_bar.h"
 #include "eco_perf/terminal_interface/graphics/term_layouts.h"
 #include "eco_perf/terminal_interface/graphics/terminal_twidget.h"
 #include "eco_perf/terminal_interface/io/io.h"
 #include "eco_perf/terminal_interface/terminal/cursor.h"
+#include "eco_perf/terminal_interface/tools/percent_bar.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>

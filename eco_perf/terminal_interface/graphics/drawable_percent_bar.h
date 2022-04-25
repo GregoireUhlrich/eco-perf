@@ -1,7 +1,7 @@
 #ifndef ECO_PERF_DRAWABLE_PERCNT_BAR_H_INCLUDED
 #define ECO_PERF_DRAWABLE_PERCNT_BAR_H_INCLUDED
 
-#include "percent_bar.h"
+#include "../tools/percent_bar.h"
 #include "twidget.h"
 
 typedef twidget_t drawable_percent_bar_t;

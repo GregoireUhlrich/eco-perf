@@ -1,5 +1,4 @@
 add_library(graphics
-    percent_bar.h percent_bar.c
     twidget.h twidget.c
     term_box.h term_box.c
     term_layouts.h term_layouts.c
@@ -7,4 +6,4 @@ add_library(graphics
     drawable_percent_bar.h drawable_percent_bar.c
 )
 
-target_link_libraries(graphics io m)
+target_link_libraries(graphics io)
