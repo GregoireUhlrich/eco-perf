@@ -18,6 +18,5 @@ void _apply_vlayout(
     align_widget_for_linear_layout(
         widget,
         1, // Vertical : y direction
-        layout->config.auto_children_resize,
-        layout->config.vertical_align_mode);
+        &layout->config);
 }

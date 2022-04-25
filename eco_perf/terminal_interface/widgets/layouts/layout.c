@@ -2,18 +2,17 @@
 #include "../twidget.h"
 #include <stdlib.h>
 
-twidget_layout_config_t default_twidget_layout_config()
+void init_twidget_layout_config(twidget_layout_config_t *config)
 {
-    twidget_layout_config_t default_config;
-    default_config.auto_children_resize = 1;
-    default_config.horizontal_align_mode = LAYOUT_TWIDGET_CENTER;
-    default_config.vertical_align_mode = LAYOUT_TWIDGET_CENTER;
-    return default_config;
+    config->auto_children_resize = 1;
+    config->horizontal_align_mode = LAYOUT_TWIDGET_CENTER;
+    config->vertical_align_mode = LAYOUT_TWIDGET_CENTER;
+    config->spacing = 0;
 }
 
 void init_twidget_layout(twidget_layout_t *layout)
 {
-    layout->config = default_twidget_layout_config();
+    init_twidget_layout_config(&layout->config);
     layout->apply_layout = NULL;
 }
 

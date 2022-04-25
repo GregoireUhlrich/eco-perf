@@ -15,6 +15,7 @@ typedef struct TWidgetLayoutConfig
     int auto_children_resize;
     layout_align_mode_t horizontal_align_mode;
     layout_align_mode_t vertical_align_mode;
+    int spacing;
 } twidget_layout_config_t;
 
 typedef struct TWidgetLayout
@@ -26,9 +27,9 @@ typedef struct TWidgetLayout
         struct TWidget *widget);
 } twidget_layout_t;
 
-twidget_layout_config_t default_twidget_layout_config();
-
 void init_twidget_layout(twidget_layout_t *layout);
+
+void init_twidget_layout_config(twidget_layout_config_t *config);
 
 twidget_layout_t default_twidget_layout();
 

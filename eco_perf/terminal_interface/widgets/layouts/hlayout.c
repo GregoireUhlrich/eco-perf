@@ -19,6 +19,5 @@ void _apply_hlayout(
     align_widget_for_linear_layout(
         widget,
         0, // Horizontal : x direction,
-        layout->config.auto_children_resize,
-        layout->config.horizontal_align_mode);
+        &layout->config);
 }

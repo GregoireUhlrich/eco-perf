@@ -6,12 +6,12 @@
 
 int compute_layout_stretching(
     twidget_t const *widget,
-    int direction);
+    int direction,
+    twidget_layout_config_t const *config);
 
 void align_widget_for_linear_layout(
     twidget_t *twidget,
     int direction,
-    int resize,
-    layout_align_mode_t alignement);
+    twidget_layout_config_t const *config);
 
 #endif

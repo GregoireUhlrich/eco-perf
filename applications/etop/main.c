@@ -50,6 +50,7 @@ void display_cpu_data()
     // Main widget has horizontal layout
     twidget_hlayout_t hlayout;
     init_twidget_hlayout(&hlayout);
+    hlayout.config.spacing = 3;
     set_twidget_layout(&main_widget, &hlayout);
 
     // Each sub-widget has vertical layout
@@ -66,6 +67,7 @@ void display_cpu_data()
             test_vlayouts[i].config.auto_children_resize = 0;
             cpudata_widgets[i].size.x = cpubar_size;
             cpudata_widgets[i].fixed_size.x = 1;
+            test_vlayouts[i].config.spacing = 1;
         }
         set_twidget_layout(&cpudata_widgets[i], &test_vlayouts[i]);
         add_twidget_child(&main_widget, &cpudata_widgets[i]);
