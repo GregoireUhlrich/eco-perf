@@ -38,11 +38,12 @@ void _find_strechable_elements(
 {
     *size_to_divide = layout->size_v[offset];
     *n_stretchables = 0;
-    for (int i = 0; i != layout->n_children; ++i)
+    twidget_array_t *widgets = &layout->children;
+    for (int i = 0; i != widgets->size; ++i)
     {
-        if (layout->children[i]->fixed_size_v[offset])
+        if (widgets->widgets[i]->fixed_size_v[offset])
         {
-            *size_to_divide -= layout->children[i]->size_v[offset];
+            *size_to_divide -= widgets->widgets[i]->size_v[offset];
         }
         else
         {
@@ -73,16 +74,20 @@ void _apply_size_update(
     int step_size = size_to_divide / n_stretchables;
     int last_step = size_to_divide - (n_stretchables - 1) * step_size;
 
+    twidget_array_t *widgets = &layout->children;
     for (int i = 0; i != n_stretchables - 1; ++i)
     {
-        layout->children[stretchables[i]]->size_v[offset] = step_size;
+        widgets->widgets[stretchables[i]]->size_v[offset] = step_size;
     }
-    layout->children[stretchables[n_stretchables - 1]]->size_v[offset] = last_step;
+    widgets->widgets[stretchables[n_stretchables - 1]]->size_v[offset] = last_step;
 
     // Put perpendicular size equal
-    for (int i = 0; i != layout->n_children; ++i)
+    for (int i = 0; i != widgets->size; ++i)
     {
-        layout->children[i]->size_v[1 - offset] = layout->size_v[1 - offset];
+        if (!widgets->widgets[i]->fixed_size_v[1 - offset])
+        {
+            widgets->widgets[i]->size_v[1 - offset] = layout->size_v[1 - offset];
+        }
     }
 }
 
@@ -94,28 +99,30 @@ void _apply_pos_update(
 
     // Alignement in the layout direction
     int current_pos = layout->pos_v[offset];
-    for (int i = 0; i != layout->n_children; ++i)
+
+    twidget_array_t *widgets = &layout->children;
+    for (int i = 0; i != widgets->size; ++i)
     {
-        layout->children[i]->pos_v[offset] = current_pos;
-        current_pos += layout->children[i]->size_v[offset];
+        widgets->widgets[i]->pos_v[offset] = current_pos;
+        current_pos += widgets->widgets[i]->size_v[offset];
     }
 
     // Alignement perpendicular to the layout
     int anti_offset = 1 - offset;
     const int parent_size = layout->size_v[anti_offset];
-    for (int i = 0; i != layout->n_children; ++i)
+    for (int i = 0; i != widgets->size; ++i)
     {
         unsigned int new_pos = 0; // relative pos
         if (config->align_mode != LAYOUT_TWIDGET_TOPLEFT)
         {
-            unsigned int child_size = layout->children[i]->size_v[anti_offset];
+            unsigned int child_size = widgets->widgets[i]->size_v[anti_offset];
             int size_diff = parent_size - child_size;
             if (config->align_mode == LAYOUT_TWIDGET_CENTER)
                 new_pos += size_diff / 2;
             else
                 new_pos += size_diff;
         }
-        layout->children[i]->pos_v[anti_offset] = new_pos;
+        widgets->widgets[i]->pos_v[anti_offset] = new_pos;
     }
 }
 

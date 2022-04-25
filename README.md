@@ -19,20 +19,23 @@ Here is the tree representation of the sub-packages of `eco-perf`.
 Individual files are not represented, only directories.
 ```
 eco-perf
+|_________________
 |
-| -- eco_perf      # Core library used in applications
+|-- eco_perf      # Core library used in applications
 |  |
-|  | -- terminal_interface  # All utilities for terminal display
-|  |  | -- io        # io and string utilities for the terminal-I/O
-|  |  | -- terminal  # Utilities to manipulate the terminal window
-|  |  | -- tools     # Tools to use in widgets
-|  |  | -- widgets   # Built-in widgets of eco-perf
+|  |-- terminal_interface  # All utilities for terminal display
+|  |  |-- io        # io and string utilities for the terminal-I/O
+|  |  |-- terminal  # Utilities to manipulate the terminal window
+|  |  |-- tools     # Tools to use in widgets
+|  |  |-- widgets   # Built-in widgets of eco-perf
 |  |
-|  | -- metrics             # System metrics (CPU, memory etc)
+|  |-- metrics             # System metrics (CPU, memory etc)
+|_________________
 |
-| -- applications  # Terminal applications
+|-- applications  # Terminal applications
+|_________________
 |
-| -- tests         # Test programs
+|-- tests         # Test programs
 ```
 
 ## Setup instructions

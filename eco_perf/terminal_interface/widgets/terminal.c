@@ -13,9 +13,9 @@ void _update_terminal(terminal_twidget_t *terminal)
     terminal->size.y = terminal_window.height - 1;
     terminal->pos.x = 0;
     terminal->pos.y = 1;
-    if (terminal->n_children == 1)
+    if (terminal->children.size == 1)
     {
-        terminal->children[0]->size = terminal->size;
+        terminal->children.widgets[0]->size = terminal->size;
     }
     else
     {
