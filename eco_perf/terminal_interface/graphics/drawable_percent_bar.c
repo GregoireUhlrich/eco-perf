@@ -1,5 +1,5 @@
 #include "drawable_percent_bar.h"
-#include "../io/terminal_cursor.h"
+#include "../terminal/cursor.h"
 #include <stdio.h>
 
 void _update_percent_bar(drawable_percent_bar_t *percent_bar)

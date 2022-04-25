@@ -1,6 +1,6 @@
 #include "term_box.h"
 #include "../io/io.h"
-#include "../io/terminal_cursor.h"
+#include "../terminal/cursor.h"
 #include <stdio.h>
 
 term_vector_t _get_box_origin(term_box_t const *box)

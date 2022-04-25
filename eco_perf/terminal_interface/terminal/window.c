@@ -1,9 +1,9 @@
-#include "terminal_interface.h"
+#include "window.h"
 #include <stdio.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
 
-void fill_terminal_data(terminal_data_t *data)
+void init_terminal_window(terminal_window_t *data)
 {
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);

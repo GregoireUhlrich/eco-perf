@@ -1,16 +1,16 @@
 #include "terminal_panel.h"
-#include "../io/terminal_cursor.h"
-#include "../io/terminal_interface.h"
+#include "../terminal/cursor.h"
+#include "../terminal/window.h"
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 void _update_terminal(terminal_panel_t *terminal)
 {
-    terminal_data_t terminal_data;
-    fill_terminal_data(&terminal_data);
-    terminal->size.x = terminal_data.width;
-    terminal->size.y = terminal_data.height - 1;
+    terminal_window_t terminal_window;
+    init_terminal_window(&terminal_window);
+    terminal->size.x = terminal_window.width;
+    terminal->size.y = terminal_window.height - 1;
     terminal->pos.x = 0;
     terminal->pos.y = 1;
     if (terminal->n_children == 1)

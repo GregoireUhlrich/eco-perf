@@ -1,5 +1,5 @@
 #include "term_drawable.h"
-#include "../io/terminal_cursor.h"
+#include "../terminal/cursor.h"
 #include <errno.h>
 #include <stddef.h>
 #include <stdio.h>

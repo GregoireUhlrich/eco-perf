@@ -1,6 +1,6 @@
-#include "eco_perf/graphics/term_box.h"
-#include "eco_perf/graphics/term_drawable.h"
-#include "eco_perf/io/terminal_cursor.h"
+#include "eco_perf/terminal_interface/graphics/term_box.h"
+#include "eco_perf/terminal_interface/graphics/term_drawable.h"
+#include "eco_perf/terminal_interface/terminal/cursor.h"
 #include <stdio.h>
 #include <sys/ioctl.h>
 #include <unistd.h>

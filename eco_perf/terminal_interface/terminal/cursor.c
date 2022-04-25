@@ -1,4 +1,4 @@
-#include "terminal_cursor.h"
+#include "cursor.h"
 #include <stdio.h>
 
 void save_cursor_position()
