@@ -1,6 +1,6 @@
-add_library(terminal_interface INTERFACE)
+add_library(cute_terminal INTERFACE)
 
-target_link_libraries(terminal_interface INTERFACE
+target_link_libraries(cute_terminal INTERFACE
     io widgets terminal tools)
 
 add_subdirectory(io)

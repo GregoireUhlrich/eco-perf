@@ -1,6 +1,6 @@
-#include "eco_perf/terminal_interface/terminal/cursor.h"
-#include "eco_perf/terminal_interface/widgets/box.h"
-#include "eco_perf/terminal_interface/widgets/twidget.h"
+#include "eco_perf/cute_terminal/terminal/cursor.h"
+#include "eco_perf/cute_terminal/widgets/box.h"
+#include "eco_perf/cute_terminal/widgets/twidget.h"
 #include <stdio.h>
 #include <sys/ioctl.h>
 #include <unistd.h>

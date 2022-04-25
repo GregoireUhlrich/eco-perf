@@ -10,7 +10,7 @@ users to have an information about processes that consumed,
 cumulatively, a lot of resources during a long time (and not only a
 snap-shot of resource consumption such as in `htop`).
 
-Applications are built using the `terminal_interface` library providing a
+Applications are built using the `cute_terminal` library providing a
 simple interface to create and manipulate widgets inside a terminal.
 
 ## Package structure
@@ -23,11 +23,12 @@ eco-perf
 |
 |-- eco_perf      # Core library used in applications
 |  |
-|  |-- terminal_interface  # All utilities for terminal display
+|  |-- cute_terminal  # All utilities for terminal display
 |  |  |-- io        # io and string utilities for the terminal-I/O
 |  |  |-- terminal  # Utilities to manipulate the terminal window
 |  |  |-- tools     # Tools to use in widgets
 |  |  |-- widgets   # Built-in widgets of eco-perf
+|  |     |-- layouts  # Layouts applied to widgets
 |  |
 |  |-- metrics             # System metrics (CPU, memory etc)
 |_________________

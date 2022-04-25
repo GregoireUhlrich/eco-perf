@@ -1,10 +1,10 @@
+#include "eco_perf/cute_terminal/tools/percent_bar.h"
+#include "eco_perf/cute_terminal/widgets/layouts/hlayout.h"
+#include "eco_perf/cute_terminal/widgets/layouts/vlayout.h"
+#include "eco_perf/cute_terminal/widgets/percent_bar.h"
+#include "eco_perf/cute_terminal/widgets/terminal.h"
+#include "eco_perf/cute_terminal/widgets/twidget.h"
 #include "eco_perf/metrics/cpu_usage.h"
-#include "eco_perf/terminal_interface/tools/percent_bar.h"
-#include "eco_perf/terminal_interface/widgets/layouts/hlayout.h"
-#include "eco_perf/terminal_interface/widgets/layouts/vlayout.h"
-#include "eco_perf/terminal_interface/widgets/percent_bar.h"
-#include "eco_perf/terminal_interface/widgets/terminal.h"
-#include "eco_perf/terminal_interface/widgets/twidget.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
