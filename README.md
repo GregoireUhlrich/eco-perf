@@ -10,30 +10,59 @@ users to have an information about processes that consumed,
 cumulatively, a lot of resources during a long time (and not only a
 snap-shot of resource consumption such as in `htop`).
 
-Applications are built using `term-widgets`, a library providing a simple
-interface to create and manipulate widgets inside a terminal.
+Applications are built using the `terminal_interface` library providing a
+simple interface to create and manipulate widgets inside a terminal.
+
+## Package structure
+
+Here is the tree representation of the sub-packages of `eco-perf`.
+Individual files are not represented, only directories.
+```
+eco-perf
+|
+| -- eco_perf      # Core library used in applications
+|  |
+|  | -- terminal_interface  # All utilities for terminal display
+|  |  | -- io        # io and string utilities for the terminal-I/O
+|  |  | -- terminal  # Utilities to manipulate the terminal window
+|  |  | -- tools     # Tools to use in widgets
+|  |  | -- widgets   # Built-in widgets of eco-perf
+|  |
+|  | -- metrics             # System metrics (CPU, memory etc)
+|
+| -- applications  # Terminal applications
+|
+| -- tests         # Test programs
+```
 
 ## Setup instructions
 
 Clone the repository
 ``` console
-    git clone https://github.com/GregoireUhlrich/eco-perf.git
+    git clone git@github.com:GregoireUhlrich/eco-perf.git
+    # or
+    # git clone https://github.com/GregoireUhlrich/eco-perf.git
 ```
 
-Build from sources
+Go in the `eco-perf` directory and prepare for build:
 ``` console
     cd eco-perf
     mkdir build
     cd build
+```
+Using cmake, Makefiles are generated automatically and the whole project
+can then be built from sources using `make`:
+``` console
     cmake ..
     make
-    cd ..
 ```
 
-Finally, execute the programs
+Finally, from the `build/` directory, binaries can be directly launched:
 ``` console
-    build/test_terminal  # test colors and formats for the terminal
-    build/etop  # etop -- htop for eco-perf
+    tests/test_terminal  # test colors and formats for the terminal
+    applications/etop/etop  # etop -- htop for eco-perf
 ```
 
-Quit the `etop` program using `Ctrl+C` in the terminal.
+*Note:*
+For now the `etop` program has no keyboard input so one must quit the
+program using `Ctrl+C` in the terminal.
