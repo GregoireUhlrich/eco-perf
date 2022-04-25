@@ -12,8 +12,24 @@ void init_term_vector(terminal_vector_t *vector)
     vector->y = 0;
 }
 
+void set_twidget_layout(
+    twidget_t *widget,
+    twidget_layout_t *layout)
+{
+    widget->layout = layout;
+}
+
+void apply_twidget_layout(twidget_t *widget)
+{
+    if (widget->layout && widget->layout->apply_layout)
+    {
+        widget->layout->apply_layout(widget->layout, widget);
+    }
+}
+
 void _default_update(twidget_t *widget)
 {
+    apply_twidget_layout(widget);
 }
 
 int _default_draw(twidget_t const *widget)
@@ -31,6 +47,8 @@ void init_twidget(twidget_t *widget)
 {
     widget->hidden = 0;
     widget->floating = 0;
+    widget->parent = NULL;
+    widget->layout = NULL;
     init_term_vector(&widget->pos);
     init_term_vector(&widget->size);
     init_term_vector(&widget->fixed_size);
@@ -86,6 +104,13 @@ void add_twidget_child(
     twidget_t *parent,
     twidget_t *child)
 {
+    if (child->parent)
+    {
+        errno = EINVAL;
+        perror("Child already has a twidget parent.");
+        exit(1);
+    }
+    child->parent = parent;
     twidget_array_push_back(&parent->children, child);
 }
 
@@ -104,6 +129,10 @@ void remove_twidget_child(
     if (free_child)
     {
         free_twidget(child);
+    }
+    else
+    {
+        child->parent = NULL;
     }
     twidget_array_remove(&parent->children, child);
 }

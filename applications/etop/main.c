@@ -1,8 +1,10 @@
 #include "eco_perf/metrics/cpu_usage.h"
 #include "eco_perf/terminal_interface/tools/percent_bar.h"
-#include "eco_perf/terminal_interface/widgets/layouts.h"
+#include "eco_perf/terminal_interface/widgets/layouts/hlayout.h"
+#include "eco_perf/terminal_interface/widgets/layouts/vlayout.h"
 #include "eco_perf/terminal_interface/widgets/percent_bar.h"
 #include "eco_perf/terminal_interface/widgets/terminal.h"
+#include "eco_perf/terminal_interface/widgets/twidget.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,24 +37,38 @@ void display_cpu_data()
 
     int n_cpus = first.n_cpus;
 
+    // Main widget
+    twidget_t main_widget;
+    init_twidget(&main_widget);
+    twidget_layout_t main_layout = default_twidget_layout();
+    set_twidget_layout(&main_widget, &main_layout);
+
+    // Init the terminal widget containing the main widget
     terminal_twidget_t terminal;
-    hlayout_twidget_t main_widget;
-    layout_twidget_config_t default_layout_config = get_default_layout_twidget_config();
-    init_hlayout_twidget(&main_widget, &default_layout_config);
     init_terminal_twidget(&terminal, &main_widget);
 
-    vlayout_twidget_t test_vlayouts[3];
-    layout_twidget_config_t vlayouts_configs[3];
+    // Main widget has horizontal layout
+    twidget_hlayout_t hlayout;
+    init_twidget_hlayout(&hlayout);
+    set_twidget_layout(&main_widget, &hlayout);
+
+    // Each sub-widget has vertical layout
+    twidget_t cpudata_widgets[3];
+    twidget_vlayout_t test_vlayouts[3];
+    int cpubar_size = 35;
     for (int i = 0; i != 3; ++i)
     {
-        vlayouts_configs[i] = get_default_layout_twidget_config();
-        vlayouts_configs[i].align_mode = LAYOUT_TWIDGET_TOPLEFT + i;
+        init_twidget_vlayout(&test_vlayouts[i]);
+        test_vlayouts[i].config.horizontal_align_mode = LAYOUT_TWIDGET_TOPLEFT + i;
+        init_twidget(&cpudata_widgets[i]);
         if (i == 1)
         {
-            vlayouts_configs[i].auto_children_resize = 0;
+            test_vlayouts[i].config.auto_children_resize = 0;
+            cpudata_widgets[i].size.x = cpubar_size;
+            cpudata_widgets[i].fixed_size.x = 1;
         }
-        init_vlayout_twidget(&test_vlayouts[i], &vlayouts_configs[i]);
-        add_twidget_child(&main_widget, &test_vlayouts[i]);
+        set_twidget_layout(&cpudata_widgets[i], &test_vlayouts[i]);
+        add_twidget_child(&main_widget, &cpudata_widgets[i]);
     }
 
     percent_bar_twidget_t *cpu_bars = malloc(3 * n_cpus * sizeof(percent_bar_twidget_t));
@@ -66,9 +82,9 @@ void display_cpu_data()
             &cpu_bars[i],
             &cpu_datas[i],
             &cpu_configs[i]);
-        cpu_bars[i].size.x = 40;
+        cpu_bars[i].size.x = cpubar_size;
         cpu_bars[i].size.y = 1;
-        add_twidget_child(&test_vlayouts[i / n_cpus], &cpu_bars[i]);
+        add_twidget_child(&cpudata_widgets[i / n_cpus], &cpu_bars[i]);
     }
 
     while (1)
