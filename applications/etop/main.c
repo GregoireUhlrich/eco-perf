@@ -3,7 +3,7 @@
 #include "eco_perf/terminal_interface/graphics/drawable_percent_bar.h"
 #include "eco_perf/terminal_interface/graphics/percent_bar.h"
 #include "eco_perf/terminal_interface/graphics/term_layouts.h"
-#include "eco_perf/terminal_interface/graphics/terminal_panel.h"
+#include "eco_perf/terminal_interface/graphics/terminal_twidget.h"
 #include "eco_perf/terminal_interface/io/io.h"
 #include "eco_perf/terminal_interface/terminal/cursor.h"
 #include <math.h>
@@ -37,11 +37,11 @@ void display_cpu_data()
 
     int n_cpus = first.n_cpus;
 
-    terminal_panel_t terminal;
+    terminal_twidget_t terminal;
     term_hlayout_t main_widget;
     term_layout_config_t default_layout_config = get_default_term_layout_config();
     init_term_hlayout(&main_widget, &default_layout_config);
-    init_terminal_panel(&terminal, &main_widget);
+    init_terminal_twidget(&terminal, &main_widget);
 
     term_vlayout_t test_vlayouts[3];
     term_layout_config_t vlayouts_configs[3];
@@ -54,7 +54,7 @@ void display_cpu_data()
             vlayouts_configs[i].auto_children_resize = 0;
         }
         init_term_vlayout(&test_vlayouts[i], &vlayouts_configs[i]);
-        add_term_drawable_child(&main_widget, &test_vlayouts[i]);
+        add_twidget_child(&main_widget, &test_vlayouts[i]);
     }
 
     drawable_percent_bar_t *cpu_bars = malloc(3 * n_cpus * sizeof(drawable_percent_bar_t));
@@ -70,7 +70,7 @@ void display_cpu_data()
             &cpu_configs[i]);
         cpu_bars[i].size.x = 40;
         cpu_bars[i].size.y = 1;
-        add_term_drawable_child(&test_vlayouts[i / n_cpus], &cpu_bars[i]);
+        add_twidget_child(&test_vlayouts[i / n_cpus], &cpu_bars[i]);
     }
 
     while (1)
@@ -85,8 +85,8 @@ void display_cpu_data()
             sprintf(cpu_name, "CPU %d", i);
             update_cpu_data(&cpu_bars[i], &ratio.core_data[i % n_cpus]);
         }
-        update_term_drawable(&terminal);
-        draw_term_drawable(&terminal);
+        update_twidget(&terminal);
+        draw_twidget(&terminal);
         fflush(stdout);
         usleep(n_seconds_sleep * 1e6);
 

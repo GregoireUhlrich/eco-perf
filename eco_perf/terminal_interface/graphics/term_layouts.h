@@ -1,13 +1,13 @@
 #ifndef ECO_PERF_TERM_LAYOUT_H_INCLUDED
 #define ECO_PERF_TERM_LAYOUT_H_INCLUDED
 
-#include "term_drawable.h"
+#include "twidget.h"
 
 #define MAX_TERM_N_LAYOUT_ELEMENTS 15
 
-typedef term_drawable_t term_hlayout_t;
+typedef twidget_t term_hlayout_t;
 
-typedef term_drawable_t term_vlayout_t;
+typedef twidget_t term_vlayout_t;
 
 typedef enum TermLayoutAlignMode
 {

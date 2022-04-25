@@ -15,7 +15,7 @@ void init_term_hlayout(
     term_hlayout_t *layout,
     term_layout_config_t *config)
 {
-    init_term_drawable(layout);
+    init_twidget(layout);
     layout->config = (void *)config;
     layout->update = update_term_hlayout;
 }
@@ -24,13 +24,13 @@ void init_term_vlayout(
     term_vlayout_t *layout,
     term_layout_config_t *config)
 {
-    init_term_drawable(layout);
+    init_twidget(layout);
     layout->config = (void *)config;
     layout->update = update_term_vlayout;
 }
 
 void _find_strechable_elements(
-    term_drawable_t *layout,
+    twidget_t *layout,
     int *size_to_divide,
     int *n_stretchables,
     int stretchables[],
@@ -59,7 +59,7 @@ void _find_strechable_elements(
 }
 
 void _apply_size_update(
-    term_drawable_t *layout,
+    twidget_t *layout,
     int size_to_divide,
     int n_stretchables,
     int stretchables[],
@@ -87,7 +87,7 @@ void _apply_size_update(
 }
 
 void _apply_pos_update(
-    term_drawable_t *layout,
+    twidget_t *layout,
     int offset)
 {
     term_layout_config_t *config = (term_layout_config_t *)layout->config;
@@ -119,7 +119,7 @@ void _apply_pos_update(
     }
 }
 
-void _update_term_layout(term_drawable_t *layout, int hlayout)
+void _update_term_layout(twidget_t *layout, int hlayout)
 {
     const int offset = !hlayout;
     int n_stretchables;

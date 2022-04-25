@@ -2,9 +2,9 @@
 #define ECO_PERF_DRAWABLE_PERCNT_BAR_H_INCLUDED
 
 #include "percent_bar.h"
-#include "term_drawable.h"
+#include "twidget.h"
 
-typedef term_drawable_t drawable_percent_bar_t;
+typedef twidget_t drawable_percent_bar_t;
 
 void init_drawable_percent_bar(
     drawable_percent_bar_t *percent_bar,

@@ -1,9 +1,9 @@
 #ifndef ECO_PERF_TERM_BOX_H_INCLUDED
 #define ECO_PERF_TERM_BOX_H_INCLUDED
 
-#include "term_drawable.h"
+#include "twidget.h"
 
-typedef term_drawable_t term_box_t;
+typedef twidget_t term_box_t;
 
 typedef struct TermBoxConfig
 {

@@ -1,11 +1,11 @@
-#include "terminal_panel.h"
+#include "terminal_twidget.h"
 #include "../terminal/cursor.h"
 #include "../terminal/window.h"
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-void _update_terminal(terminal_panel_t *terminal)
+void _update_terminal(terminal_twidget_t *terminal)
 {
     terminal_window_t terminal_window;
     init_terminal_window(&terminal_window);
@@ -25,18 +25,18 @@ void _update_terminal(terminal_panel_t *terminal)
     }
 }
 
-int _draw_terminal(terminal_panel_t const *terminal)
+int _draw_terminal(terminal_twidget_t const *terminal)
 {
     clear_terminal();
     return 1;
 }
 
-void init_terminal_panel(
-    terminal_panel_t *terminal,
-    term_drawable_t *main_drawable)
+void init_terminal_twidget(
+    terminal_twidget_t *terminal,
+    twidget_t *main_drawable)
 {
-    init_term_drawable(terminal);
-    add_term_drawable_child(terminal, main_drawable);
+    init_twidget(terminal);
+    add_twidget_child(terminal, main_drawable);
     terminal->update = _update_terminal;
     terminal->update(terminal);
     terminal->draw_self = _draw_terminal;

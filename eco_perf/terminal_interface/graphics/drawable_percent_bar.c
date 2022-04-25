@@ -40,7 +40,7 @@ void init_drawable_percent_bar(
     percent_bar_data_t *data,
     percent_bar_config_t *config)
 {
-    init_term_drawable(percent_bar);
+    init_twidget(percent_bar);
     percent_bar->size.y = 1;
     percent_bar->data = (void *)data;
     percent_bar->config = (void *)config;

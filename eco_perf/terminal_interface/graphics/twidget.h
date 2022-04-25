@@ -7,7 +7,7 @@ typedef struct TermVector
     unsigned int y;
 } term_vector_t;
 
-typedef struct TermDrawable
+typedef struct TWidget
 {
     int hidden;
     union
@@ -28,41 +28,41 @@ typedef struct TermDrawable
 
     int n_children;
     int _memory_size;
-    struct TermDrawable **children;
+    struct TWidget **children;
 
     void *config; // possible additional config
     void *data;   // possible additional data
 
-    void (*update)(struct TermDrawable *drawable);
+    void (*update)(struct TWidget *drawable);
 
     term_vector_t (*get_origin)(
-        struct TermDrawable const *drawable);
+        struct TWidget const *drawable);
 
-    int (*draw_self)(struct TermDrawable const *drawable);
-} term_drawable_t;
+    int (*draw_self)(struct TWidget const *drawable);
+} twidget_t;
 
 void init_term_vector(term_vector_t *vector);
-void init_term_drawable(term_drawable_t *drawable);
+void init_twidget(twidget_t *drawable);
 
 term_vector_t get_default_term_origin();
 
-void update_term_drawable(term_drawable_t *drawable);
+void update_twidget(twidget_t *drawable);
 
-int draw_term_drawable(term_drawable_t *drawable);
+int draw_twidget(twidget_t *drawable);
 
-void add_term_drawable_child(
-    term_drawable_t *parent,
-    term_drawable_t *child);
+void add_twidget_child(
+    twidget_t *parent,
+    twidget_t *child);
 
-int index_of_term_drawable_child(
-    term_drawable_t *parent,
-    term_drawable_t *child);
+int twiget_child_index(
+    twidget_t *parent,
+    twidget_t *child);
 
-void remove_term_drawable_child(
-    term_drawable_t *parent,
-    term_drawable_t *child,
+void remove_twidget_child(
+    twidget_t *parent,
+    twidget_t *child,
     int release_child);
 
-void free_term_drawable(term_drawable_t *drawable);
+void free_twidget(twidget_t *drawable);
 
 #endif

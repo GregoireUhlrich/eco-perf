@@ -63,7 +63,7 @@ void init_term_box(
     term_vector_t pos,
     term_vector_t size)
 {
-    init_term_drawable(box);
+    init_twidget(box);
     box->pos = pos;
     box->size = size;
     box->draw_self = _draw_box;

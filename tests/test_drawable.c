@@ -1,11 +1,11 @@
 #include "eco_perf/terminal_interface/graphics/term_box.h"
-#include "eco_perf/terminal_interface/graphics/term_drawable.h"
+#include "eco_perf/terminal_interface/graphics/twidget.h"
 #include "eco_perf/terminal_interface/terminal/cursor.h"
 #include <stdio.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
 
-void print_drawable(term_drawable_t *drawable)
+void print_drawable(twidget_t *drawable)
 {
     printf("Drawable with %d children (mem_size=%d)\n",
            drawable->n_children,
@@ -52,45 +52,45 @@ void test_boxes()
     init_term_box(&box3, pos, size);
     box3.config = (void *)(&config_box3);
 
-    add_term_drawable_child(&bigger_box, &box1);
-    add_term_drawable_child(&bigger_box, &box2);
-    add_term_drawable_child(&bigger_box, &box3);
+    add_twidget_child(&bigger_box, &box1);
+    add_twidget_child(&bigger_box, &box2);
+    add_twidget_child(&bigger_box, &box3);
 
-    draw_term_drawable(&bigger_box);
+    draw_twidget(&bigger_box);
     char c;
     scanf("%c", &c);
 }
 
 int main()
 {
-    term_drawable_t terminal;
-    init_term_drawable(&terminal);
+    twidget_t terminal;
+    init_twidget(&terminal);
 
-    term_drawable_t panel1, panel2, panel3;
-    init_term_drawable(&panel1);
-    init_term_drawable(&panel2);
-    init_term_drawable(&panel3);
+    twidget_t panel1, panel2, panel3;
+    init_twidget(&panel1);
+    init_twidget(&panel2);
+    init_twidget(&panel3);
 
-    term_drawable_t element1, element2;
-    init_term_drawable(&element1);
-    init_term_drawable(&element2);
+    twidget_t element1, element2;
+    init_twidget(&element1);
+    init_twidget(&element2);
 
-    add_term_drawable_child(&panel1, &element1);
-    add_term_drawable_child(&panel1, &element2);
+    add_twidget_child(&panel1, &element1);
+    add_twidget_child(&panel1, &element2);
 
-    add_term_drawable_child(&terminal, &panel1);
-    add_term_drawable_child(&terminal, &panel2);
-    add_term_drawable_child(&terminal, &panel3);
+    add_twidget_child(&terminal, &panel1);
+    add_twidget_child(&terminal, &panel2);
+    add_twidget_child(&terminal, &panel3);
 
     print_drawable(&element1);
     print_drawable(&panel1);
     print_drawable(&terminal);
 
-    remove_term_drawable_child(&panel1, &element2, 1);
-    remove_term_drawable_child(&terminal, &panel1, 1);
+    remove_twidget_child(&panel1, &element2, 1);
+    remove_twidget_child(&terminal, &panel1, 1);
     print_drawable(&terminal);
 
-    free_term_drawable(&terminal);
+    free_twidget(&terminal);
 
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);

@@ -1,4 +1,4 @@
-#include "term_drawable.h"
+#include "twidget.h"
 #include "../terminal/cursor.h"
 #include <errno.h>
 #include <stddef.h>
@@ -12,21 +12,21 @@ void init_term_vector(term_vector_t *vector)
     vector->y = 0;
 }
 
-void _default_update(term_drawable_t *drawable)
+void _default_update(twidget_t *drawable)
 {
 }
 
-int _default_draw(term_drawable_t const *drawable)
+int _default_draw(twidget_t const *drawable)
 {
 }
 
-term_vector_t _default_get_origin(term_drawable_t const *drawable)
+term_vector_t _default_get_origin(twidget_t const *drawable)
 {
     static const term_vector_t default_origin = {0, 0};
     return default_origin;
 }
 
-void init_term_drawable(term_drawable_t *drawable)
+void init_twidget(twidget_t *drawable)
 {
     drawable->hidden = 0;
     init_term_vector(&drawable->pos);
@@ -48,17 +48,17 @@ term_vector_t get_default_term_origin()
     return origin;
 }
 
-void update_term_drawable(term_drawable_t *drawable)
+void update_twidget(twidget_t *drawable)
 {
     drawable->update(drawable);
     for (int i = 0; i != drawable->n_children; ++i)
     {
-        update_term_drawable(drawable->children[i]);
+        update_twidget(drawable->children[i]);
     }
 }
 
 #include <unistd.h>
-int draw_term_drawable(term_drawable_t *drawable)
+int draw_twidget(twidget_t *drawable)
 {
     if (drawable && drawable->draw_self && !drawable->hidden)
     {
@@ -70,7 +70,7 @@ int draw_term_drawable(term_drawable_t *drawable)
         drawable->draw_self(drawable);
         for (int i = 0; i != drawable->n_children; ++i)
         {
-            draw_term_drawable(drawable->children[i]);
+            draw_twidget(drawable->children[i]);
         }
         move_cursor_left(offset_x);
         move_cursor_up(offset_y);
@@ -79,28 +79,28 @@ int draw_term_drawable(term_drawable_t *drawable)
     return 0;
 }
 
-void _extend_memory_space(term_drawable_t *drawable)
+void _extend_memory_space(twidget_t *drawable)
 {
     if (drawable->_memory_size == 0)
     {
-        drawable->children = (term_drawable_t **)malloc(sizeof(term_drawable_t *));
+        drawable->children = (twidget_t **)malloc(sizeof(twidget_t *));
         drawable->_memory_size = 1;
         return;
     }
-    term_drawable_t **new_array = malloc(
-        2 * drawable->_memory_size * sizeof(term_drawable_t *));
+    twidget_t **new_array = malloc(
+        2 * drawable->_memory_size * sizeof(twidget_t *));
     memcpy(
         new_array,
         drawable->children,
-        drawable->n_children * sizeof(term_drawable_t *));
+        drawable->n_children * sizeof(twidget_t *));
     free(drawable->children);
     drawable->_memory_size *= 2;
     drawable->children = new_array;
 }
 
-void add_term_drawable_child(
-    term_drawable_t *parent,
-    term_drawable_t *child)
+void add_twidget_child(
+    twidget_t *parent,
+    twidget_t *child)
 {
     if (parent->n_children == parent->_memory_size)
     {
@@ -110,9 +110,9 @@ void add_term_drawable_child(
     ++parent->n_children;
 }
 
-int index_of_term_drawable_child(
-    term_drawable_t *parent,
-    term_drawable_t *child)
+int twiget_child_index(
+    twidget_t *parent,
+    twidget_t *child)
 {
     for (int i = 0; i != parent->n_children; ++i)
     {
@@ -124,12 +124,12 @@ int index_of_term_drawable_child(
     return -1;
 }
 
-void remove_term_drawable_child(
-    term_drawable_t *parent,
-    term_drawable_t *child,
+void remove_twidget_child(
+    twidget_t *parent,
+    twidget_t *child,
     int release_child)
 {
-    int index = index_of_term_drawable_child(parent, child);
+    int index = twiget_child_index(parent, child);
     if (index == -1)
     {
         errno = EINVAL;
@@ -143,15 +143,15 @@ void remove_term_drawable_child(
     --parent->n_children;
     if (release_child)
     {
-        free_term_drawable(child);
+        free_twidget(child);
     }
 }
 
-void free_term_drawable(term_drawable_t *drawable)
+void free_twidget(twidget_t *drawable)
 {
     for (int i = 0; i != drawable->n_children; ++i)
     {
-        free_term_drawable(drawable->children[i]);
+        free_twidget(drawable->children[i]);
     }
     free(drawable->children);
 }

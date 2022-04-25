@@ -1,9 +1,9 @@
 add_library(graphics
     percent_bar.h percent_bar.c
-    term_drawable.h term_drawable.c
+    twidget.h twidget.c
     term_box.h term_box.c
     term_layouts.h term_layouts.c
-    terminal_panel.h terminal_panel.c
+    terminal_twidget.h terminal_twidget.c
     drawable_percent_bar.h drawable_percent_bar.c
 )
 
