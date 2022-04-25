@@ -1,9 +1,9 @@
-#ifndef ECO_PERF_TERM_LAYOUT_H_INCLUDED
-#define ECO_PERF_TERM_LAYOUT_H_INCLUDED
+#ifndef ECO_PERF_TWIDGET_LAYOUT_H_INCLUDED
+#define ECO_PERF_TWIDGET_LAYOUT_H_INCLUDED
 
 #include "twidget.h"
 
-#define MAX_TERM_N_LAYOUT_ELEMENTS 15
+#define MAX_N_LAYOUT_TWIDGET_ELEMENTS 15
 
 typedef twidget_t hlayout_twidget_t;
 
@@ -11,14 +11,14 @@ typedef twidget_t vlayout_twidget_t;
 
 typedef enum LayoutTWidgetAlignMode
 {
-    TERM_LAYOUT_TOPLEFT,
-    TERM_LAYOUT_CENTER,
-    TERM_LAYOUT_BOTTOMRIGHT
-} layout_t_widget_align_mode_t;
+    LAYOUT_TWIDGET_TOPLEFT,
+    LAYOUT_TWIDGET_CENTER,
+    LAYOUT_TWIDGET_BOTTOMRIGHT
+} layout_twidget_align_mode_t;
 
 typedef struct LayoutTWidgetConfig
 {
-    layout_t_widget_align_mode_t align_mode;
+    layout_twidget_align_mode_t align_mode;
     int auto_children_resize;
 } layout_twidget_config_t;
 

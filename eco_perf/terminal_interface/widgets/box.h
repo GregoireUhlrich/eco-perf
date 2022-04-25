@@ -1,5 +1,5 @@
-#ifndef ECO_PERF_TERM_BOX_H_INCLUDED
-#define ECO_PERF_TERM_BOX_H_INCLUDED
+#ifndef ECO_PERF_TWIDGET_BOX_H_INCLUDED
+#define ECO_PERF_TWIDGET_BOX_H_INCLUDED
 
 #include "twidget.h"
 
@@ -12,8 +12,8 @@ typedef struct BoxTWidgetConfig
 
 void init_box_twidget(
     term_box_t *box,
-    term_vector_t pos,
-    term_vector_t size);
+    terminal_vector_t pos,
+    terminal_vector_t size);
 
 void set_box_twidget_config(
     term_box_t *box,

@@ -6,7 +6,7 @@
 layout_twidget_config_t get_default_layout_twidget_config()
 {
     layout_twidget_config_t config;
-    config.align_mode = TERM_LAYOUT_TOPLEFT;
+    config.align_mode = LAYOUT_TWIDGET_TOPLEFT;
     config.auto_children_resize = 1;
     return config;
 }
@@ -106,11 +106,11 @@ void _apply_pos_update(
     for (int i = 0; i != layout->n_children; ++i)
     {
         unsigned int new_pos = 0; // relative pos
-        if (config->align_mode != TERM_LAYOUT_TOPLEFT)
+        if (config->align_mode != LAYOUT_TWIDGET_TOPLEFT)
         {
             unsigned int child_size = layout->children[i]->size_v[anti_offset];
             int size_diff = parent_size - child_size;
-            if (config->align_mode == TERM_LAYOUT_CENTER)
+            if (config->align_mode == LAYOUT_TWIDGET_CENTER)
                 new_pos += size_diff / 2;
             else
                 new_pos += size_diff;
@@ -124,7 +124,7 @@ void _update_term_layout(twidget_t *layout, int hlayout)
     const int offset = !hlayout;
     int n_stretchables;
     int size_to_divide;
-    int stretchables[MAX_TERM_N_LAYOUT_ELEMENTS];
+    int stretchables[MAX_N_LAYOUT_TWIDGET_ELEMENTS];
     _find_strechable_elements(
         layout,
         &size_to_divide,

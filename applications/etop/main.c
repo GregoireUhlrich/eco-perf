@@ -11,7 +11,7 @@
 #include <stdlib.h>
 
 void update_cpu_data(
-    percent_bar_widget_t *percent_bar,
+    percent_bar_twidget_t *percent_bar,
     cpu_core_data_t const *ratio)
 {
     percent_bar_data_t *data = (percent_bar_data_t *)(percent_bar->data);
@@ -48,7 +48,7 @@ void display_cpu_data()
     for (int i = 0; i != 3; ++i)
     {
         vlayouts_configs[i] = get_default_layout_twidget_config();
-        vlayouts_configs[i].align_mode = TERM_LAYOUT_TOPLEFT + i;
+        vlayouts_configs[i].align_mode = LAYOUT_TWIDGET_TOPLEFT + i;
         if (i == 1)
         {
             vlayouts_configs[i].auto_children_resize = 0;
@@ -57,7 +57,7 @@ void display_cpu_data()
         add_twidget_child(&main_widget, &test_vlayouts[i]);
     }
 
-    percent_bar_widget_t *cpu_bars = malloc(3 * n_cpus * sizeof(percent_bar_widget_t));
+    percent_bar_twidget_t *cpu_bars = malloc(3 * n_cpus * sizeof(percent_bar_twidget_t));
     percent_bar_config_t *cpu_configs = malloc(3 * n_cpus * sizeof(percent_bar_config_t));
     percent_bar_data_t *cpu_datas = malloc(3 * n_cpus * sizeof(percent_bar_data_t));
     for (int i = 0; i != 3 * first.n_cpus; ++i)

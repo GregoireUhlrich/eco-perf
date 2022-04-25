@@ -4,9 +4,9 @@
 #include "../terminal/cursor.h"
 #include <stdio.h>
 
-term_vector_t _get_box_origin(term_box_t const *box)
+terminal_vector_t _get_box_origin(term_box_t const *box)
 {
-    static const term_vector_t origin = {1, 1};
+    static const terminal_vector_t origin = {1, 1};
     return origin;
 }
 
@@ -16,15 +16,15 @@ void _new_box_line(int line_size)
     move_cursor_left(line_size);
 }
 
-void _set_box_cursor_pos(term_vector_t box_pos)
+void _set_box_cursor_pos(terminal_vector_t box_pos)
 {
     move_cursor_right(box_pos.x);
     move_cursor_down(box_pos.y);
 }
 
 void _reset_box_cursor_pos(
-    term_vector_t box_pos,
-    term_vector_t box_size)
+    terminal_vector_t box_pos,
+    terminal_vector_t box_size)
 {
     move_cursor_left(box_pos.x + box_size.x);
     move_cursor_up(box_pos.y + box_size.y - 1);
@@ -61,8 +61,8 @@ int _draw_box(term_box_t const *box)
 
 void init_box_twidget(
     term_box_t *box,
-    term_vector_t pos,
-    term_vector_t size)
+    terminal_vector_t pos,
+    terminal_vector_t size)
 {
     init_twidget(box);
     box->pos = pos;

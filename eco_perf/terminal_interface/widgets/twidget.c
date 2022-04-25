@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void init_term_vector(term_vector_t *vector)
+void init_term_vector(terminal_vector_t *vector)
 {
     vector->x = 0;
     vector->y = 0;
@@ -20,9 +20,9 @@ int _default_draw(twidget_t const *drawable)
 {
 }
 
-term_vector_t _default_get_origin(twidget_t const *drawable)
+terminal_vector_t _default_get_origin(twidget_t const *drawable)
 {
-    static const term_vector_t default_origin = {0, 0};
+    static const terminal_vector_t default_origin = {0, 0};
     return default_origin;
 }
 
@@ -42,9 +42,9 @@ void init_twidget(twidget_t *drawable)
     drawable->draw_self = _default_draw;
 }
 
-term_vector_t get_default_term_origin()
+terminal_vector_t get_default_twidget_origin()
 {
-    term_vector_t origin = {0, 0};
+    terminal_vector_t origin = {0, 0};
     return origin;
 }
 
@@ -62,7 +62,7 @@ int draw_twidget(twidget_t *drawable)
 {
     if (drawable && drawable->draw_self && !drawable->hidden)
     {
-        term_vector_t origin = drawable->get_origin(drawable);
+        terminal_vector_t origin = drawable->get_origin(drawable);
         const int offset_x = drawable->pos.x + origin.x;
         const int offset_y = drawable->pos.y + origin.y;
         move_cursor_right(offset_x);
@@ -110,7 +110,7 @@ void add_twidget_child(
     ++parent->n_children;
 }
 
-int twiget_child_index(
+int twidget_child_index(
     twidget_t *parent,
     twidget_t *child)
 {
@@ -129,7 +129,7 @@ void remove_twidget_child(
     twidget_t *child,
     int release_child)
 {
-    int index = twiget_child_index(parent, child);
+    int index = twidget_child_index(parent, child);
     if (index == -1)
     {
         errno = EINVAL;

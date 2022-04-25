@@ -20,7 +20,7 @@ void print_drawable(twidget_t *drawable)
 void test_boxes()
 {
     term_box_t bigger_box;
-    term_vector_t pos, size;
+    terminal_vector_t pos, size;
     pos.x = 10;
     pos.y = 5;
     size.x = 100;

@@ -2,28 +2,28 @@
 #include "../terminal/cursor.h"
 #include <stdio.h>
 
-void _update_percent_bar(percent_bar_widget_t *percent_bar)
+void _update_percent_bar(percent_bar_twidget_t *percent_bar)
 {
     percent_bar_config_t *config = (percent_bar_config_t *)percent_bar->config;
     int percent_size = 6 * (config->percent_mode == PERCENT_OUT);
     config->bar_size = percent_bar->size.x - 2 - percent_size;
 }
 
-void _set_bar_cursor_pos(term_vector_t bar_pos)
+void _set_bar_cursor_pos(terminal_vector_t bar_pos)
 {
     move_cursor_down(bar_pos.y);
     move_cursor_right(bar_pos.x);
 }
 
 void _reset_bar_cursor_pos(
-    term_vector_t bar_pos,
+    terminal_vector_t bar_pos,
     int str_size)
 {
     move_cursor_up(bar_pos.y);
     move_cursor_left(bar_pos.x + str_size);
 }
 
-int _draw_percent_bar(percent_bar_widget_t const *percent_bar)
+int _draw_percent_bar(percent_bar_twidget_t const *percent_bar)
 {
     char buffer[MAX_PERCENT_BAR_SIZE];
     percent_bar_data_t *data = (percent_bar_data_t *)percent_bar->data;
@@ -36,7 +36,7 @@ int _draw_percent_bar(percent_bar_widget_t const *percent_bar)
 }
 
 void init_percent_bar_twidget(
-    percent_bar_widget_t *percent_bar,
+    percent_bar_twidget_t *percent_bar,
     percent_bar_data_t *data,
     percent_bar_config_t *config)
 {
