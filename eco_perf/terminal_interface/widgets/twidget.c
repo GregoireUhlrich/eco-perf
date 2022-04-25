@@ -18,6 +18,7 @@ void _default_update(twidget_t *widget)
 
 int _default_draw(twidget_t const *widget)
 {
+    return 0;
 }
 
 terminal_vector_t _default_get_origin(twidget_t const *widget)
@@ -29,6 +30,7 @@ terminal_vector_t _default_get_origin(twidget_t const *widget)
 void init_twidget(twidget_t *widget)
 {
     widget->hidden = 0;
+    widget->floating = 0;
     init_term_vector(&widget->pos);
     init_term_vector(&widget->size);
     init_term_vector(&widget->fixed_size);
@@ -97,8 +99,12 @@ int twidget_child_index(
 void remove_twidget_child(
     twidget_t *parent,
     twidget_t *child,
-    int release_child)
+    int free_child)
 {
+    if (free_child)
+    {
+        free_twidget(child);
+    }
     twidget_array_remove(&parent->children, child);
 }
 
