@@ -148,9 +148,15 @@ void remove_twidget_child(
 
 void free_twidget(twidget_t *widget)
 {
+    if (!widget->children)
+    {
+        return;
+    }
     for (int i = 0; i != widget->n_children; ++i)
     {
         free_twidget(widget->children[i]);
     }
     free(widget->children);
+    widget->children = NULL;
+    widget->n_children = 0;
 }
