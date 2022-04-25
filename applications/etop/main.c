@@ -1,11 +1,11 @@
 #include "eco_perf/cross_os_std.h"
 #include "eco_perf/metrics/cpu_usage.h"
-#include "eco_perf/terminal_interface/graphics/percent_bar.h"
-#include "eco_perf/terminal_interface/graphics/term_layouts.h"
-#include "eco_perf/terminal_interface/graphics/terminal.h"
 #include "eco_perf/terminal_interface/io/io.h"
 #include "eco_perf/terminal_interface/terminal/cursor.h"
 #include "eco_perf/terminal_interface/tools/percent_bar.h"
+#include "eco_perf/terminal_interface/widgets/layouts.h"
+#include "eco_perf/terminal_interface/widgets/percent_bar.h"
+#include "eco_perf/terminal_interface/widgets/terminal.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,13 +38,13 @@ void display_cpu_data()
     int n_cpus = first.n_cpus;
 
     terminal_twidget_t terminal;
-    term_hlayout_t main_widget;
-    term_layout_config_t default_layout_config = get_default_term_layout_config();
-    init_term_hlayout(&main_widget, &default_layout_config);
+    hlayout_twidget_t main_widget;
+    layout_twidget_config_t default_layout_config = get_default_term_layout_config();
+    init_hlayout_twidget(&main_widget, &default_layout_config);
     init_terminal_twidget(&terminal, &main_widget);
 
-    term_vlayout_t test_vlayouts[3];
-    term_layout_config_t vlayouts_configs[3];
+    vlayout_twidget_t test_vlayouts[3];
+    layout_twidget_config_t vlayouts_configs[3];
     for (int i = 0; i != 3; ++i)
     {
         vlayouts_configs[i] = get_default_term_layout_config();
@@ -53,7 +53,7 @@ void display_cpu_data()
         {
             vlayouts_configs[i].auto_children_resize = 0;
         }
-        init_term_vlayout(&test_vlayouts[i], &vlayouts_configs[i]);
+        init_vlayout_twidget(&test_vlayouts[i], &vlayouts_configs[i]);
         add_twidget_child(&main_widget, &test_vlayouts[i]);
     }
 

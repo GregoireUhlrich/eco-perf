@@ -1,32 +1,32 @@
-#include "term_layouts.h"
+#include "layouts.h"
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-term_layout_config_t get_default_term_layout_config()
+layout_twidget_config_t get_default_term_layout_config()
 {
-    term_layout_config_t config;
+    layout_twidget_config_t config;
     config.align_mode = TERM_LAYOUT_TOPLEFT;
     config.auto_children_resize = 1;
     return config;
 }
 
-void init_term_hlayout(
-    term_hlayout_t *layout,
-    term_layout_config_t *config)
+void init_hlayout_twidget(
+    hlayout_twidget_t *layout,
+    layout_twidget_config_t *config)
 {
     init_twidget(layout);
     layout->config = (void *)config;
-    layout->update = update_term_hlayout;
+    layout->update = update_hlayout_twidget;
 }
 
-void init_term_vlayout(
-    term_vlayout_t *layout,
-    term_layout_config_t *config)
+void init_vlayout_twidget(
+    vlayout_twidget_t *layout,
+    layout_twidget_config_t *config)
 {
     init_twidget(layout);
     layout->config = (void *)config;
-    layout->update = update_term_vlayout;
+    layout->update = update_vlayout_twidget;
 }
 
 void _find_strechable_elements(
@@ -65,7 +65,7 @@ void _apply_size_update(
     int stretchables[],
     int offset)
 {
-    term_layout_config_t *config = (term_layout_config_t *)layout->config;
+    layout_twidget_config_t *config = (layout_twidget_config_t *)layout->config;
     if (!config->auto_children_resize)
     {
         return;
@@ -90,7 +90,7 @@ void _apply_pos_update(
     twidget_t *layout,
     int offset)
 {
-    term_layout_config_t *config = (term_layout_config_t *)layout->config;
+    layout_twidget_config_t *config = (layout_twidget_config_t *)layout->config;
 
     // Alignement in the layout direction
     int current_pos = layout->pos_v[offset];
@@ -144,12 +144,12 @@ void _update_term_layout(twidget_t *layout, int hlayout)
     _apply_pos_update(layout, offset);
 }
 
-void update_term_hlayout(term_hlayout_t *layout)
+void update_hlayout_twidget(hlayout_twidget_t *layout)
 {
     _update_term_layout(layout, 1);
 }
 
-void update_term_vlayout(term_vlayout_t *layout)
+void update_vlayout_twidget(vlayout_twidget_t *layout)
 {
     _update_term_layout(layout, 0);
 }
