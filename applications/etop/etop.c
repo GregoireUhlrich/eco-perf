@@ -39,8 +39,6 @@ void display_cpu_data()
     // Main widget
     twidget_t main_widget;
     init_twidget(&main_widget);
-    twidget_layout_t main_layout = default_twidget_layout();
-    set_twidget_layout(&main_widget, &main_layout);
 
     // Init the terminal widget containing the main widget
     terminal_twidget_t terminal;
