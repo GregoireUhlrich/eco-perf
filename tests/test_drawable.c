@@ -19,27 +19,27 @@ void print_drawable(twidget_t *drawable)
 
 void test_boxes()
 {
-    term_box_t bigger_box;
+    box_twidget_t bigger_box;
     terminal_vector_t pos, size;
     pos.x = 10;
     pos.y = 5;
     size.x = 100;
     size.y = 100;
-    init_box_twidget(&bigger_box, pos, size);
+    init_box_twidget(&bigger_box);
 
     clear_terminal();
-    term_box_t box1, box2, box3;
+    box_twidget_t box1, box2, box3;
 
     pos.x = 0;
     pos.y = 1;
     size.x = 5;
     size.y = 5;
-    init_box_twidget(&box1, pos, size);
+    init_box_twidget(&box1);
 
     pos.x += 10;
     size.x += 30;
-    box_twidget_t config_box2;
-    init_box_twidget(&box2, pos, size);
+    box_twidget_config_t config_box2;
+    init_box_twidget(&box2);
     config_box2.background = 'x';
     box2.config = (void *)(&config_box2);
 
@@ -47,9 +47,9 @@ void test_boxes()
     pos.y = 4;
     size.x = 20;
     size.y = 10;
-    box_twidget_t config_box3;
+    box_twidget_config_t config_box3;
     config_box3.background = '*';
-    init_box_twidget(&box3, pos, size);
+    init_box_twidget(&box3);
     box3.config = (void *)(&config_box3);
 
     add_twidget_child(&bigger_box, &box1);
