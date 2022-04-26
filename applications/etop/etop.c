@@ -1,7 +1,7 @@
+#include "eco_perf/cute_terminal/terminal_application.h"
 #include "eco_perf/cute_terminal/tools/percent_bar.h"
 #include "eco_perf/cute_terminal/widgets/layouts/linear_layout.h"
 #include "eco_perf/cute_terminal/widgets/percent_bar.h"
-#include "eco_perf/cute_terminal/widgets/terminal.h"
 #include "eco_perf/cute_terminal/widgets/twidget.h"
 #include "eco_perf/metrics/cpu_usage.h"
 #include <math.h>
@@ -41,8 +41,9 @@ void display_cpu_data()
     init_twidget(&main_widget);
 
     // Init the terminal widget containing the main widget
-    terminal_twidget_t terminal;
-    init_terminal_twidget(&terminal, &main_widget);
+    terminal_application_t app;
+    init_terminal_application(&app, &main_widget);
+    app.sleep_duration = n_seconds_sleep;
 
     // Main widget has horizontal layout
     twidget_linear_layout_t hlayout;
@@ -75,7 +76,7 @@ void display_cpu_data()
     percent_bar_data_t *cpu_datas = malloc(3 * n_cpus * sizeof(percent_bar_data_t));
     for (int i = 0; i != 3 * first.n_cpus; ++i)
     {
-        load_default_bar_config(&cpu_configs[i]);
+        init_percent_bar_config(&cpu_configs[i]);
         init_percent_bar_data(&cpu_datas[i]);
         init_percent_bar_twidget(
             &cpu_bars[i],
@@ -98,10 +99,7 @@ void display_cpu_data()
             sprintf(cpu_name, "CPU %d", i);
             update_cpu_data(&cpu_bars[i], &ratio.core_data[i % n_cpus]);
         }
-        update_twidget(&terminal);
-        draw_twidget(&terminal);
-        fflush(stdout);
-        usleep(n_seconds_sleep * 1e6);
+        update_terminal_application(&app);
 
         // Swap first and last data for next iteration
         cpu_core_data_t *foo = first.core_data;

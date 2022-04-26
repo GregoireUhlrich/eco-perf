@@ -4,12 +4,6 @@
 #include "../terminal/cursor.h"
 #include <stdio.h>
 
-terminal_vector_t _get_box_origin(box_twidget_t const *box)
-{
-    static const terminal_vector_t origin = {1, 1};
-    return origin;
-}
-
 void _new_box_line(int line_size)
 {
     move_cursor_down(1);
@@ -18,16 +12,16 @@ void _new_box_line(int line_size)
 
 void _set_box_cursor_pos(terminal_vector_t box_pos)
 {
-    move_cursor_right(box_pos.x);
-    move_cursor_down(box_pos.y);
+    // move to display the external border
+    move_cursor_left(1);
+    move_cursor_up(1);
 }
 
-void _reset_box_cursor_pos(
-    terminal_vector_t box_pos,
-    terminal_vector_t box_size)
+void _reset_box_cursor_pos(terminal_vector_t box_size)
 {
-    move_cursor_left(box_pos.x + box_size.x);
-    move_cursor_up(box_pos.y + box_size.y - 1);
+    // move to display the external border
+    move_cursor_left(box_size.x + 1);
+    move_cursor_up(box_size.y);
 }
 
 int _draw_box(box_twidget_t const *box)
@@ -37,9 +31,8 @@ int _draw_box(box_twidget_t const *box)
     {
         background = ((box_twidget_config_t *)box->config)->background;
     }
-    _set_box_cursor_pos(box->pos);
-    const int lx = box->size.x;
-    const int ly = box->size.y;
+    const int lx = box->size.x + 2; // 2 = external border
+    const int ly = box->size.y + 2; // 2 = external border
     char buffer[500];
     fill_str(buffer, '-', lx);
     printf("%s", buffer);
@@ -54,7 +47,7 @@ int _draw_box(box_twidget_t const *box)
     }
     fill_str(buffer, '-', lx);
     printf("%s", buffer);
-    _reset_box_cursor_pos(box->pos, box->size);
+    _reset_box_cursor_pos(box->size);
 
     return 1;
 }
@@ -64,7 +57,6 @@ void init_box_twidget(
 {
     init_twidget(box);
     box->draw_self = _draw_box;
-    box->get_origin = _get_box_origin;
 }
 
 void set_box_twidget_config(

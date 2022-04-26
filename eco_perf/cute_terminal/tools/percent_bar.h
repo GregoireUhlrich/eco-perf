@@ -25,7 +25,7 @@ typedef struct PercentBarConfig
     char empty;
 } percent_bar_config_t;
 
-void load_default_bar_config(percent_bar_config_t *config);
+void init_percent_bar_config(percent_bar_config_t *config);
 
 typedef struct PercentBarData
 {

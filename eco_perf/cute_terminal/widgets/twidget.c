@@ -27,7 +27,6 @@ void apply_twidget_layout(twidget_t *widget)
 
 void _default_update(twidget_t *widget)
 {
-    apply_twidget_layout(widget);
 }
 
 int _default_draw(twidget_t const *widget)
@@ -67,6 +66,7 @@ terminal_vector_t get_default_twidget_origin()
 void update_twidget(twidget_t *widget)
 {
     widget->update(widget);
+    apply_twidget_layout(widget);
     for (int i = 0; i != widget->children.size; ++i)
     {
         update_twidget(widget->children.widgets[i]);
@@ -81,17 +81,17 @@ int draw_twidget(twidget_t *widget)
     if (widget && widget->draw_self && !widget->hidden)
     {
         terminal_vector_t origin = widget->get_origin(widget);
-        const int offset_x = widget->pos.x + origin.x;
-        const int offset_y = widget->pos.y + origin.y;
-        move_cursor_right(offset_x);
-        move_cursor_down(offset_y);
+        move_cursor_right(widget->pos.x);
+        move_cursor_down(widget->pos.y);
         widget->draw_self(widget);
+        move_cursor_right(origin.x);
+        move_cursor_down(origin.y);
         for (int i = 0; i != widget->children.size; ++i)
         {
             draw_twidget(widget->children.widgets[i]);
         }
-        move_cursor_left(offset_x);
-        move_cursor_up(offset_y);
+        move_cursor_left(widget->pos.x + origin.x);
+        move_cursor_up(widget->pos.y + origin.y);
         return 1;
     }
     return 0;

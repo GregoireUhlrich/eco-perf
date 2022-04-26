@@ -5,7 +5,7 @@
 #include <math.h>
 #include <string.h>
 
-void load_default_bar_config(percent_bar_config_t *config)
+void init_percent_bar_config(percent_bar_config_t *config)
 {
     config->bar_size = 32;
     config->percent_mode = CT_PERCENT_OUT;
@@ -70,9 +70,12 @@ int create_percent_bar(
     if (config->percent_mode == CT_PERCENT_OUT)
     {
         double final_percentage = value_tot * 100. / config->bar_size;
-        if (final_percentage > 100)
-            final_percentage = 100;
-        sprintf(buffer, " %.1f%% ", final_percentage);
+        if (final_percentage < 10)
+            sprintf(buffer, "  %.1f%%", final_percentage);
+        else if (final_percentage < 100)
+            sprintf(buffer, " %.1f%%", final_percentage);
+        else
+            sprintf(buffer, "  100%%");
         str_size += strlen(buffer);
         destination = str_append(destination, buffer);
     }
