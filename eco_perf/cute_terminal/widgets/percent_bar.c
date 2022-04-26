@@ -25,7 +25,7 @@ void _reset_bar_cursor_pos(
 
 int _draw_percent_bar(percent_bar_twidget_t const *percent_bar)
 {
-    char buffer[MAX_PERCENT_BAR_SIZE];
+    char buffer[CT_MAX_PERCENT_BAR_SIZE];
     percent_bar_data_t *data = (percent_bar_data_t *)percent_bar->data;
     percent_bar_config_t *config = (percent_bar_config_t *)percent_bar->config;
     create_percent_bar(buffer, data, config);

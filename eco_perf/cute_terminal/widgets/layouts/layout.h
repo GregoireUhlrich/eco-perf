@@ -5,9 +5,9 @@ struct TWidget;
 
 typedef enum LayoutAlignMode
 {
-    LAYOUT_TWIDGET_TOPLEFT,
-    LAYOUT_TWIDGET_BOTTOMRIGHT,
-    LAYOUT_TWIDGET_CENTER,
+    CT_ALIGN_TOPLEFT,
+    CT_ALIGN_BOTTOMRIGHT,
+    CT_ALIGN_CENTER,
 } layout_align_mode_t;
 
 typedef struct TWidgetLayoutConfig

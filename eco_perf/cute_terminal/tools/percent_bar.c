@@ -35,7 +35,7 @@ int create_percent_bar(
     percent_bar_data_t const *data,
     percent_bar_config_t const *config)
 {
-    char buffer[MAX_PERCENT_BAR_SIZE];
+    char buffer[CT_MAX_PERCENT_BAR_SIZE];
     destination = apply_format(destination, config->left, BOLD);
     double value_tot = 0;
     int n_tot = 0;
