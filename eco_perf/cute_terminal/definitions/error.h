@@ -21,15 +21,16 @@ const char *get_ct_error_str(ct_error_t error_code);
 #else
 #include <stdio.h>
 #include <string.h>
-#define CT_ERROR(error_code, message, ...)                              \
-    {                                                                   \
-        char *_ct_error_str_buffer[CT_ERROR_STR_BUFFER_SIZE] = sprintf( \
-            _ct_error_str_buffer,                                       \
-            "%s : " message,                                            \
-            get_ct_error_str(error_code),                               \
-            __VA_ARGS__);                                               \
-        fprintf(stderr, "%s", _ct_error_str_buffer);                    \
-        exit(1);                                                        \
+#define CT_ERROR(error_code, message, ...)                   \
+    {                                                        \
+        char _ct_error_str_buffer[CT_ERROR_STR_BUFFER_SIZE]; \
+        sprintf(                                             \
+            _ct_error_str_buffer,                            \
+            "%s : " message "\n",                            \
+            get_ct_error_str(error_code),                    \
+            ##__VA_ARGS__);                                  \
+        fprintf(stderr, "%s", _ct_error_str_buffer);         \
+        exit(1);                                             \
     }
 #endif
 
