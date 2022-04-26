@@ -1,5 +1,5 @@
-#ifndef ECO_PERF_IO_H_INCLUDED
-#define ECO_PERF_IO_H_INCLUDED
+#ifndef CUTE_TERMINAL_IO_H_INCLUDED
+#define CUTE_TERMINAL_IO_H_INCLUDED
 
 #include "format_definitions.h"
 

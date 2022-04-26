@@ -1,5 +1,5 @@
-#ifndef ECO_PERF_LIMITS_H_INCLUDED
-#define ECO_PERF_LIMITS_H_INCLUDED
+#ifndef CUTE_TERMINAL_LIMITS_H_INCLUDED
+#define CUTE_TERMINAL_LIMITS_H_INCLUDED
 
 // Limitations for the percent bar widget
 #define CT_MAX_PERCENT_BAR_SIZE 200 // Used for a string buffer

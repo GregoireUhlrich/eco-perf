@@ -1,5 +1,5 @@
-#ifndef ECO_PERF_PERCENT_BAR_H_INCLUDED
-#define ECO_PERF_PERCENT_BAR_H_INCLUDED
+#ifndef CUTE_TERMINAL_PERCENT_BAR_H_INCLUDED
+#define CUTE_TERMINAL_PERCENT_BAR_H_INCLUDED
 
 #include "../definitions/limits.h"
 #include "../io/format_definitions.h"

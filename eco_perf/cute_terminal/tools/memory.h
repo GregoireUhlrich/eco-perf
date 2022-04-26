@@ -1,5 +1,5 @@
-#ifndef ECO_PERF_MEMORY_H_INCLUDED
-#define ECO_PERF_MEMORY_H_INCLUDED
+#ifndef CUTE_TERMINAL_MEMORY_H_INCLUDED
+#define CUTE_TERMINAL_MEMORY_H_INCLUDED
 
 void *reallocate_array_memory(
     void *array,
