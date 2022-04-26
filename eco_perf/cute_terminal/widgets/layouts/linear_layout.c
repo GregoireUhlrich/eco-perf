@@ -1,9 +1,7 @@
 #include "linear_layout.h"
+#include "../../definitions/error.h"
 #include "../twidget.h"
 #include "compute_layout.h"
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 void _apply_hlayout(
     twidget_layout_t const *layout,
@@ -27,9 +25,10 @@ void init_twidget_linear_layout(
         layout->apply_layout = _apply_vlayout;
         break;
     default:
-        errno = EINVAL;
-        perror("Unknown layout linear direction.");
-        exit(1);
+        CT_ERROR(
+            CT_VALUE_ERROR,
+            "Unknown linear direction for layout %d.",
+            direction)
     }
 }
 

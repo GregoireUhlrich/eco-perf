@@ -1,10 +1,8 @@
 #include "percent_bar.h"
+#include "../definitions/error.h"
 #include "../io/io.h"
 #include "../io/string_utils.h"
-#include <errno.h>
 #include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 void load_default_bar_config(percent_bar_config_t *config)
@@ -27,12 +25,11 @@ void add_percent_data(
     double ratio,
     term_color_t color)
 {
-    if (data->n_data == CT_MAX_PERCENT_BAR_N_DATA)
-    {
-        errno = EINVAL;
-        perror("Limit reached for number of data in percent bar.");
-        exit(1);
-    }
+    CT_ASSERT(
+        data->n_data < CT_MAX_PERCENT_BAR_N_DATA,
+        CT_OVERFLOW_ERROR,
+        "Percent bar data cannot have more than %d elements.",
+        CT_MAX_PERCENT_BAR_N_DATA - 1)
     data->data[data->n_data] = ratio;
     data->colors[data->n_data] = color;
     ++data->n_data;

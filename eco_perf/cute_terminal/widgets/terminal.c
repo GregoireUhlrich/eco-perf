@@ -1,9 +1,7 @@
 #include "terminal.h"
+#include "../definitions/error.h"
 #include "../terminal/cursor.h"
 #include "../terminal/window.h"
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 void _update_terminal(terminal_twidget_t *terminal)
 {
@@ -13,16 +11,12 @@ void _update_terminal(terminal_twidget_t *terminal)
     terminal->size.y = terminal_window.height - 1;
     terminal->pos.x = 0;
     terminal->pos.y = 1;
-    if (terminal->children.size == 1)
-    {
-        terminal->children.widgets[0]->size = terminal->size;
-    }
-    else
-    {
-        errno = EINVAL;
-        perror("Terminal should have one and one widget child only.");
-        exit(1);
-    }
+    CT_ASSERT(
+        terminal->children.size == 1,
+        CT_VALUE_ERROR,
+        "Terminal should have exactly one child widget, found %d.",
+        terminal->children.size)
+    terminal->children.widgets[0]->size = terminal->size;
 }
 
 int _draw_terminal(terminal_twidget_t const *terminal)
