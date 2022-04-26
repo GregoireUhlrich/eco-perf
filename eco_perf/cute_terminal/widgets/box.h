@@ -3,20 +3,18 @@
 
 #include "twidget.h"
 
-typedef twidget_t term_box_t;
+typedef twidget_t box_twidget_t;
 
 typedef struct BoxTWidgetConfig
 {
     char background;
-} box_twidget_t;
+} box_twidget_config_t;
 
 void init_box_twidget(
-    term_box_t *box,
-    terminal_vector_t pos,
-    terminal_vector_t size);
+    box_twidget_t *box);
 
 void set_box_twidget_config(
-    term_box_t *box,
-    box_twidget_t *config);
+    box_twidget_t *box,
+    box_twidget_config_t *config);
 
 #endif

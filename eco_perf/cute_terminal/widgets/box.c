@@ -4,7 +4,7 @@
 #include "../terminal/cursor.h"
 #include <stdio.h>
 
-terminal_vector_t _get_box_origin(term_box_t const *box)
+terminal_vector_t _get_box_origin(box_twidget_t const *box)
 {
     static const terminal_vector_t origin = {1, 1};
     return origin;
@@ -30,12 +30,12 @@ void _reset_box_cursor_pos(
     move_cursor_up(box_pos.y + box_size.y - 1);
 }
 
-int _draw_box(term_box_t const *box)
+int _draw_box(box_twidget_t const *box)
 {
     char background = ' ';
     if (box->config)
     {
-        background = ((box_twidget_t *)box->config)->background;
+        background = ((box_twidget_config_t *)box->config)->background;
     }
     _set_box_cursor_pos(box->pos);
     const int lx = box->size.x;
@@ -60,20 +60,16 @@ int _draw_box(term_box_t const *box)
 }
 
 void init_box_twidget(
-    term_box_t *box,
-    terminal_vector_t pos,
-    terminal_vector_t size)
+    box_twidget_t *box)
 {
     init_twidget(box);
-    box->pos = pos;
-    box->size = size;
     box->draw_self = _draw_box;
     box->get_origin = _get_box_origin;
 }
 
 void set_box_twidget_config(
-    term_box_t *box,
-    box_twidget_t *config)
+    box_twidget_t *box,
+    box_twidget_config_t *config)
 {
     box->config = (void *)config;
 }
