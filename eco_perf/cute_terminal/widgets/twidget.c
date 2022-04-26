@@ -1,9 +1,7 @@
 #include "twidget.h"
+#include "../definitions/error.h"
 #include "../terminal/cursor.h"
-#include <errno.h>
 #include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 void init_term_vector(terminal_vector_t *vector)
@@ -104,12 +102,10 @@ void add_twidget_child(
     twidget_t *parent,
     twidget_t *child)
 {
-    if (child->parent)
-    {
-        errno = EINVAL;
-        perror("Child already has a twidget parent.");
-        exit(1);
-    }
+    CT_ASSERT(
+        !child->parent,
+        CT_VALUE_ERROR,
+        "Child already has a parent!")
     child->parent = parent;
     twidget_array_push_back(&parent->children, child);
 }

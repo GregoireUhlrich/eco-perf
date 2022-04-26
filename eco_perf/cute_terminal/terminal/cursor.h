@@ -1,5 +1,5 @@
-#ifndef ECO_PERF_TERMINAL_CURSOR_H_INCLUDED
-#define ECO_PERF_TERMINAL_CURSOR_H_INCLUDED
+#ifndef CUTE_TERMINAL_TERMINAL_CURSOR_H_INCLUDED
+#define CUTE_TERMINAL_TERMINAL_CURSOR_H_INCLUDED
 
 void save_cursor_position();
 void restore_cursor_position();

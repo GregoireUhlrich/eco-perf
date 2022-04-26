@@ -1,6 +1,5 @@
 add_library(layouts
     layout.h layout.c
-    hlayout.h hlayout.c
-    vlayout.h vlayout.c
+    linear_layout.h linear_layout.c
     compute_layout.h compute_layout.c
 )

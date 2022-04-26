@@ -1,2 +1,2 @@
-add_executable(etop main.c)
+add_executable(etop etop.c)
 target_link_libraries(etop eco_perf)

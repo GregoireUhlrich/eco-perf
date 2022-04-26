@@ -1,26 +1,26 @@
-#ifndef ECO_PERF_FORMAT_DEFINITION_H_INCLUDED
-#define ECO_PERF_FORMAT_DEFINITION_H_INCLUDED
+#ifndef CUTE_TERMINAL_FORMAT_DEFINITION_H_INCLUDED
+#define CUTE_TERMINAL_FORMAT_DEFINITION_H_INCLUDED
 
 typedef enum TermColor
 {
-    NULL_COLOR = -1,
-    DEFAULT_COLOR = 0,
-    BLACK,
-    RED,
-    GREEN,
-    YELLOW,
-    BLUE,
-    MAGENTA,
-    CYAN,
-    LIGHT_GRAY,
-    DARK_GRAY,
-    LIGHT_RED,
-    LIGHT_GREEN,
-    LIGHT_YELLOW,
-    LIGHT_BLUE,
-    LIGHT_MAGENTA,
-    LIGHT_CYAN,
-    WHITE,
+    CT_NULL_COLOR = -1,
+    CT_DEFAULT_COLOR = 0,
+    CT_BLACK,
+    CT_RED,
+    CT_GREEN,
+    CT_YELLOW,
+    CT_BLUE,
+    CT_MAGENTA,
+    CT_CYAN,
+    CT_LIGHT_GRAY,
+    CT_DARK_GRAY,
+    CT_LIGHT_RED,
+    CT_LIGHT_GREEN,
+    CT_LIGHT_YELLOW,
+    CT_LIGHT_BLUE,
+    CT_LIGHT_MAGENTA,
+    CT_LIGHT_CYAN,
+    CT_WHITE,
 } term_color_t;
 
 typedef struct ColorDefinitions
@@ -49,14 +49,14 @@ char const *get_background_color(term_color_t color);
 
 typedef enum TermFormat
 {
-    NULL_FORMAT = -1,
-    DEFAULT_FORMAT = 0,
-    BOLD,
-    DIM,
-    UNDERLINED,
-    BLINKING,
-    INVERTED,
-    HIDDEN,
+    CT_NULL_FORMAT = -1,
+    CT_DEFAULT_FORMAT = 0,
+    CT_BOLD,
+    CT_DIM,
+    CT_UNDERLINED,
+    CT_BLINKING,
+    CT_INVERTED,
+    CT_HIDDEN,
 } term_format_t;
 
 typedef struct FormatDefinitions

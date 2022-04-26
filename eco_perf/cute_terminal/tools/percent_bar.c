@@ -1,14 +1,14 @@
 #include "percent_bar.h"
+#include "../definitions/error.h"
 #include "../io/io.h"
 #include "../io/string_utils.h"
 #include <math.h>
-#include <stdio.h>
 #include <string.h>
 
 void load_default_bar_config(percent_bar_config_t *config)
 {
     config->bar_size = 32;
-    config->percent_mode = PERCENT_OUT;
+    config->percent_mode = CT_PERCENT_OUT;
     config->left = "[";
     config->right = "]";
     config->fill = '|';
@@ -25,6 +25,11 @@ void add_percent_data(
     double ratio,
     term_color_t color)
 {
+    CT_ASSERT(
+        data->n_data < CT_MAX_PERCENT_BAR_N_DATA,
+        CT_OVERFLOW_ERROR,
+        "Percent bar data cannot have more than %d elements.",
+        CT_MAX_PERCENT_BAR_N_DATA - 1)
     data->data[data->n_data] = ratio;
     data->colors[data->n_data] = color;
     ++data->n_data;
@@ -35,8 +40,8 @@ int create_percent_bar(
     percent_bar_data_t const *data,
     percent_bar_config_t const *config)
 {
-    char buffer[MAX_PERCENT_BAR_SIZE];
-    destination = apply_format(destination, config->left, BOLD);
+    char buffer[CT_MAX_PERCENT_BAR_SIZE];
+    destination = apply_format(destination, config->left, CT_BOLD);
     double value_tot = 0;
     int n_tot = 0;
     for (int i = 0; i != data->n_data; ++i)
@@ -60,9 +65,9 @@ int create_percent_bar(
         n_blank = 0;
     fill_str(buffer, config->empty, n_blank);
     destination = str_append(destination, buffer);
-    destination = apply_format(destination, config->right, BOLD);
+    destination = apply_format(destination, config->right, CT_BOLD);
     int str_size = 2 + config->bar_size;
-    if (config->percent_mode == PERCENT_OUT)
+    if (config->percent_mode == CT_PERCENT_OUT)
     {
         double final_percentage = value_tot * 100. / config->bar_size;
         if (final_percentage > 100)

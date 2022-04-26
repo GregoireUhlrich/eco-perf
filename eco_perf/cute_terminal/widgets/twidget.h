@@ -1,5 +1,5 @@
-#ifndef ECO_PERF_TERM_DRAWABLE_H_INCLUDED
-#define ECO_PERF_TERM_DRAWABLE_H_INCLUDED
+#ifndef CUTE_TERMINAL_TERM_DRAWABLE_H_INCLUDED
+#define CUTE_TERMINAL_TERM_DRAWABLE_H_INCLUDED
 
 #include "../terminal/vector.h"
 #include "../tools/twidget_array.h"

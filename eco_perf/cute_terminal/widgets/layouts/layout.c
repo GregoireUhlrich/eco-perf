@@ -5,8 +5,8 @@
 void init_twidget_layout_config(twidget_layout_config_t *config)
 {
     config->auto_children_resize = 1;
-    config->horizontal_align_mode = LAYOUT_TWIDGET_CENTER;
-    config->vertical_align_mode = LAYOUT_TWIDGET_CENTER;
+    config->horizontal_align_mode = CT_CENTER;
+    config->vertical_align_mode = CT_CENTER;
     config->spacing = 0;
 }
 

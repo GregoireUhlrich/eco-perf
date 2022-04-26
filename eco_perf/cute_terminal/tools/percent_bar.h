@@ -1,24 +1,17 @@
-#ifndef ECO_PERF_PERCENT_BAR_H_INCLUDED
-#define ECO_PERF_PERCENT_BAR_H_INCLUDED
+#ifndef CUTE_TERMINAL_PERCENT_BAR_H_INCLUDED
+#define CUTE_TERMINAL_PERCENT_BAR_H_INCLUDED
 
+#include "../definitions/limits.h"
 #include "../io/format_definitions.h"
 #include "../io/io.h"
-
-#ifndef MAX_PERCENT_BAR_SIZE
-#define MAX_PERCENT_BAR_SIZE 200
-#endif
-
-#ifndef MAX_PERCENT_BAR_N_DATA
-#define MAX_PERCENT_BAR_N_DATA 5
-#endif
 
 char *str_append(char *destination, char const *src);
 
 typedef enum DisplayPercentMode
 {
-    NO_PERCENT,
-    PERCENT_IN,
-    PERCENT_OUT,
+    CT_NO_PERCENT,
+    CT_PERCENT_IN,
+    CT_PERCENT_OUT,
 } display_percent_mode_t;
 
 typedef struct PercentBarConfig
@@ -37,8 +30,8 @@ void load_default_bar_config(percent_bar_config_t *config);
 typedef struct PercentBarData
 {
     int n_data;
-    double data[MAX_PERCENT_BAR_N_DATA];
-    term_color_t colors[MAX_PERCENT_BAR_N_DATA];
+    double data[CT_MAX_PERCENT_BAR_N_DATA];
+    term_color_t colors[CT_MAX_PERCENT_BAR_N_DATA];
 } percent_bar_data_t;
 
 void init_percent_bar_data(percent_bar_data_t *data);

@@ -1,6 +1,5 @@
 #include "eco_perf/cute_terminal/tools/percent_bar.h"
-#include "eco_perf/cute_terminal/widgets/layouts/hlayout.h"
-#include "eco_perf/cute_terminal/widgets/layouts/vlayout.h"
+#include "eco_perf/cute_terminal/widgets/layouts/linear_layout.h"
 #include "eco_perf/cute_terminal/widgets/percent_bar.h"
 #include "eco_perf/cute_terminal/widgets/terminal.h"
 #include "eco_perf/cute_terminal/widgets/twidget.h"
@@ -16,9 +15,9 @@ void update_cpu_data(
 {
     percent_bar_data_t *data = (percent_bar_data_t *)(percent_bar->data);
     init_percent_bar_data(data);
-    add_percent_data(data, ratio->user_ratio, GREEN);
-    add_percent_data(data, ratio->sys_ratio, BLUE);
-    add_percent_data(data, ratio->nice_ratio, YELLOW);
+    add_percent_data(data, ratio->user_ratio, CT_GREEN);
+    add_percent_data(data, ratio->sys_ratio, CT_BLUE);
+    add_percent_data(data, ratio->nice_ratio, CT_YELLOW);
 }
 
 void display_cpu_data()
@@ -48,19 +47,19 @@ void display_cpu_data()
     init_terminal_twidget(&terminal, &main_widget);
 
     // Main widget has horizontal layout
-    twidget_hlayout_t hlayout;
-    init_twidget_hlayout(&hlayout);
+    twidget_linear_layout_t hlayout;
+    init_twidget_linear_layout(&hlayout, CT_HORIZONTAL);
     hlayout.config.spacing = 3;
     set_twidget_layout(&main_widget, &hlayout);
 
     // Each sub-widget has vertical layout
     twidget_t cpudata_widgets[3];
-    twidget_vlayout_t test_vlayouts[3];
+    twidget_linear_layout_t test_vlayouts[3];
     int cpubar_size = 35;
     for (int i = 0; i != 3; ++i)
     {
-        init_twidget_vlayout(&test_vlayouts[i]);
-        test_vlayouts[i].config.horizontal_align_mode = LAYOUT_TWIDGET_TOPLEFT + i;
+        init_twidget_linear_layout(&test_vlayouts[i], CT_VERTICAL);
+        test_vlayouts[i].config.horizontal_align_mode = CT_TOP_OR_LEFT + i;
         init_twidget(&cpudata_widgets[i]);
         if (i == 1)
         {
