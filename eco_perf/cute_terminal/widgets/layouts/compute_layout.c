@@ -33,6 +33,9 @@ void _apply_in_layout_direction(
 {
     int current_pos = 0;
     twidget_array_t *children = &widget->children;
+    const int alignement =
+        (direction == 0) ? config->horizontal_align_mode
+                         : config->vertical_align_mode;
     for (int i = 0; i != children->size; ++i)
     {
         twidget_t *child = children->widgets[i];
@@ -41,11 +44,37 @@ void _apply_in_layout_direction(
             continue;
         }
         child->pos_v[direction] = current_pos;
-        if (config->auto_children_resize && !child->fixed_size_v[direction])
+        if (!child->fixed_size_v[direction])
         {
-            child->size_v[direction] = stretchable_size;
+            int resize = child->size_v[direction] > stretchable_size || !child->size_v[direction];
+            resize = resize && config->auto_children_resize;
+            if (resize)
+            {
+                // Size invalid or too big: adapt to layout
+                child->size_v[direction] = stretchable_size;
+            }
+            else
+            {
+                // If element smaller than block size, realign
+                int diff_size = stretchable_size - child->size_v[direction];
+                switch (alignement)
+                {
+                case CT_CENTER:
+                    child->pos_v[direction] += diff_size / 2;
+                    break;
+                case CT_BOTTOM_OR_RIGHT:
+                    child->pos_v[direction] += diff_size;
+                    break;
+                default:
+                    break;
+                }
+            }
+            current_pos += stretchable_size;
         }
-        current_pos += child->size_v[direction];
+        else
+        {
+            current_pos += child->size_v[direction];
+        }
         current_pos += config->spacing;
     }
 }
@@ -59,7 +88,7 @@ void _apply_perpendicular_to_layout(
     twidget_array_t *children = &widget->children;
     const int parent_size = widget->size_v[perpendicular];
     const int alignement =
-        (direction == 0) ? config->horizontal_align_mode
+        (direction == 1) ? config->horizontal_align_mode
                          : config->vertical_align_mode;
     for (int i = 0; i != children->size; ++i)
     {

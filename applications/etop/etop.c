@@ -59,6 +59,7 @@ void display_cpu_data()
     {
         init_twidget_linear_layout(&test_vlayouts[i], CT_VERTICAL);
         test_vlayouts[i].config.horizontal_align_mode = CT_TOP_OR_LEFT + i;
+        test_vlayouts[i].config.vertical_align_mode = CT_TOP_OR_LEFT + i;
         init_twidget(&cpudata_widgets[i]);
         if (i == 1)
         {
