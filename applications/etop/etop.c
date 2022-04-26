@@ -1,5 +1,6 @@
 #include "eco_perf/cute_terminal/terminal_application.h"
 #include "eco_perf/cute_terminal/tools/percent_bar.h"
+#include "eco_perf/cute_terminal/widgets/box.h"
 #include "eco_perf/cute_terminal/widgets/layouts/linear_layout.h"
 #include "eco_perf/cute_terminal/widgets/percent_bar.h"
 #include "eco_perf/cute_terminal/widgets/twidget.h"
@@ -37,8 +38,8 @@ void display_cpu_data()
     int n_cpus = first.n_cpus;
 
     // Main widget
-    twidget_t main_widget;
-    init_twidget(&main_widget);
+    box_twidget_t main_widget;
+    init_box_twidget(&main_widget);
 
     // Init the terminal widget containing the main widget
     terminal_application_t app;
@@ -63,6 +64,7 @@ void display_cpu_data()
         init_twidget(&cpudata_widgets[i]);
         if (i == 1)
         {
+            test_vlayouts[i].config.vertical_align_mode = CT_CENTER;
             test_vlayouts[i].config.auto_children_resize = 0;
             cpudata_widgets[i].size.x = cpubar_size;
             cpudata_widgets[i].fixed_size.x = 1;

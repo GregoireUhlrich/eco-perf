@@ -7,9 +7,9 @@ void _update_terminal(terminal_twidget_t *terminal)
 {
     terminal_window_t terminal_window;
     init_terminal_window(&terminal_window);
-    terminal->size.x = terminal_window.width;
-    terminal->size.y = terminal_window.height - 1;
-    terminal->pos.x = 0;
+    terminal->size.x = terminal_window.width - 3;
+    terminal->size.y = terminal_window.height - 3;
+    terminal->pos.x = 1;
     terminal->pos.y = 1;
     CT_ASSERT(
         terminal->children.size == 1,
@@ -35,5 +35,4 @@ void init_terminal_twidget(
     terminal->draw_self = _draw_terminal;
 
     terminal->update(terminal);
-    main_widget->size = terminal->size;
 }
