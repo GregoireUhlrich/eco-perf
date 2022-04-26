@@ -24,16 +24,18 @@ eco-perf
 |-- eco_perf      # Core library used in applications
 |  |
 |  |-- cute_terminal  # All utilities for terminal display
-|  |  |-- io        # io and string utilities for the terminal-I/O
-|  |  |-- terminal  # Utilities to manipulate the terminal window
-|  |  |-- tools     # Tools to use in widgets
-|  |  |-- widgets   # Built-in widgets of eco-perf
+|  |  |-- definitions  # Several constant definitions and error handling
+|  |  |-- io           # io and string utilities for the terminal-I/O
+|  |  |-- terminal     # Utilities to manipulate the terminal window
+|  |  |-- tools        # Tools to use in widgets
+|  |  |-- widgets      # Built-in widgets of eco-perf
 |  |     |-- layouts  # Layouts applied to widgets
 |  |
 |  |-- metrics             # System metrics (CPU, memory etc)
 |_________________
 |
 |-- applications  # Terminal applications
+|  |-- etop  # Equivalent of htop with different metrics
 |_________________
 |
 |-- tests         # Test programs
