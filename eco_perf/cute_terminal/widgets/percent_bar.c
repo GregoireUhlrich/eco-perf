@@ -5,7 +5,7 @@
 void _update_percent_bar(percent_bar_twidget_t *percent_bar)
 {
     percent_bar_config_t *config = (percent_bar_config_t *)percent_bar->config;
-    int percent_size = 6 * (config->percent_mode == PERCENT_OUT);
+    int percent_size = 6 * (config->percent_mode == CT_PERCENT_OUT);
     config->bar_size = percent_bar->size.x - 2 - percent_size;
 }
 

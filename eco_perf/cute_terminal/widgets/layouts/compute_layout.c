@@ -71,11 +71,11 @@ void _apply_perpendicular_to_layout(
         if (!config->auto_children_resize || child->fixed_size_v[perpendicular])
         {
             const int size_delta = parent_size - child->size_v[perpendicular];
-            if (alignement == LAYOUT_TWIDGET_CENTER)
+            if (alignement == CT_CENTER)
             {
                 child->pos_v[perpendicular] = size_delta / 2;
             }
-            else if (alignement == LAYOUT_TWIDGET_BOTTOMRIGHT)
+            else if (alignement == CT_BOTTOM_OR_RIGHT)
             {
                 child->pos_v[perpendicular] = size_delta;
             }

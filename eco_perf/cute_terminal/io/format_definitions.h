@@ -49,14 +49,14 @@ char const *get_background_color(term_color_t color);
 
 typedef enum TermFormat
 {
-    NULL_FORMAT = -1,
-    DEFAULT_FORMAT = 0,
-    BOLD,
-    DIM,
-    UNDERLINED,
-    BLINKING,
-    INVERTED,
-    HIDDEN,
+    CT_NULL_FORMAT = -1,
+    CT_DEFAULT_FORMAT = 0,
+    CT_BOLD,
+    CT_DIM,
+    CT_UNDERLINED,
+    CT_BLINKING,
+    CT_INVERTED,
+    CT_HIDDEN,
 } term_format_t;
 
 typedef struct FormatDefinitions
