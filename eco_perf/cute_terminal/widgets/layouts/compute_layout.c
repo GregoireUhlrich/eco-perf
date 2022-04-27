@@ -23,7 +23,7 @@ void _compute_layout_stretching(
         {
             available_size -= child->size_v[direction];
         }
-        else
+        else if (!child->floating)
         {
             ++*n_stretchable_elements;
         }
@@ -219,7 +219,7 @@ void _apply_perpendicular_to_layout(
         twidget_t *child = children->widgets[i];
         if (child->floating)
         {
-            return;
+            continue;
         }
         if (!config->auto_children_resize || child->fixed_size_v[perpendicular])
         {

@@ -11,4 +11,14 @@ void init_percent_bar_twidget(
     percent_bar_data_t *data,
     percent_bar_config_t *config);
 
+typedef struct PercentBarTwidgetContainer
+{
+    percent_bar_twidget_t widget;
+    percent_bar_config_t config;
+    percent_bar_data_t data;
+} percent_bar_twidget_container_t;
+
+void init_percent_bar_twidget_container(
+    percent_bar_twidget_container_t *container);
+
 #endif

@@ -17,4 +17,6 @@ void update_terminal_application(terminal_application_t *app);
 
 void run_terminal_application(terminal_application_t *app);
 
+void free_terminal_application(terminal_application_t *app);
+
 #endif

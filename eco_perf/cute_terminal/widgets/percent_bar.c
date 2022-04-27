@@ -54,3 +54,14 @@ void init_percent_bar_twidget(
     percent_bar->update = _update_percent_bar;
     percent_bar->draw_self = _draw_percent_bar;
 }
+
+void init_percent_bar_twidget_container(
+    percent_bar_twidget_container_t *container)
+{
+    init_percent_bar_config(&container->config);
+    init_percent_bar_data(&container->data);
+    init_percent_bar_twidget(
+        &container->widget,
+        &container->data,
+        &container->config);
+}
