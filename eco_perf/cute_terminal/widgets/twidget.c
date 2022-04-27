@@ -51,6 +51,7 @@ void init_twidget(twidget_t *widget)
     init_term_vector(&widget->fixed_size);
     init_twidget_array(&widget->children);
     widget->config = NULL;
+    widget->free = NULL;
 
     widget->get_origin = _default_get_origin;
     widget->update = _default_update;
@@ -135,13 +136,20 @@ void remove_twidget_child(
 
 void free_twidget(twidget_t *widget)
 {
-    if (!widget->children.widgets)
+    if (!widget)
     {
         return;
     }
-    for (int i = 0; i != widget->children.size; ++i)
+    if (widget->children.widgets)
     {
-        free_twidget(widget->children.widgets[i]);
+        for (int i = 0; i != widget->children.size; ++i)
+        {
+            free_twidget(widget->children.widgets[i]);
+        }
+        free_twidget_array(&widget->children);
     }
-    free_twidget_array(&widget->children);
+    if (widget->free)
+    {
+        widget->free(widget);
+    }
 }

@@ -35,6 +35,8 @@ typedef struct TWidget
         struct TWidget const *widget);
 
     int (*draw_self)(struct TWidget const *widget);
+
+    void (*free)(struct TWidget *widget);
 } twidget_t;
 
 void init_twidget(twidget_t *widget);

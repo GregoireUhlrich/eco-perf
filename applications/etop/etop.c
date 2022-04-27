@@ -5,6 +5,9 @@
 #include "eco_perf/cute_terminal/widgets/percent_bar.h"
 #include "eco_perf/cute_terminal/widgets/twidget.h"
 #include "eco_perf/metrics/cpu_usage.h"
+
+#include "widgets/cpu_info.h"
+
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,7 +24,7 @@ void update_cpu_data(
     add_percent_data(data, ratio->nice_ratio, CT_YELLOW);
 }
 
-void display_cpu_data()
+void display_cpu_data(unsigned short max_iter)
 {
     double n_seconds_sleep = 1.5;
 
@@ -64,7 +67,7 @@ void display_cpu_data()
         init_twidget(&cpudata_widgets[i]);
         if (i == 1)
         {
-            test_vlayouts[i].config.vertical_align_mode = CT_CENTER;
+            test_vlayouts[i].config.vertical_align_mode = CT_BOTTOM_OR_RIGHT;
             test_vlayouts[i].config.auto_children_resize = 0;
             cpudata_widgets[i].size.x = cpubar_size;
             cpudata_widgets[i].fixed_size.x = 1;
@@ -90,7 +93,16 @@ void display_cpu_data()
         add_twidget_child(&cpudata_widgets[i / n_cpus], &cpu_bars[i]);
     }
 
-    while (1)
+    read_cpu_data(&last);
+    diff_cpu_data(&first, &last, &diff);
+    calculate_ratio(&diff, &ratio, n_seconds_sleep);
+    cpu_info_twidget_t cpu_info;
+    init_cpu_info_twidget(&cpu_info, &ratio);
+    cpu_info.floating = 1;
+    add_twidget_child(&main_widget, &cpu_info);
+
+    unsigned char iter = 0;
+    while (iter++ < max_iter)
     {
         read_cpu_data(&last);
         diff_cpu_data(&first, &last, &diff);
@@ -115,10 +127,21 @@ void display_cpu_data()
     free_cpu_data(&last);
     free_cpu_data(&diff);
     free_cpu_data(&ratio);
+
+    free(cpu_bars);
+    free(cpu_configs);
+    free(cpu_datas);
+
+    free_terminal_application(&app);
 }
 
-int main()
+int main(int argc, char const *argv[])
 {
-    display_cpu_data();
+    unsigned short max_iter = -1;
+    if (argc > 1)
+    {
+        max_iter = atoi(argv[1]);
+    }
+    display_cpu_data(max_iter);
     return 0;
 }

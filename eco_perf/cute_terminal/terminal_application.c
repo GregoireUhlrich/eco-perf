@@ -26,3 +26,9 @@ void run_terminal_application(terminal_application_t *app)
         update_terminal_application(app);
     }
 }
+
+void free_terminal_application(terminal_application_t *app)
+{
+    app->terminal.draw_self(&app->terminal);
+    free_twidget(&app->terminal);
+}
