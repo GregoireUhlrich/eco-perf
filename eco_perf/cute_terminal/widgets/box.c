@@ -15,6 +15,7 @@ void init_box_tmanager(
     box_tmanager_t *box)
 {
     init_twidget(&box->twidget);
+    box->config.background = ' ';
     box->twidget.config = (void *)&box->config;
     box->twidget.interface = &box_twidget_interface;
 }

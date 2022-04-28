@@ -33,6 +33,11 @@ void init_term_vector(terminal_vector_t *vector)
     vector->y = 0;
 }
 
+void init_tmanager(tmanager_t *manager)
+{
+    init_twidget(&manager->twidget);
+}
+
 void set_twidget_layout(
     twidget_t *widget,
     twidget_layout_t *layout)

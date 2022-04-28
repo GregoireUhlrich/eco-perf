@@ -17,6 +17,9 @@ void init_text_line_tmanager(
     init_twidget(widget);
     init_text_line_twidget_data(&manager->data);
     init_text_line_twidget_config(&manager->config);
+    widget->size.y = 1;
+    widget->fixed_size.x = 1;
+    widget->fixed_size.y = 1;
     widget->data = (void *)&manager->data;
     widget->config = (void *)&manager->config;
     widget->interface = &text_line_twidget_interface;
