@@ -1,6 +1,7 @@
 #include "cpu_info.h"
 #include <stdlib.h>
 
+/*
 void init_cpu_info_twidget(
     cpu_info_twidget_t *widget);
 
@@ -60,3 +61,5 @@ void _update_cpu_data_widget(cpu_info_twidget_t *widget)
     add_percent_data(bar_data, core_data->sys_ratio, CT_BLUE);
     add_percent_data(bar_data, core_data->nice_ratio, CT_YELLOW);
 }
+
+*/

@@ -7,6 +7,7 @@
 #include "eco_perf/cute_terminal/widgets/twidget.h"
 #include "eco_perf/metrics/cpu_usage.h"
 
+/*
 typedef twidget_t cpu_info_twidget_t;
 
 typedef struct CPUInfoTwidgetData
@@ -43,5 +44,5 @@ void init_cpu_info_twidget_container(
 void set_cpu_info_twidget_data(
     cpu_info_twidget_t *widget,
     cpu_core_data_t *data);
-
+*/
 #endif
