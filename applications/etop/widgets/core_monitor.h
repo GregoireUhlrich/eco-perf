@@ -9,8 +9,8 @@
 
 typedef struct CoreMonitorTwidgetData
 {
+    char const *title;
     cpu_core_data_t *core_data;
-    twidget_t *cpu_widgets;
 } core_monitor_twidget_data_t;
 
 typedef struct CoreMonitorTwidgetConfig
@@ -22,6 +22,9 @@ typedef struct CoreMonitorTManager
     twidget_t twidget;
 
     twidget_linear_layout_t layout;
+
+    text_line_tmanager_t title;
+    percent_bar_tmanager_t percent_bar;
 
     core_monitor_twidget_data_t data;
     core_monitor_twidget_config_t config;
@@ -36,6 +39,10 @@ void init_core_monitor_tmanager(core_monitor_tmanager_t *manager);
 void set_core_monitor_data(
     core_monitor_tmanager_t *manager,
     cpu_core_data_t *core_data);
+
+void set_core_monitor_title(
+    core_monitor_tmanager_t *manager,
+    char const *title);
 
 extern const twidget_interface_t core_monitor_twidget_interface;
 

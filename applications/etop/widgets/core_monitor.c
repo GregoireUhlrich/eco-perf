@@ -1,17 +1,18 @@
-#include "cpu_info.h"
+#include "core_monitor.h"
 #include "eco_perf/cute_terminal/definitions/error.h"
 #include <stdlib.h>
 
 void _update_cpu_monitor(twidget_t *twidget);
-void _draw_cpu_monitor(twidget_t *twidget);
 
 const twidget_interface_t core_monitor_twidget_interface = {
     _update_cpu_monitor,
-    _draw_cpu_monitor,
+    default_twidget_draw,
     default_twidget_free};
 
 void init_core_monitor_twidget_data(core_monitor_twidget_data_t *data)
 {
+    data->title = "";
+    data->core_data = NULL;
 }
 
 void init_core_monitor_twidget_config(core_monitor_twidget_config_t *config)
@@ -22,12 +23,23 @@ void init_core_monitor_tmanager(core_monitor_tmanager_t *manager)
 {
     twidget_t *widget = &manager->twidget;
     core_monitor_twidget_data_t *data = &manager->data;
-    data->core_data = NULL;
     core_monitor_twidget_config_t *config = &manager->config;
-    init_twidget(widget);
     init_core_monitor_twidget_data(data);
     init_core_monitor_twidget_config(config);
+    init_twidget(widget);
+    widget->interface = &core_monitor_twidget_interface;
     widget->manager = (void *)manager;
+    widget->size.y = 1;
+    widget->size.x = 50;
+
+    init_twidget_linear_layout(&manager->layout, CT_HORIZONTAL);
+    set_twidget_layout(widget, &manager->layout);
+
+    init_text_line_tmanager(&manager->title);
+    init_percent_bar_tmanager(&manager->percent_bar);
+
+    add_twidget_child(widget, &manager->title.twidget);
+    add_twidget_child(widget, &manager->percent_bar.twidget);
 }
 
 void set_core_monitor_data(
@@ -35,17 +47,39 @@ void set_core_monitor_data(
     cpu_core_data_t *core_data)
 {
     manager->data.core_data = core_data;
-    core_monitor_twidget_config_t *config = &manager->config;
+}
+
+void set_core_monitor_title(
+    core_monitor_tmanager_t *manager,
+    char const *title)
+{
+    set_text_line_content(&manager->title, title);
 }
 
 void _update_cpu_monitor(twidget_t *twidget)
 {
     core_monitor_tmanager_t *manager = (core_monitor_tmanager_t *)twidget->manager;
     core_monitor_twidget_data_t *data = &manager->data;
-}
+    percent_bar_data_t *percent_bar_data = &manager->percent_bar.data;
+    init_percent_bar_data(percent_bar_data);
+    add_percent_data(
+        percent_bar_data,
+        data->core_data->user_ratio, CT_RED);
+    add_percent_data(
+        percent_bar_data,
+        data->core_data->sys_ratio, CT_GREEN);
+    add_percent_data(
+        percent_bar_data,
+        data->core_data->nice_ratio, CT_BLUE);
 
-void _draw_cpu_monitor(twidget_t *twidget)
-{
+    if (!manager->data.title)
+    {
+        manager->layout.config.spacing = 0;
+    }
+    else
+    {
+        manager->layout.config.spacing = 1;
+    }
 }
 
 /*

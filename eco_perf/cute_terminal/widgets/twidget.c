@@ -1,6 +1,7 @@
 #include "twidget.h"
 #include "../definitions/error.h"
 #include "../terminal/cursor.h"
+#include "layouts/compute_layout.h"
 #include <stddef.h>
 #include <string.h>
 
@@ -47,6 +48,10 @@ void set_twidget_layout(
 
 void apply_twidget_layout(twidget_t *widget)
 {
+    if (widget->floating)
+    {
+        place_floating_twidget(widget);
+    }
     if (widget->layout && widget->layout->apply_layout)
     {
         widget->layout->apply_layout(widget->layout, widget);

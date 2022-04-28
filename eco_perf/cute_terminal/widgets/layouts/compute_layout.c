@@ -1,4 +1,5 @@
 #include "compute_layout.h"
+#include "../../definitions/error.h"
 
 void _compute_layout_stretching(
     twidget_t const *widget,
@@ -270,4 +271,17 @@ void align_widget_for_linear_layout(
     }
     _apply_perpendicular_to_layout(
         widget, direction, config);
+}
+
+void place_floating_twidget(
+    twidget_t *twidget)
+{
+    CT_ASSERT(
+        twidget->size.x > 0 && twidget->size.y > 0,
+        CT_VALUE_ERROR,
+        "The size of floating widgets must be defined. "
+        "Found size (%d, %d) for twidget at address %p.",
+        twidget->size.x,
+        twidget->size.y,
+        twidget)
 }

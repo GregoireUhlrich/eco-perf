@@ -27,6 +27,7 @@ void init_percent_bar_tmanager(
 
     twidget_t *twidget = &manager->twidget;
     init_twidget(twidget);
+    twidget->size.x = 30;
     twidget->size.y = 1;
     twidget->fixed_size.y = 1;
     twidget->manager = (void *)manager;

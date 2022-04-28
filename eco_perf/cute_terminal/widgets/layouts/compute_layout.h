@@ -9,4 +9,7 @@ void align_widget_for_linear_layout(
     int direction,
     twidget_layout_config_t const *config);
 
+void place_floating_twidget(
+    twidget_t *twidget);
+
 #endif

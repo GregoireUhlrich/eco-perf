@@ -6,7 +6,7 @@
 #include "eco_perf/cute_terminal/widgets/twidget.h"
 #include "eco_perf/metrics/cpu_usage.h"
 
-#include "widgets/cpu_info.h"
+#include "widgets/core_monitor.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -91,10 +91,12 @@ void display_cpu_data(unsigned short max_iter)
     read_cpu_data(&last);
     diff_cpu_data(&first, &last, &diff);
     calculate_ratio(&diff, &ratio, n_seconds_sleep);
-    // cpu_info_twidget_t cpu_info;
-    // init_cpu_info_twidget(&cpu_info, &ratio);
-    // cpu_info.floating = 1;
-    // add_twidget_child(&main_widget, &cpu_info);
+
+    core_monitor_tmanager_t core_monitor;
+    init_core_monitor_tmanager(&core_monitor);
+    core_monitor.twidget.floating = 1;
+    core_monitor.twidget.pos.x = 120;
+    add_twidget_child(main_widget, &core_monitor.twidget);
 
     unsigned char iter = 0;
     while (iter++ < max_iter)
@@ -102,6 +104,10 @@ void display_cpu_data(unsigned short max_iter)
         read_cpu_data(&last);
         diff_cpu_data(&first, &last, &diff);
         calculate_ratio(&diff, &ratio, n_seconds_sleep);
+        char title_buffer[15];
+        sprintf(title_buffer, "core - %dx", iter);
+        set_core_monitor_title(&core_monitor, title_buffer);
+        set_core_monitor_data(&core_monitor, &ratio.core_data[1]);
         printf("etop - %d cores\n", first.n_cpus);
         for (int i = 0; i != 3 * n_cpus; ++i)
         {
