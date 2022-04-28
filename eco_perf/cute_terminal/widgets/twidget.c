@@ -4,14 +4,10 @@
 #include <stddef.h>
 #include <string.h>
 
-void _default_update(twidget_t *widget);
-void _default_draw(twidget_t *widget);
-void _default_free(twidget_t *widget);
-
 const twidget_interface_t default_twidget_interface = {
-    _default_update,
-    _default_draw,
-    _default_free};
+    default_twidget_update,
+    default_twidget_draw,
+    default_twidget_free};
 
 twidget_update_function_t get_twidget_update_function(
     twidget_t const *widget)
@@ -50,18 +46,6 @@ void apply_twidget_layout(twidget_t *widget)
     {
         widget->layout->apply_layout(widget->layout, widget);
     }
-}
-
-void _default_update(twidget_t *widget)
-{
-}
-
-void _default_draw(twidget_t *widget)
-{
-}
-
-void _default_free(twidget_t *widget)
-{
 }
 
 void init_twidget(twidget_t *widget)

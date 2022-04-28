@@ -3,7 +3,25 @@
 #include "../terminal/cursor.h"
 #include "../terminal/window.h"
 
-void _update_terminal(terminal_twidget_t *terminal)
+void _update_terminal(twidget_t *terminal);
+void _draw_terminal(twidget_t *terminal);
+
+const twidget_interface_t terminal_twidget_interface = {
+    _update_terminal,
+    _draw_terminal,
+    default_twidget_free};
+
+void init_terminal_tmanager(
+    terminal_tmanager_t *terminal,
+    twidget_t *main_twidget)
+{
+    twidget_t *term_twidget = &terminal->terminal_container_twidget;
+    init_twidget(term_twidget);
+    term_twidget->interface = &terminal_twidget_interface;
+    add_twidget_child(term_twidget, main_twidget);
+}
+
+void _update_terminal(twidget_t *terminal)
 {
     terminal_window_t terminal_window;
     init_terminal_window(&terminal_window);
@@ -19,20 +37,7 @@ void _update_terminal(terminal_twidget_t *terminal)
     terminal->children.widgets[0]->size = terminal->size;
 }
 
-int _draw_terminal(terminal_twidget_t const *terminal)
+void _draw_terminal(twidget_t *terminal)
 {
     clear_terminal();
-    return 1;
-}
-
-void init_terminal_twidget(
-    terminal_twidget_t *terminal,
-    twidget_t *main_widget)
-{
-    init_twidget(terminal);
-    add_twidget_child(terminal, main_widget);
-    terminal->update = _update_terminal;
-    terminal->draw_self = _draw_terminal;
-
-    terminal->update(terminal);
 }
