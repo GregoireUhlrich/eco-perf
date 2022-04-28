@@ -29,8 +29,7 @@ void init_percent_bar_tmanager(
     init_twidget(twidget);
     twidget->size.y = 1;
     twidget->fixed_size.y = 1;
-    twidget->data = (void *)&manager->data;
-    twidget->config = (void *)&manager->config;
+    twidget->manager = (void *)manager;
     twidget->interface = &percent_bar_twidget_interface;
 }
 
@@ -50,7 +49,8 @@ void _reset_bar_cursor_pos(
 
 void _update_percent_bar(twidget_t *percent_bar)
 {
-    percent_bar_config_t *config = (percent_bar_config_t *)percent_bar->config;
+    percent_bar_tmanager_t *manager = (percent_bar_tmanager_t *)percent_bar->manager;
+    percent_bar_config_t *config = &manager->config;
     int percent_size = 6 * (config->percent_mode == CT_PERCENT_OUT);
     config->bar_size = percent_bar->size.x - 2 - percent_size;
     CT_ASSERT(
@@ -63,8 +63,9 @@ void _update_percent_bar(twidget_t *percent_bar)
 void _draw_percent_bar(twidget_t *percent_bar)
 {
     char buffer[CT_MAX_PERCENT_BAR_SIZE];
-    percent_bar_data_t *data = (percent_bar_data_t *)percent_bar->data;
-    percent_bar_config_t *config = (percent_bar_config_t *)percent_bar->config;
+    percent_bar_tmanager_t *manager = (percent_bar_tmanager_t *)percent_bar->manager;
+    percent_bar_data_t *data = &manager->data;
+    percent_bar_config_t *config = &manager->config;
     create_percent_bar(buffer, data, config);
     int line_size = get_effective_string_length(buffer);
     printf("%s", buffer);

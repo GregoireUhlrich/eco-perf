@@ -20,8 +20,7 @@ void init_text_line_tmanager(
     widget->size.y = 1;
     widget->fixed_size.x = 1;
     widget->fixed_size.y = 1;
-    widget->data = (void *)&manager->data;
-    widget->config = (void *)&manager->config;
+    widget->manager = (void *)manager;
     widget->interface = &text_line_twidget_interface;
 }
 
@@ -47,7 +46,8 @@ void set_text_line_content(
 
 void _draw_line_widget(twidget_t *line_widget)
 {
-    text_line_twidget_data_t *data = (text_line_twidget_data_t *)line_widget->data;
+    text_line_tmanager_t *manager = (text_line_tmanager_t *)line_widget;
+    text_line_twidget_data_t *data = &manager->data;
     printf("%s", data->_line);
     move_cursor_left(data->_effective_line_length);
 }

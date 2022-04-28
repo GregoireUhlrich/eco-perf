@@ -24,8 +24,7 @@ typedef struct TWidget
 
     twidget_layout_t *layout; // layout for the widget, can be null
 
-    void *config;                         // possible additional config
-    void *data;                           // possible additional data
+    void *manager;
     twidget_interface_t const *interface; // interface functions
 
     struct TWidget *parent;
@@ -41,6 +40,8 @@ void set_twidget_layout(
 void update_twidget(twidget_t *widget);
 
 int draw_twidget(twidget_t *widget);
+
+void free_twidget_children(twidget_t *widget);
 
 void free_twidget(twidget_t *widget);
 

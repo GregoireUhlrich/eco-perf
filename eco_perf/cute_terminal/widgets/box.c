@@ -16,7 +16,7 @@ void init_box_tmanager(
 {
     init_twidget(&box->twidget);
     box->config.background = ' ';
-    box->twidget.config = (void *)&box->config;
+    box->twidget.manager = (void *)box;
     box->twidget.interface = &box_twidget_interface;
 }
 
@@ -43,9 +43,10 @@ void _reset_box_cursor_pos(terminal_vector_t box_size)
 void _draw_box(twidget_t *box)
 {
     char background = ' ';
-    if (box->config)
+    box_twidget_config_t *config = &((box_tmanager_t *)box->manager)->config;
+    if (config)
     {
-        background = ((box_twidget_config_t *)box->config)->background;
+        background = config->background;
     }
     const int lx = box->size.x + 2; // 2 = external border
     const int ly = box->size.y + 2; // 2 = external border

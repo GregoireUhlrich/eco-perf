@@ -64,8 +64,7 @@ void init_twidget(twidget_t *widget)
 
     widget->layout = NULL;
 
-    widget->data = NULL;
-    widget->config = NULL;
+    widget->manager = NULL;
     widget->interface = &default_twidget_interface;
 
     widget->parent = NULL;
@@ -141,7 +140,7 @@ void remove_twidget_child(
     twidget_array_remove(&parent->children, child);
 }
 
-void free_twidget(twidget_t *widget)
+void free_twidget_children(twidget_t *widget)
 {
     if (!widget)
     {
@@ -155,6 +154,14 @@ void free_twidget(twidget_t *widget)
         }
         free_twidget_array(&widget->children);
     }
+}
+void free_twidget(twidget_t *widget)
+{
+    if (!widget)
+    {
+        return;
+    }
+    free_twidget_children(widget);
     const twidget_free_function_t free_ = get_twidget_free_function(widget);
     if (free_)
     {
