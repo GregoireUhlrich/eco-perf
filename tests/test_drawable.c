@@ -2,6 +2,7 @@
 #include "eco_perf/cute_terminal/widgets/box.h"
 #include "eco_perf/cute_terminal/widgets/twidget.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
 
@@ -19,49 +20,53 @@ void print_drawable(twidget_t *drawable)
 
 void test_boxes()
 {
-    box_twidget_t bigger_box;
+    box_tmanager_t bigger_box;
     terminal_vector_t pos, size;
     pos.x = 10;
     pos.y = 5;
     size.x = 100;
-    size.y = 100;
-    init_box_twidget(&bigger_box);
+    size.y = 10;
+    init_box_tmanager(&bigger_box);
+    bigger_box.twidget.pos = pos;
+    bigger_box.twidget.size = size;
 
     clear_terminal();
-    box_twidget_t box1, box2, box3;
+    box_tmanager_t box1, box2, box3;
+    init_box_tmanager(&box1);
+    init_box_tmanager(&box2);
+    init_box_tmanager(&box3);
 
     pos.x = 0;
     pos.y = 1;
     size.x = 5;
     size.y = 5;
-    init_box_twidget(&box1);
+    box1.twidget.pos = pos;
+    box1.twidget.size = size;
 
     pos.x += 10;
-    size.x += 30;
-    box_twidget_config_t config_box2;
-    init_box_twidget(&box2);
-    config_box2.background = 'x';
-    box2.config = (void *)(&config_box2);
+    size.x += 2;
+    box2.twidget.pos = pos;
+    box2.twidget.size = size;
+    box2.config.background = 'x';
 
     pos.x = 3;
     pos.y = 4;
     size.x = 20;
-    size.y = 10;
-    box_twidget_config_t config_box3;
-    config_box3.background = '*';
-    init_box_twidget(&box3);
-    box3.config = (void *)(&config_box3);
+    size.y = 8;
+    box3.twidget.pos = pos;
+    box3.twidget.size = size;
+    box3.config.background = '*';
 
-    add_twidget_child(&bigger_box, &box1);
-    add_twidget_child(&bigger_box, &box2);
-    add_twidget_child(&bigger_box, &box3);
+    add_twidget_child(&bigger_box.twidget, &box1.twidget);
+    add_twidget_child(&bigger_box.twidget, &box2.twidget);
+    add_twidget_child(&bigger_box.twidget, &box3.twidget);
 
-    draw_twidget(&bigger_box);
+    draw_twidget(&bigger_box.twidget);
     char c;
     scanf("%c", &c);
 }
 
-int main()
+int main(int argc, char const *argv[])
 {
     twidget_t terminal;
     init_twidget(&terminal);
@@ -98,7 +103,10 @@ int main()
     printf("lines %d\n", w.ws_row);
     printf("columns %d\n", w.ws_col);
 
-    // test_boxes();
+    if (argc > 1 && atoi(argv[1]))
+    {
+        test_boxes();
+    }
 
     return 0;
 }

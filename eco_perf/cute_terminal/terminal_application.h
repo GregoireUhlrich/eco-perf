@@ -5,7 +5,8 @@
 
 typedef struct TerminalApplication
 {
-    terminal_twidget_t terminal;
+    int is_open;
+    terminal_tmanager_t terminal_manager;
     float sleep_duration; // in seconds
 } terminal_application_t;
 
@@ -16,5 +17,7 @@ void init_terminal_application(
 void update_terminal_application(terminal_application_t *app);
 
 void run_terminal_application(terminal_application_t *app);
+
+void free_terminal_application(terminal_application_t *app);
 
 #endif

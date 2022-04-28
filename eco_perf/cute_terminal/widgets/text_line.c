@@ -3,17 +3,26 @@
 #include "../terminal/cursor.h"
 #include <stdio.h>
 
-void _update_line_widget(text_line_twidget_t *line_widget);
-int _draw_line_widget(text_line_twidget_t const *line_widget);
+void _draw_line_widget(twidget_t *line_widget);
 
-void init_text_line_twidget(
-    text_line_twidget_t *widget,
-    text_line_twidget_data_t *data)
+const twidget_interface_t text_line_twidget_interface = {
+    default_twidget_update,
+    _draw_line_widget,
+    default_twidget_free};
+
+void init_text_line_tmanager(
+    text_line_tmanager_t *manager)
 {
+    twidget_t *widget = &manager->twidget;
     init_twidget(widget);
-    widget->data = (void *)data;
-    widget->update = _update_line_widget;
-    widget->draw_self = _draw_line_widget;
+    init_text_line_twidget_data(&manager->data);
+    init_text_line_twidget_config(&manager->config);
+    widget->size.y = 1;
+    widget->fixed_size.x = 1;
+    widget->fixed_size.y = 1;
+    widget->data = (void *)&manager->data;
+    widget->config = (void *)&manager->config;
+    widget->interface = &text_line_twidget_interface;
 }
 
 void init_text_line_twidget_data(text_line_twidget_data_t *data)
@@ -22,24 +31,23 @@ void init_text_line_twidget_data(text_line_twidget_data_t *data)
     data->_effective_line_length = 0;
 }
 
-void set_text_line_twidget_data(
-    text_line_twidget_t *line_widget,
+void init_text_line_twidget_config(text_line_twidget_config_t *config)
+{
+}
+
+void set_text_line_content(
+    text_line_tmanager_t *line_manager,
     char const *line)
 {
-    text_line_twidget_data_t *data = (text_line_twidget_data_t *)line_widget->data;
+    text_line_twidget_data_t *data = &line_manager->data;
     data->_line = line;
     data->_effective_line_length = get_effective_string_length(line);
-    line_widget->size.x = data->_effective_line_length;
+    line_manager->twidget.size.x = data->_effective_line_length;
 }
 
-void _update_line_widget(text_line_twidget_t *line_widget)
-{
-}
-
-int _draw_line_widget(text_line_twidget_t const *line_widget)
+void _draw_line_widget(twidget_t *line_widget)
 {
     text_line_twidget_data_t *data = (text_line_twidget_data_t *)line_widget->data;
     printf("%s", data->_line);
     move_cursor_left(data->_effective_line_length);
-    return 1;
 }
