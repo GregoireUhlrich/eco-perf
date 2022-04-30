@@ -1,6 +1,8 @@
 #include "process.h"
 #include "../system/list_dir.h"
+#include "eco_perf/cute_terminal/tools/memory.h"
 #include <ctype.h>
+#include <errno.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -126,6 +128,64 @@ void list_processes()
         }
     }
     close_directory_lister(&lister);
+}
+
+process_data_t *create_process_list(size_t *n_processes)
+{
+    process_data_t *list;
+    directory_lister_t lister;
+    open_directory_lister(&lister, "/proc");
+    char const *next;
+    *n_processes = 0;
+    while ((next = get_next_directory(&lister)))
+    {
+        if (is_integer(next))
+        {
+            ++(*n_processes);
+        }
+    }
+    close_directory_lister(&lister);
+    if (n_processes < 0)
+    {
+        errno = EINVAL;
+        perror("Invalid number of processes.");
+        exit(1);
+    }
+
+    list = (process_data_t *)malloc(2 * (*n_processes) * sizeof(process_data_t));
+    list = update_process_list(list, n_processes);
+    return list;
+}
+
+process_data_t *update_process_list(process_data_t *list, size_t *n_processes)
+{
+    directory_lister_t lister;
+    open_directory_lister(&lister, "/proc");
+    char const *next;
+    size_t memory_size = *n_processes;
+    *n_processes = 0;
+    while ((next = get_next_directory(&lister)))
+    {
+        if (is_integer(next))
+        {
+            if (memory_size == *n_processes)
+            {
+                list = (process_data_t *)realloc(
+                    list,
+                    2 * memory_size * sizeof(process_data_t));
+                memory_size *= 2;
+            }
+            read_process_data(&list[*n_processes], atoi(next));
+            ++(*n_processes);
+        }
+    }
+    close_directory_lister(&lister);
+    return list;
+}
+
+void free_process(process_data_t *list)
+{
+    free(list);
 }
 
 void free_process_data(process_data_t *process)
