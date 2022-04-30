@@ -6,6 +6,7 @@
 #include "layouts/layout.h"
 #include "twidget_interface.h"
 
+#define DISABLE_TERMINAL_DRAWING
 #define DEF_TERMINAL_VECTOR(name) \
     union                         \
     {                             \

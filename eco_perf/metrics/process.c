@@ -1,1 +1,222 @@
 #include "process.h"
+#include "../system/list_dir.h"
+#include <ctype.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+void init_process_data(process_data_t *process)
+{
+    process->valid = 0;
+    process->pid = -1;
+    process->directory = -1;
+    *process->executable = '\0';
+    process->memory_usage.real = 0;
+    process->memory_usage.virt = 0;
+    process->memory_usage.shared = 0;
+    process->cpu_usage.user_time = 0;
+    process->cpu_usage.sys_time = 0;
+    process->cpu_usage.nice_time = 0;
+}
+
+void _read_process_stat_data(FILE *file, process_data_t *process);
+void _read_process_statm_data(FILE *file, process_data_t *process);
+
+void read_process_data(process_data_t *process, int dir)
+{
+    process->directory = dir;
+    char process_file_name[50];
+    sprintf(process_file_name, "/proc/%d/stat", dir);
+    FILE *stat_file = fopen(process_file_name, "r");
+    if (stat_file)
+    {
+        process->valid = 1;
+        _read_process_stat_data(stat_file, process);
+        fclose(stat_file);
+    }
+    else
+    {
+        process->valid = 0;
+        return;
+    }
+
+    sprintf(process_file_name, "/proc/%d/statm", dir);
+    stat_file = fopen(process_file_name, "r");
+    if (stat_file)
+    {
+        _read_process_statm_data(stat_file, process);
+        fclose(stat_file);
+    }
+    else
+    {
+        process->valid = 0;
+        return;
+    }
+}
+
+void get_process_command_line(
+    char *destination,
+    process_data_t const *process)
+{
+    char process_file_name[60];
+    sprintf(process_file_name, "/proc/%d/cmdline", process->directory);
+    FILE *file = fopen(process_file_name, "r");
+    *destination = '\0';
+    if (file)
+    {
+        fscanf(file, "%s", destination);
+        fclose(file);
+    }
+    else
+    {
+        return;
+    }
+}
+
+void print_process_data_summary(process_data_t const *process)
+{
+    char real_mem[100], virt_mem[100];
+    char command_line[4096];
+    get_process_command_line(command_line, process);
+    print_nice_memory(real_mem, process->memory_usage.real);
+    print_nice_memory(virt_mem, process->memory_usage.virt);
+    printf(
+        "Process '%s' (pid=%d): cpu_time (user: %.3fs, sys: %.3fs), "
+        "mem (real: %s, virt: %s) -- [%s]\n",
+        process->executable, process->pid,
+        process->cpu_usage.user_time, process->cpu_usage.sys_time,
+        real_mem, virt_mem,
+        command_line);
+}
+
+int is_integer(char const *str)
+{
+    while (*str)
+    {
+        if (!isdigit(*str++))
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+void list_processes()
+{
+    directory_lister_t lister;
+    open_directory_lister(&lister, "/proc");
+    char const *next;
+    while ((next = get_next_directory(&lister)))
+    {
+        if (is_integer(next))
+        {
+            // process directory
+            process_data_t process;
+            init_process_data(&process);
+            read_process_data(&process, atoi(next));
+            if (process.valid)
+            {
+                print_process_data_summary(&process);
+            }
+            free_process_data(&process);
+        }
+    }
+    close_directory_lister(&lister);
+}
+
+void free_process_data(process_data_t *process)
+{
+}
+
+void _read_process_stat_data(FILE *file, process_data_t *process)
+{
+    int pid, ppid, pgrp, session, tty_nr, tpgid, exit_signal, processor, exit_code;
+    long cutime, cstime, priority, nice, num_threads, itrealvalue, rss, cguest_time;
+    unsigned int flags, rt_priority, policy;
+    unsigned long minflt, cminflt, majflt, cmajflt, utime, stime, vsize, rsslim,
+        startcode, endcode, startstack, kstkesp, kstseip, signal, blocked, sigignore,
+        sigcatch, wchan, nswap, cnswap, guest_time, start_data, end_data, start_brk,
+        end_vrk, arg_start, arg_end, env_start, env_end;
+    unsigned long long starttime, delayacct_nlkio_ticks;
+    char comm[NAME_MAX];
+    char state;
+    int n_scanned = fscanf(
+        file,
+        "%d %s %c %d %d %d %d %d %u %lu %lu %lu %lu %lu %lu "
+        "%ld %ld %ld %ld %ld %ld %llu",
+        &pid, comm, &state, &ppid, &pgrp, &session, &tty_nr,
+        &tpgid, &flags, &minflt, &cminflt, &majflt, &cmajflt,
+        &utime, &stime, &cutime, &cstime, &priority, &nice,
+        &num_threads, &itrealvalue, &starttime);
+    if (n_scanned < 22)
+    {
+        process->valid = 0;
+        return;
+    }
+    process->pid = pid;
+    char const *const first = comm + 1;
+    const int len = strlen(comm) - 1;
+    comm[len] = 0;
+    strncpy(process->executable, first, len);
+    process->state = state;
+    process->parent_pid = ppid;
+    process->pgroup = pgrp;
+    process->psession = session;
+    process->flags = flags;
+    process->priority = priority;
+    process->nice_value = nice;
+    process->num_threads = num_threads;
+    process->start_time = starttime;
+    process->cpu_usage.user_time = utime * 1. / CLOCKS_PER_SEC;
+    process->cpu_usage.sys_time = stime * 1. / CLOCKS_PER_SEC;
+    process->cpu_usage.nice_time = 0;
+
+    n_scanned = fscanf(
+        file,
+        "%lu %ld %lu %lu %lu %lu %lu %lu ",
+        &vsize, &rss, &rsslim, &startcode, &endcode, &startstack,
+        &kstkesp, &kstseip);
+    if (n_scanned < 8)
+    {
+        process->stack_pointer = 0;
+        process->start_stack = 0;
+        process->instruction_pointer = 0;
+        return;
+    }
+    process->start_stack = startstack;
+    process->stack_pointer = kstkesp;
+    process->instruction_pointer = kstseip;
+
+    n_scanned = fscanf(
+        file,
+        "%lu %lu %lu %lu %lu %lu %lu %d %d %u "
+        "%u %llu %lu %ld %lu %lu %lu %lu %lu %lu %lu %d",
+        &signal, &blocked, &sigignore, &sigcatch,
+        &wchan, &nswap, &cnswap, &exit_signal, &processor,
+        &rt_priority, &policy, &delayacct_nlkio_ticks,
+        &guest_time, &cguest_time, &start_data, &end_data,
+        &start_brk, &arg_start, &arg_end, &env_start, &env_end,
+        &exit_code);
+    if (n_scanned < 12)
+    {
+        process->accumulated_io_delay = 0;
+    }
+    else
+    {
+        process->accumulated_io_delay = delayacct_nlkio_ticks;
+    }
+}
+
+void _read_process_statm_data(FILE *file, process_data_t *process)
+{
+    unsigned long size, resident, shared, text, lib, data, dt;
+    fscanf(file, "%lu %lu %lu %lu %lu %lu %lu",
+           &size, &resident, &shared, &text, &lib, &data, &dt);
+    process->memory_usage.real = resident;
+    process->memory_usage.virt = size - resident;
+    process->memory_usage.shared = shared;
+    process->text_memory = text;
+    process->data_memory = text;
+}

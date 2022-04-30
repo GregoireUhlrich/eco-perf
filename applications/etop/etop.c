@@ -136,8 +136,8 @@ void display_cpu_data(unsigned short max_iter)
     free_cpu_data(&diff);
     free_cpu_data(&ratio);
 
-    free(cpu_bars);
     free_terminal_application(&app);
+    free(cpu_bars);
 }
 
 int main(int argc, char const *argv[])

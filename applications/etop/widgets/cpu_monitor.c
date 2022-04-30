@@ -106,8 +106,6 @@ void _update_cpu_monitor(twidget_t *twidget)
 void _free_cpu_monitor(twidget_t *twidget)
 {
     cpu_monitor_tstack_t *monitor = (cpu_monitor_tstack_t *)twidget->stack;
-    for (int i = 0; i != monitor->n_core_monitors; ++i)
-        free_core_monitor_stack(&monitor->core_monitors[i]);
     free(monitor->core_monitors);
 }
 

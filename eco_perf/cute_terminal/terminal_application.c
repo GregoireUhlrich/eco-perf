@@ -33,6 +33,8 @@ void run_terminal_application(terminal_application_t *app)
 void free_terminal_application(terminal_application_t *app)
 {
     twidget_t *terminal_twidget = &app->terminal_stack.terminal_container_twidget;
+#ifndef DISABLE_TERMINAL_DRAWING
     terminal_twidget->interface->draw(terminal_twidget);
+#endif
     free_twidget(terminal_twidget);
 }
