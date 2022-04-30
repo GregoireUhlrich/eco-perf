@@ -14,6 +14,8 @@ void init_twidget_array(twidget_array_t *array);
 
 void allocate_twidget_array(twidget_array_t *array, int n_children);
 
+void resize_twidget_array(twidget_array_t *array, int n_children);
+
 void free_twidget_array(
     twidget_array_t *array);
 

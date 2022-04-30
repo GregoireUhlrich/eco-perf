@@ -7,9 +7,10 @@
 #include "eco_perf/cute_terminal/widgets/twidget.h"
 #include "eco_perf/metrics/cpu_usage.h"
 
+#define MAX_CORE_MONITOR_TITLE_SIZE 15
 typedef struct CoreMonitorTwidgetData
 {
-    char const *title;
+    char title[MAX_CORE_MONITOR_TITLE_SIZE + 1];
     cpu_core_data_t *core_data;
 } core_monitor_twidget_data_t;
 
@@ -36,6 +37,8 @@ void init_core_monitor_twidget_config(core_monitor_twidget_config_t *config);
 
 void init_core_monitor_tstack(core_monitor_tstack_t *stack);
 
+void free_core_monitor_stack(core_monitor_tstack_t *monitor);
+
 void set_core_monitor_data(
     core_monitor_tstack_t *stack,
     cpu_core_data_t *core_data);
@@ -46,42 +49,4 @@ void set_core_monitor_title(
 
 extern const twidget_interface_t core_monitor_twidget_interface;
 
-/*
-typedef twidget_t cpu_info_twidget_t;
-
-typedef struct CPUInfoTwidgetData
-{
-    char const *title;
-    cpu_core_data_t *core_data;
-    percent_bar_data_t percent_bar_data;
-} cpu_info_twidget_data_t;
-
-typedef struct CPUInfoTwidgetConfig
-{
-    twidget_linear_layout_t layout;
-    percent_bar_config_t percent_bar_config;
-} cpu_info_twidget_config_t;
-
-typedef struct CPUInfoTwidgetContainer
-{
-    // Main widget
-    twidget_t widget;
-
-    // Sub-widgets
-    text_line_twidget_t title_widget;
-    cpu_info_twidget_t cpu_widget;
-
-    // Data and config
-    cpu_info_twidget_data_t data;
-    cpu_info_twidget_config_t config;
-
-} cpu_info_twidget_container_t;
-
-void init_cpu_info_twidget_container(
-    cpu_info_twidget_container_t *container);
-
-void set_cpu_info_twidget_data(
-    cpu_info_twidget_t *widget,
-    cpu_core_data_t *data);
-*/
 #endif

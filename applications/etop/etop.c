@@ -7,6 +7,7 @@
 #include "eco_perf/metrics/cpu_usage.h"
 
 #include "widgets/core_monitor.h"
+#include "widgets/cpu_monitor.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -92,11 +93,19 @@ void display_cpu_data(unsigned short max_iter)
     diff_cpu_data(&first, &last, &diff);
     calculate_ratio(&diff, &ratio, n_seconds_sleep);
 
-    core_monitor_tstack_t core_monitor;
-    init_core_monitor_tstack(&core_monitor);
-    core_monitor.twidget.floating = 1;
-    core_monitor.twidget.pos.x = 120;
-    add_twidget_child(main_widget, &core_monitor.twidget);
+    // core_monitor_tstack_t core_monitor;
+    // init_core_monitor_tstack(&core_monitor);
+    // core_monitor.twidget.floating = 1;
+    // core_monitor.twidget.pos.x = 120;
+    // add_twidget_child(main_widget, &core_monitor.twidget);
+
+    cpu_monitor_tstack_t cpu_monitor;
+    init_cpu_monitor_tstack(&cpu_monitor);
+    cpu_monitor.twidget.floating = 1;
+    cpu_monitor.twidget.pos.x = 120;
+    set_cpu_monitor_data(&cpu_monitor, &ratio);
+    add_twidget_child(main_widget, &cpu_monitor.twidget);
+    set_cpu_monitor_bounds(&cpu_monitor, -1, -1);
 
     unsigned char iter = 0;
     while (iter++ < max_iter)
@@ -106,8 +115,6 @@ void display_cpu_data(unsigned short max_iter)
         calculate_ratio(&diff, &ratio, n_seconds_sleep);
         char title_buffer[15];
         sprintf(title_buffer, "core - %dx", iter);
-        set_core_monitor_title(&core_monitor, title_buffer);
-        set_core_monitor_data(&core_monitor, &ratio.core_data[1]);
         printf("etop - %d cores\n", first.n_cpus);
         for (int i = 0; i != 3 * n_cpus; ++i)
         {

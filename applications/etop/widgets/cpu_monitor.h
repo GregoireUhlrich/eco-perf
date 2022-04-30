@@ -21,6 +21,7 @@ typedef struct CPUMonitorTStack
     twidget_t twidget;
     twidget_linear_layout_t layout;
 
+    int n_core_monitors;
     core_monitor_tstack_t *core_monitors;
 
     cpu_monitor_twidget_data_t data;
@@ -32,6 +33,17 @@ void init_cpu_monitor_twidget_data(cpu_monitor_twidget_data_t *data);
 void init_cpu_monitor_twidget_config(cpu_monitor_twidget_config_t *config);
 
 void init_cpu_monitor_tstack(cpu_monitor_tstack_t *monitor);
+
+void set_cpu_monitor_data(
+    cpu_monitor_tstack_t *monitor,
+    cpu_data_t *cpu_data);
+
+void set_cpu_monitor_bounds(
+    cpu_monitor_tstack_t *monitor,
+    int first_core_monitor,
+    int n_core_monitors);
+
+void free_cpu_monitor_tstack(cpu_monitor_tstack_t *monitor);
 
 extern const twidget_interface_t cpu_monitor_twidget_interface;
 

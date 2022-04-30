@@ -1,4 +1,6 @@
 #include "string_utils.h"
+#include <stdio.h>
+#include <string.h>
 
 char *str_append(char *destination, char const *src)
 {
@@ -59,4 +61,48 @@ int get_effective_string_length(char const *str)
         ++str;
     }
     return length;
+}
+
+void lfill(
+    char *destination,
+    char const *str,
+    int length,
+    char filler)
+{
+    int n_filled_char = length - strlen(str);
+    for (int i = 0; i < n_filled_char; ++i)
+        *destination++ = filler;
+    sprintf(destination, "%s", str);
+}
+
+void rfill(
+    char *destination,
+    char const *str,
+    int length,
+    char filler)
+{
+    const int len = strlen(str);
+    int n_filled_char = length - len;
+    sprintf(destination, "%s", str);
+    destination += len;
+    for (int i = 0; i < n_filled_char; ++i)
+        *destination++ = filler;
+    *destination = '\0';
+}
+
+void cfill(
+    char *destination,
+    char const *str,
+    int length,
+    char filler)
+{
+    const int len = strlen(str);
+    int n_filled_char = length - len;
+    for (int i = 0; i < n_filled_char / 2; ++i)
+        *destination++ = filler;
+    sprintf(destination, "%s", str);
+    destination += len;
+    for (int i = 0; i < n_filled_char - n_filled_char / 2; ++i)
+        *destination++ = filler;
+    *destination = '\0';
 }

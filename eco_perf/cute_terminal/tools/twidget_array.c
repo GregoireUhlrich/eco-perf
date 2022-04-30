@@ -16,9 +16,19 @@ void allocate_twidget_array(twidget_array_t *array, int n_children)
     CT_ASSERT(array->size == 0,
               CT_RUNTIME_ERROR,
               "Cannot use the allocate children function on non-empty array.")
+    if (n_children <= 0)
+        return;
     array->widgets = (twidget_t **)malloc(n_children * sizeof(twidget_t *));
     array->_memory_size = n_children;
     array->size = n_children;
+}
+
+void resize_twidget_array(twidget_array_t *array, int n_children)
+{
+    if (array->size == n_children || n_children < 0)
+        return;
+    free_twidget_array(array);
+    allocate_twidget_array(array, n_children);
 }
 
 void free_twidget_array(
