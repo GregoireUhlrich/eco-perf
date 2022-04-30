@@ -5,7 +5,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/times.h>
 #include <time.h>
+#include <unistd.h>
 
 void init_process_data(process_data_t *process)
 {
@@ -83,9 +85,9 @@ void print_process_data_summary(process_data_t const *process)
     print_nice_memory(real_mem, process->memory_usage.real);
     print_nice_memory(virt_mem, process->memory_usage.virt);
     printf(
-        "Process '%s' (pid=%d): cpu_time (user: %.3fs, sys: %.3fs), "
+        "Process '%s' (pid=%d, ppid=%d): cpu_time (user: %.3fs, sys: %.3fs), "
         "mem (real: %s, virt: %s) -- [%s]\n",
-        process->executable, process->pid,
+        process->executable, process->pid, process->parent_pid,
         process->cpu_usage.user_time, process->cpu_usage.sys_time,
         real_mem, virt_mem,
         command_line);
@@ -169,8 +171,9 @@ void _read_process_stat_data(FILE *file, process_data_t *process)
     process->nice_value = nice;
     process->num_threads = num_threads;
     process->start_time = starttime;
-    process->cpu_usage.user_time = utime * 1. / CLOCKS_PER_SEC;
-    process->cpu_usage.sys_time = stime * 1. / CLOCKS_PER_SEC;
+    const double ticks_per_sec = sysconf(_SC_CLK_TCK);
+    process->cpu_usage.user_time = utime * 1. / ticks_per_sec;
+    process->cpu_usage.sys_time = stime * 1. / ticks_per_sec;
     process->cpu_usage.nice_time = 0;
 
     n_scanned = fscanf(
