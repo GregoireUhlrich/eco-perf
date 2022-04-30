@@ -19,48 +19,48 @@ void init_core_monitor_twidget_config(core_monitor_twidget_config_t *config)
 {
 }
 
-void init_core_monitor_tmanager(core_monitor_tmanager_t *manager)
+void init_core_monitor_tstack(core_monitor_tstack_t *stack)
 {
-    twidget_t *widget = &manager->twidget;
-    core_monitor_twidget_data_t *data = &manager->data;
-    core_monitor_twidget_config_t *config = &manager->config;
+    twidget_t *widget = &stack->twidget;
+    core_monitor_twidget_data_t *data = &stack->data;
+    core_monitor_twidget_config_t *config = &stack->config;
     init_core_monitor_twidget_data(data);
     init_core_monitor_twidget_config(config);
     init_twidget(widget);
     widget->interface = &core_monitor_twidget_interface;
-    widget->manager = (void *)manager;
+    widget->stack = (void *)stack;
     widget->size.y = 1;
     widget->size.x = 50;
 
-    init_twidget_linear_layout(&manager->layout, CT_HORIZONTAL);
-    set_twidget_layout(widget, &manager->layout);
+    init_twidget_linear_layout(&stack->layout, CT_HORIZONTAL);
+    set_twidget_layout(widget, &stack->layout);
 
-    init_text_line_tmanager(&manager->title);
-    init_percent_bar_tmanager(&manager->percent_bar);
+    init_text_line_tstack(&stack->title);
+    init_percent_bar_tstack(&stack->percent_bar);
 
-    add_twidget_child(widget, &manager->title.twidget);
-    add_twidget_child(widget, &manager->percent_bar.twidget);
+    add_twidget_child(widget, &stack->title.twidget);
+    add_twidget_child(widget, &stack->percent_bar.twidget);
 }
 
 void set_core_monitor_data(
-    core_monitor_tmanager_t *manager,
+    core_monitor_tstack_t *stack,
     cpu_core_data_t *core_data)
 {
-    manager->data.core_data = core_data;
+    stack->data.core_data = core_data;
 }
 
 void set_core_monitor_title(
-    core_monitor_tmanager_t *manager,
+    core_monitor_tstack_t *stack,
     char const *title)
 {
-    set_text_line_content(&manager->title, title);
+    set_text_line_content(&stack->title, title);
 }
 
 void _update_cpu_monitor(twidget_t *twidget)
 {
-    core_monitor_tmanager_t *manager = (core_monitor_tmanager_t *)twidget->manager;
-    core_monitor_twidget_data_t *data = &manager->data;
-    percent_bar_data_t *percent_bar_data = &manager->percent_bar.data;
+    core_monitor_tstack_t *stack = (core_monitor_tstack_t *)twidget->stack;
+    core_monitor_twidget_data_t *data = &stack->data;
+    percent_bar_data_t *percent_bar_data = &stack->percent_bar.data;
     init_percent_bar_data(percent_bar_data);
     add_percent_data(
         percent_bar_data,
@@ -72,13 +72,13 @@ void _update_cpu_monitor(twidget_t *twidget)
         percent_bar_data,
         data->core_data->nice_ratio, CT_BLUE);
 
-    if (!manager->data.title)
+    if (!stack->data.title)
     {
-        manager->layout.config.spacing = 0;
+        stack->layout.config.spacing = 0;
     }
     else
     {
-        manager->layout.config.spacing = 1;
+        stack->layout.config.spacing = 1;
     }
 }
 

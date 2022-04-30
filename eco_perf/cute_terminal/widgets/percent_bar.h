@@ -4,16 +4,16 @@
 #include "../tools/percent_bar.h"
 #include "twidget.h"
 
-typedef struct PercentBarTManager
+typedef struct PercentBarTStack
 {
     twidget_t twidget;
     percent_bar_config_t config;
     percent_bar_data_t data;
-} percent_bar_tmanager_t;
+} percent_bar_tstack_t;
 
 extern const twidget_interface_t percent_bar_twidget_interface;
 
-void init_percent_bar_tmanager(
-    percent_bar_tmanager_t *container);
+void init_percent_bar_tstack(
+    percent_bar_tstack_t *container);
 
 #endif

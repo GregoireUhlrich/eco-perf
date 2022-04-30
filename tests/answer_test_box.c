@@ -10,25 +10,25 @@ int main()
 {
     // Init the application and the main widget
     terminal_application_t app;
-    tmanager_t main_manager;
-    init_tmanager(&main_manager);
-    init_terminal_application(&app, &main_manager.twidget);
+    tstack_t main_stack;
+    init_tstack(&main_stack);
+    init_terminal_application(&app, &main_stack.twidget);
     app.sleep_duration = 0.5; // time between two iterations
 
     // Set layout for main widget
     twidget_linear_layout_t main_layout;
     init_twidget_linear_layout(&main_layout, CT_VERTICAL);
-    set_twidget_layout(&main_manager.twidget, &main_layout);
+    set_twidget_layout(&main_stack.twidget, &main_layout);
     main_layout.config.auto_children_resize = 0;
     main_layout.config.vertical_align_mode = CT_CENTER;
     main_layout.config.horizontal_align_mode = CT_CENTER;
 
     // Init the box widget, with a fixed size
     // (the layout will not stretch it, only center it)
-    box_tmanager_t box;
-    init_box_tmanager(&box);
+    box_tstack_t box;
+    init_box_tstack(&box);
     set_terminal_vector(&box.twidget.size, 40, 10);
-    add_twidget_child(&main_manager.twidget, &box.twidget);
+    add_twidget_child(&main_stack.twidget, &box.twidget);
 
     // Set the box layout: vertical layout (title and one percent bar)
     twidget_linear_layout_t box_layout;
@@ -37,13 +37,13 @@ int main()
     set_twidget_layout(&box.twidget, &box_layout);
 
     // Define title for the box
-    text_line_tmanager_t box_title;
-    init_text_line_tmanager(&box_title);
+    text_line_tstack_t box_title;
+    init_text_line_tstack(&box_title);
     add_twidget_child(&box.twidget, &box_title.twidget);
 
     // Define cpu_bar widget with dummy data (does not change)
-    percent_bar_tmanager_t cpu_bar;
-    init_percent_bar_tmanager(&cpu_bar);
+    percent_bar_tstack_t cpu_bar;
+    init_percent_bar_tstack(&cpu_bar);
     add_twidget_child(&box.twidget, &cpu_bar.twidget);
     add_percent_data(&cpu_bar.data, 0., CT_GREEN);
 

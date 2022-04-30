@@ -11,12 +11,12 @@ const twidget_interface_t box_twidget_interface = {
     _draw_box,
     default_twidget_free};
 
-void init_box_tmanager(
-    box_tmanager_t *box)
+void init_box_tstack(
+    box_tstack_t *box)
 {
     init_twidget(&box->twidget);
     box->config.background = ' ';
-    box->twidget.manager = (void *)box;
+    box->twidget.stack = (void *)box;
     box->twidget.interface = &box_twidget_interface;
 }
 
@@ -43,7 +43,7 @@ void _reset_box_cursor_pos(terminal_vector_t box_size)
 void _draw_box(twidget_t *box)
 {
     char background = ' ';
-    box_twidget_config_t *config = &((box_tmanager_t *)box->manager)->config;
+    box_twidget_config_t *config = &((box_tstack_t *)box->stack)->config;
     if (config)
     {
         background = config->background;

@@ -11,8 +11,8 @@ const twidget_interface_t terminal_twidget_interface = {
     _draw_terminal,
     default_twidget_free};
 
-void init_terminal_tmanager(
-    terminal_tmanager_t *terminal,
+void init_terminal_tstack(
+    terminal_tstack_t *terminal,
     twidget_t *main_twidget)
 {
     twidget_t *term_twidget = &terminal->terminal_container_twidget;

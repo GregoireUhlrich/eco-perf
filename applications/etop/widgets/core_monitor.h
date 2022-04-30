@@ -17,31 +17,31 @@ typedef struct CoreMonitorTwidgetConfig
 {
 } core_monitor_twidget_config_t;
 
-typedef struct CoreMonitorTManager
+typedef struct CoreMonitorTStack
 {
     twidget_t twidget;
 
     twidget_linear_layout_t layout;
 
-    text_line_tmanager_t title;
-    percent_bar_tmanager_t percent_bar;
+    text_line_tstack_t title;
+    percent_bar_tstack_t percent_bar;
 
     core_monitor_twidget_data_t data;
     core_monitor_twidget_config_t config;
-} core_monitor_tmanager_t;
+} core_monitor_tstack_t;
 
 void init_core_monitor_twidget_data(core_monitor_twidget_data_t *data);
 
 void init_core_monitor_twidget_config(core_monitor_twidget_config_t *config);
 
-void init_core_monitor_tmanager(core_monitor_tmanager_t *manager);
+void init_core_monitor_tstack(core_monitor_tstack_t *stack);
 
 void set_core_monitor_data(
-    core_monitor_tmanager_t *manager,
+    core_monitor_tstack_t *stack,
     cpu_core_data_t *core_data);
 
 void set_core_monitor_title(
-    core_monitor_tmanager_t *manager,
+    core_monitor_tstack_t *stack,
     char const *title);
 
 extern const twidget_interface_t core_monitor_twidget_interface;

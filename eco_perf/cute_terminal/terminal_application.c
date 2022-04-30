@@ -7,14 +7,14 @@ void init_terminal_application(
     terminal_application_t *app,
     twidget_t *main_twidget)
 {
-    init_terminal_tmanager(&app->terminal_manager, main_twidget);
+    init_terminal_tstack(&app->terminal_stack, main_twidget);
     app->sleep_duration = CT_DEFAULT_SLEEP_DURATION;
     app->is_open = 0;
 }
 
 void update_terminal_application(terminal_application_t *app)
 {
-    twidget_t *terminal_twidget = &app->terminal_manager.terminal_container_twidget;
+    twidget_t *terminal_twidget = &app->terminal_stack.terminal_container_twidget;
     update_twidget(terminal_twidget);
     draw_twidget(terminal_twidget);
     fflush(stdout);
@@ -32,7 +32,7 @@ void run_terminal_application(terminal_application_t *app)
 
 void free_terminal_application(terminal_application_t *app)
 {
-    twidget_t *terminal_twidget = &app->terminal_manager.terminal_container_twidget;
+    twidget_t *terminal_twidget = &app->terminal_stack.terminal_container_twidget;
     terminal_twidget->interface->draw(terminal_twidget);
     free_twidget(terminal_twidget);
 }

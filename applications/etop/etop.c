@@ -14,7 +14,7 @@
 #include <unistd.h>
 
 void update_cpu_data(
-    percent_bar_tmanager_t *percent_bar,
+    percent_bar_tstack_t *percent_bar,
     cpu_core_data_t const *ratio)
 {
     percent_bar_data_t *data = &percent_bar->data;
@@ -41,9 +41,9 @@ void display_cpu_data(unsigned short max_iter)
     int n_cpus = first.n_cpus;
 
     // Main widget
-    box_tmanager_t main_manager;
-    init_box_tmanager(&main_manager);
-    twidget_t *main_widget = &main_manager.twidget;
+    box_tstack_t main_stack;
+    init_box_tstack(&main_stack);
+    twidget_t *main_widget = &main_stack.twidget;
 
     // Init the terminal widget containing the main widget
     terminal_application_t app;
@@ -57,7 +57,7 @@ void display_cpu_data(unsigned short max_iter)
     set_twidget_layout(main_widget, &hlayout);
 
     // Each sub-widget has vertical layout
-    tmanager_t cpudata_managers[3];
+    tstack_t cpudata_stacks[3];
     twidget_linear_layout_t test_vlayouts[3];
     int cpubar_size = 35;
     for (int i = 0; i != 3; ++i)
@@ -65,26 +65,26 @@ void display_cpu_data(unsigned short max_iter)
         init_twidget_linear_layout(&test_vlayouts[i], CT_VERTICAL);
         test_vlayouts[i].config.horizontal_align_mode = CT_TOP_OR_LEFT + i;
         test_vlayouts[i].config.vertical_align_mode = CT_TOP_OR_LEFT + i;
-        init_tmanager(&cpudata_managers[i]);
+        init_tstack(&cpudata_stacks[i]);
         if (i == 1)
         {
             test_vlayouts[i].config.auto_children_resize = 0;
-            cpudata_managers[i].twidget.size.x = cpubar_size;
-            cpudata_managers[i].twidget.fixed_size.x = 1;
+            cpudata_stacks[i].twidget.size.x = cpubar_size;
+            cpudata_stacks[i].twidget.fixed_size.x = 1;
             test_vlayouts[i].config.spacing = 1;
         }
-        set_twidget_layout(&cpudata_managers[i].twidget, &test_vlayouts[i]);
-        add_twidget_child(main_widget, &cpudata_managers[i].twidget);
+        set_twidget_layout(&cpudata_stacks[i].twidget, &test_vlayouts[i]);
+        add_twidget_child(main_widget, &cpudata_stacks[i].twidget);
     }
 
-    percent_bar_tmanager_t *cpu_bars = malloc(3 * n_cpus * sizeof(percent_bar_tmanager_t));
+    percent_bar_tstack_t *cpu_bars = malloc(3 * n_cpus * sizeof(percent_bar_tstack_t));
     for (int i = 0; i != 3 * first.n_cpus; ++i)
     {
-        init_percent_bar_tmanager(&cpu_bars[i]);
+        init_percent_bar_tstack(&cpu_bars[i]);
         cpu_bars[i].twidget.size.x = cpubar_size;
         cpu_bars[i].twidget.size.y = 1;
         add_twidget_child(
-            &cpudata_managers[i / n_cpus].twidget,
+            &cpudata_stacks[i / n_cpus].twidget,
             &cpu_bars[i].twidget);
     }
 
@@ -92,8 +92,8 @@ void display_cpu_data(unsigned short max_iter)
     diff_cpu_data(&first, &last, &diff);
     calculate_ratio(&diff, &ratio, n_seconds_sleep);
 
-    core_monitor_tmanager_t core_monitor;
-    init_core_monitor_tmanager(&core_monitor);
+    core_monitor_tstack_t core_monitor;
+    init_core_monitor_tstack(&core_monitor);
     core_monitor.twidget.floating = 1;
     core_monitor.twidget.pos.x = 120;
     add_twidget_child(main_widget, &core_monitor.twidget);

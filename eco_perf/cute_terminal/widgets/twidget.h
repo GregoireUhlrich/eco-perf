@@ -24,7 +24,7 @@ typedef struct TWidget
 
     twidget_layout_t *layout; // layout for the widget, can be null
 
-    void *manager;
+    void *stack;
     twidget_interface_t const *interface; // interface functions
 
     struct TWidget *parent;
@@ -62,12 +62,12 @@ void remove_twidget_child(
 
 extern const twidget_interface_t default_twidget_interface;
 
-typedef struct TManager
+typedef struct TStack
 {
     twidget_t twidget;
-} tmanager_t;
+} tstack_t;
 
-void init_tmanager(tmanager_t *manager);
+void init_tstack(tstack_t *stack);
 
 #undef DEF_TERMINAL_VECTOR
 

@@ -6,7 +6,7 @@
 typedef struct TerminalApplication
 {
     int is_open;
-    terminal_tmanager_t terminal_manager;
+    terminal_tstack_t terminal_stack;
     float sleep_duration; // in seconds
 } terminal_application_t;
 

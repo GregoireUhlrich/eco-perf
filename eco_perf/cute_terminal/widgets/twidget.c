@@ -34,9 +34,9 @@ void init_term_vector(terminal_vector_t *vector)
     vector->y = 0;
 }
 
-void init_tmanager(tmanager_t *manager)
+void init_tstack(tstack_t *stack)
 {
-    init_twidget(&manager->twidget);
+    init_twidget(&stack->twidget);
 }
 
 void set_twidget_layout(
@@ -69,7 +69,7 @@ void init_twidget(twidget_t *widget)
 
     widget->layout = NULL;
 
-    widget->manager = NULL;
+    widget->stack = NULL;
     widget->interface = &default_twidget_interface;
 
     widget->parent = NULL;

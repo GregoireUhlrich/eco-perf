@@ -14,23 +14,23 @@ typedef struct TextLineTWidgetConfig
 
 } text_line_twidget_config_t;
 
-typedef struct TextLineTManager
+typedef struct TextLineTStack
 {
     twidget_t twidget;
     text_line_twidget_data_t data;
     text_line_twidget_config_t config;
-} text_line_tmanager_t;
+} text_line_tstack_t;
 
 extern const twidget_interface_t text_line_twidget_interface;
 
-void init_text_line_tmanager(
-    text_line_tmanager_t *manager);
+void init_text_line_tstack(
+    text_line_tstack_t *stack);
 
 void init_text_line_twidget_data(text_line_twidget_data_t *data);
 void init_text_line_twidget_config(text_line_twidget_config_t *config);
 
 void set_text_line_content(
-    text_line_tmanager_t *line_manager,
+    text_line_tstack_t *line_stack,
     char const *line);
 
 #endif

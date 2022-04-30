@@ -20,21 +20,21 @@ void print_drawable(twidget_t *drawable)
 
 void test_boxes()
 {
-    box_tmanager_t bigger_box;
+    box_tstack_t bigger_box;
     terminal_vector_t pos, size;
     pos.x = 10;
     pos.y = 5;
     size.x = 100;
     size.y = 10;
-    init_box_tmanager(&bigger_box);
+    init_box_tstack(&bigger_box);
     bigger_box.twidget.pos = pos;
     bigger_box.twidget.size = size;
 
     clear_terminal();
-    box_tmanager_t box1, box2, box3;
-    init_box_tmanager(&box1);
-    init_box_tmanager(&box2);
-    init_box_tmanager(&box3);
+    box_tstack_t box1, box2, box3;
+    init_box_tstack(&box1);
+    init_box_tstack(&box2);
+    init_box_tstack(&box3);
 
     pos.x = 0;
     pos.y = 1;
