@@ -2,19 +2,6 @@
 #include "error.h"
 #include "memory.h"
 
-#ifndef ES_ECO_MODE
-#define _BOUND_CHECK(pos, size)                                   \
-    {                                                             \
-        ES_ASSERT(                                                \
-            pos < size,                                           \
-            ES_INDEX_ERROR,                                       \
-            "Index %d is out of bounds of container of size %d.", \
-            pos, size)                                            \
-    }
-#else
-#define _BOUND_CHECK(pos, size)
-#endif
-
 void es_container_init(es_container_t *container, es_size_t object_size)
 {
     ES_ASSERT(
@@ -49,7 +36,9 @@ void es_container_free(es_container_t *container)
     es_container_init(container, container->object_size);
 }
 
-void es_container_push(es_container_t *container, void const *value_ptr)
+void es_container_push(
+    es_container_t *container,
+    es_cref_t value_ptr)
 {
     if (container->size == container->_memory_size)
     {
@@ -70,8 +59,9 @@ void es_container_erase(es_container_t *container, es_size_t pos)
     const es_size_t size = container->size;
     const es_size_t object_size = container->object_size;
     _BOUND_CHECK(pos, size)
-    void *first = &container[pos];
-    void const *last = first + (size - pos) * object_size;
+    es_iterator_t first = es_container_begin(container);
+    es_container_moveit(container, &first, pos);
+    const es_iterator_t last = es_container_end(container);
     while (first + object_size != last)
     {
         void *next = first + object_size;
@@ -81,7 +71,7 @@ void es_container_erase(es_container_t *container, es_size_t pos)
     --container->size;
 }
 
-void *es_container_get(es_container_t *container, es_size_t pos)
+es_ref_t es_container_get(es_container_t *container, es_size_t pos)
 {
     _BOUND_CHECK(pos, container->size)
     return (container->data + pos * (container->object_size));
@@ -90,7 +80,7 @@ void *es_container_get(es_container_t *container, es_size_t pos)
 void es_container_set(
     es_container_t *container,
     es_size_t pos,
-    void const *value)
+    es_cref_t value)
 {
     _BOUND_CHECK(pos, container->size)
     memcpy(

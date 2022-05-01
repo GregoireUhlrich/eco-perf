@@ -2,7 +2,6 @@
 #define ECO_STD_CONTAINER_H_INCLUDED
 
 #include "def.h"
-
 typedef struct ESContainer
 {
     void *data;
@@ -19,16 +18,16 @@ void es_container_clear(es_container_t *container);
 
 void es_container_free(es_container_t *container);
 
-void es_container_push(es_container_t *container, void const *value_ptr);
+void es_container_push(es_container_t *container, es_cref_t value_ptr);
 
 void es_container_erase(es_container_t *container, es_size_t pos);
 
-void *es_container_get(es_container_t *container, es_size_t pos);
+es_ref_t es_container_get(es_container_t *container, es_size_t pos);
 
 void es_container_set(
     es_container_t *container,
     es_size_t pos,
-    void const *value);
+    es_cref_t value);
 
 es_iterator_t es_container_begin(es_container_t const *container);
 

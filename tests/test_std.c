@@ -1,4 +1,5 @@
 #include "eco_perf/eco_std/container.h"
+#include "eco_perf/eco_std/vector.h"
 #include <stdio.h>
 
 int main()
@@ -31,6 +32,16 @@ int main()
             printf("%d: (it) %d\n", es_container_diffit(&int_container, first, it), *(int *)it);
         }
     }
+
+    es_vector_t int_references;
+    es_vector_init(&int_references);
+    es_vector_reserve(&int_references, int_container.size);
+    for (int i = 0; i != int_container.size; ++i)
+    {
+        int_references.data[i] = es_container_get(&int_container, i);
+        printf("vector el %d : %d\n", i, *(int *)int_references.data[i]);
+    }
+
     es_container_erase(&int_container, 1);
     es_container_summary(&int_container);
     es_container_clear(&int_container);

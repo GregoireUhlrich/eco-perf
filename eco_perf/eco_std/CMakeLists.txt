@@ -3,4 +3,5 @@ add_library(eco_std
     error.h error.c
     memory.h memory.c
     container.h container.c
+    vector.h vector.c
 )
