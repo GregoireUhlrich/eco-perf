@@ -12,3 +12,6 @@ target_link_libraries(answer_test_box eco_perf)
 
 add_executable(test_ls test_ls.c)
 target_link_libraries(test_ls eco_perf)
+
+add_executable(test_std test_std.c)
+target_link_libraries(test_std eco_perf)

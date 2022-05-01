@@ -24,7 +24,7 @@ int main()
     process_data_t *list = create_process_list(&n_processes);
 
     int iter = 0;
-    int max_iter = 5;
+    int max_iter = 10;
     while (iter++ < max_iter)
     {
         list = update_process_list(list, &n_processes);
