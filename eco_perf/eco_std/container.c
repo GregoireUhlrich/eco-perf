@@ -8,10 +8,26 @@ void es_container_init(es_container_t *container, es_size_t object_size)
         object_size > 0,
         ES_VALUE_ERROR,
         "Cannot create a container for object of size 0.")
-    container->data = NULL;
+    container->data = ES_NULL;
     container->object_size = object_size;
     container->size = 0;
     container->_memory_size = 0;
+}
+
+void _es_container_alloc(es_container_t *container)
+{
+    if (container->_memory_size == 0)
+    {
+        container->data = es_malloc(container->object_size);
+        container->_memory_size = 1;
+    }
+    else
+    {
+        container->data = es_realloc(
+            container->data,
+            2 * container->_memory_size * container->object_size);
+        container->_memory_size *= 2;
+    }
 }
 
 void es_container_reserve(es_container_t *container, es_size_t size)
@@ -42,10 +58,7 @@ void es_container_push(
 {
     if (container->size == container->_memory_size)
     {
-        container->data = es_realloc(
-            container->data,
-            2 * container->_memory_size * container->object_size);
-        container->_memory_size *= 2;
+        _es_container_alloc(container);
     }
     memcpy(
         container->data + container->object_size * container->size,

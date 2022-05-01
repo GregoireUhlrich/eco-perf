@@ -1,6 +1,9 @@
+#include "eco_perf/eco_std/algo.h"
 #include "eco_perf/eco_std/container.h"
 #include "eco_perf/eco_std/vector.h"
 #include <stdio.h>
+
+ES_DEFINE_DEFAULT_COMP(int, int_comparator)
 
 int main()
 {
@@ -38,8 +41,23 @@ int main()
     es_vector_reserve(&int_references, int_container.size);
     for (int i = 0; i != int_container.size; ++i)
     {
-        int_references.data[i] = es_container_get(&int_container, i);
+        es_vector_push(&int_references, es_container_get(&int_container, i));
         printf("vector el %d : %d\n", i, *(int *)int_references.data[i]);
+    }
+    int additional_value = 8;
+    es_vector_insert(&int_references, 3, &additional_value);
+    for (int i = 0; i != int_references.size; ++i)
+    {
+        printf("vector el %d : %d\n", i, *(int *)int_references.data[i]);
+    }
+    for (int i = -1; i < 30; i += 5)
+    {
+        es_ref_t *begin = es_vector_begin(&int_references);
+        es_ref_t *end = es_vector_end(&int_references);
+        es_ref_t *pos_insert = es_bsearch(begin, end, &i, int_comparator);
+        es_size_t pos_find = es_bsearch_find(begin, end, &i, int_comparator);
+        printf("Insert position of %d in vec is %lu\n", i, pos_insert - begin);
+        printf("Position of %d in vec is %u\n", i, pos_find);
     }
 
     es_container_erase(&int_container, 1);
