@@ -15,15 +15,15 @@ typedef struct ESMapItem
 
 typedef struct ESMap
 {
-    es_size_t size;
+    es_size_t n_buckets;
     es_map_item_t *buckets;
-    es_size_t items;
+    es_size_t size;
 } es_map_t;
 
 typedef void (*es_map_pair_function_t)(
     es_map_key_t key,
-    void *value,
-    void *userdata);
+    es_ref_t value,
+    es_ref_t userdata);
 
 void es_map_init(es_map_t *map, es_size_t size);
 
@@ -31,17 +31,17 @@ void es_map_free(es_map_t *map);
 
 void es_map_clear(es_map_t *map);
 
-void es_map_set_size(es_map_t *map, es_size_t size);
+void es_map_resize(es_map_t *map, es_size_t size);
 
-void es_map_put(es_map_t *map, es_map_key_t key, void *value);
+void es_map_put(es_map_t *map, es_map_key_t key, es_ref_t value);
 
-void *es_map_remove(es_map_t *map, es_map_key_t key);
+es_ref_t es_map_remove(es_map_t *map, es_map_key_t key);
 
-void *es_map_get(es_map_t *map, es_map_key_t key);
+es_ref_t es_map_get(es_map_t *map, es_map_key_t key);
 
 void es_map_for_each(
     es_map_t *map,
     es_map_pair_function_t f,
-    void *userData);
+    es_ref_t userData);
 
 #endif
