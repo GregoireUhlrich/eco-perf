@@ -4,7 +4,8 @@
 #include <stddef.h>
 
 typedef unsigned int es_size_t;
+typedef int es_diff_t;
 
-typedef void *es_object_t;
+typedef void *es_iterator_t;
 
 #endif
