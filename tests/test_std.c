@@ -5,6 +5,19 @@
 
 ES_DEFINE_DEFAULT_COMP(int, int_comparator)
 
+bool weird_int_order(es_cref_t A, es_cref_t B)
+{
+    const int a = *(int const *)A;
+    const int b = *(int const *)B;
+    if (a == 4)
+        return false;
+    if ((a & 1) != (b & 1))
+    {
+        return a & 1;
+    }
+    return a > b;
+}
+
 int main()
 {
     es_container_t int_container;
@@ -46,6 +59,15 @@ int main()
     }
     int additional_value = 8;
     es_vector_insert(&int_references, 3, &additional_value);
+    for (int i = 0; i != int_references.size; ++i)
+    {
+        printf("vector el %d : %d\n", i, *(int *)int_references.data[i]);
+    }
+    es_qsort(
+        es_vector_begin(&int_references),
+        es_vector_end(&int_references),
+        weird_int_order);
+    printf("sorted vector:\n");
     for (int i = 0; i != int_references.size; ++i)
     {
         printf("vector el %d : %d\n", i, *(int *)int_references.data[i]);

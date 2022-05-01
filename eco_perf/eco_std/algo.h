@@ -15,4 +15,9 @@ es_size_t es_bsearch_find(
     es_ref_t value_ref,
     es_comparator_t comp);
 
+void es_qsort(
+    es_ref_t *first,
+    es_ref_t *last,
+    es_comparator_t comp);
+
 #endif

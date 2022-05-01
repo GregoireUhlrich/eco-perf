@@ -1,4 +1,6 @@
 #include "vector.h"
+#include "algo.h"
+#include "container.h"
 #include "error.h"
 #include "memory.h"
 
@@ -7,6 +9,18 @@ void es_vector_init(es_vector_t *vector)
     vector->data = ES_NULL;
     vector->size = 0;
     vector->_memory_size = 0;
+}
+
+void es_vector_init_from_container(
+    es_vector_t *vector,
+    es_container_t *container)
+{
+    const es_size_t size = container->size;
+    es_vector_resize(vector, size);
+    for (int i = 0; i != size; ++i)
+    {
+        vector->data[i] = es_container_get(container, i);
+    }
 }
 
 void es_vector_reserve(es_vector_t *vector, es_size_t size)
@@ -114,6 +128,16 @@ void es_vector_insert(
         vector->data[i] = vector->data[i - 1];
     }
     vector->data[pos] = value;
+}
+
+void es_vector_sort(
+    es_vector_t *vector,
+    es_comparator_t comp)
+{
+    es_qsort(
+        es_vector_begin(vector),
+        es_vector_end(vector),
+        comp);
 }
 
 void es_vector_summary(es_vector_t const *vector)

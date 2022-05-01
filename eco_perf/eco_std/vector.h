@@ -10,7 +10,13 @@ typedef struct ESVector
     es_size_t _memory_size;
 } es_vector_t;
 
+struct ESContainer;
+
 void es_vector_init(es_vector_t *vector);
+
+void es_vector_init_from_container(
+    es_vector_t *vector,
+    struct ESContainer *container);
 
 void es_vector_reserve(es_vector_t *vector, es_size_t size);
 
@@ -32,6 +38,10 @@ void es_vector_insert(
     es_vector_t *vector,
     es_size_t pos,
     es_ref_t value);
+
+void es_vector_sort(
+    es_vector_t *vector,
+    es_comparator_t comp);
 
 void es_vector_summary(es_vector_t const *vector);
 

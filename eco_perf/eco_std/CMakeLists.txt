@@ -5,5 +5,5 @@ add_library(eco_std
     container.h container.c
     vector.h vector.c
     algo.h algo.c
-    set.h set.c
+    map.h map.c
 )
