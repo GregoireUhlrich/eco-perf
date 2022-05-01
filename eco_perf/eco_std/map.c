@@ -4,11 +4,17 @@
 
 static es_size_t _next_prime(es_size_t n);
 
-void es_map_init(es_map_t *map, es_size_t size)
+void es_map_init(
+    es_map_t *map,
+    es_size_t size,
+    es_hash_function_t hash,
+    es_comparator_t key_comp)
 {
     map->size = 0;
     map->n_buckets = _next_prime(size);
     map->buckets = (es_map_item_t *)es_calloc(map->n_buckets, sizeof(es_map_item_t));
+    map->hash = hash;
+    map->key_comp = key_comp;
 }
 
 void es_map_free(es_map_t *map)
@@ -25,10 +31,11 @@ void es_map_clear(es_map_t *map)
 
 static void _insert_map_pair(
     es_map_t *map,
-    es_map_key_t key,
+    es_ref_t key,
     es_ref_t value)
 {
-    es_size_t index = key % map->n_buckets;
+    es_size_t hash = map->hash(key);
+    es_size_t index = hash % map->n_buckets;
     es_size_t probe = 0;
 
     while (true)
@@ -37,13 +44,13 @@ static void _insert_map_pair(
         {
             map->size++;
             es_map_item_t *item = &map->buckets[index];
+            item->hash = hash;
             item->key = key;
-            item->probe = probe;
             item->value = value;
             return;
         }
 
-        if (map->buckets[index].key == key)
+        if (map->key_comp(map->buckets[index].key, key))
         {
             map->buckets[index].value = value;
             return;
@@ -52,12 +59,15 @@ static void _insert_map_pair(
         if (probe > map->buckets[index].probe)
         {
             es_map_item_t *item = &map->buckets[index];
-            key = item->key;
-            probe = item->probe;
-            value = item->value;
+            es_map_item_t foo = *item;
             item->key = key;
+            item->hash = hash;
             item->probe = probe;
             item->value = value;
+            key = foo.key;
+            hash = foo.hash;
+            probe = foo.probe;
+            value = foo.value;
         }
         index = (index + 1) % map->n_buckets;
         probe++;
@@ -88,7 +98,7 @@ void es_map_resize(es_map_t *map, es_size_t size)
     es_free(oldBuckets);
 }
 
-void es_map_put(es_map_t *map, es_map_key_t key, es_ref_t value)
+void es_map_put(es_map_t *map, es_ref_t key, es_ref_t value)
 {
     if (10 * map->size > 7 * map->n_buckets)
     {
@@ -98,16 +108,17 @@ void es_map_put(es_map_t *map, es_map_key_t key, es_ref_t value)
     _insert_map_pair(map, key, value);
 }
 
-es_ref_t es_map_remove(es_map_t *map, es_map_key_t key)
+es_ref_t es_map_remove(es_map_t *map, es_ref_t key)
 {
-    es_size_t index = key % map->n_buckets;
+    es_size_t hash = map->hash(key);
+    es_size_t index = hash % map->n_buckets;
     es_size_t probe = 0;
 
     es_ref_t res = ES_NULL;
 
     while (map->buckets[index].value)
     {
-        if (map->buckets[index].key == key)
+        if (map->key_comp(map->buckets[index].key, key))
         {
             res = map->buckets[index].value;
             es_size_t next = (index + 1) % map->n_buckets;
@@ -140,15 +151,16 @@ es_ref_t es_map_remove(es_map_t *map, es_map_key_t key)
     return res;
 }
 
-es_ref_t es_map_get(es_map_t *map, es_map_key_t key)
+es_ref_t es_map_get(es_map_t *map, es_ref_t key)
 {
-    es_size_t index = key % map->n_buckets;
+    es_size_t hash = map->hash(key);
+    es_size_t index = hash % map->n_buckets;
     es_size_t probe = 0;
     es_ref_t res = ES_NULL;
 
     while (map->buckets[index].value)
     {
-        if (map->buckets[index].key == key)
+        if (map->key_comp(map->buckets[index].key, key))
         {
             res = map->buckets[index].value;
             break;
