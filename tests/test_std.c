@@ -1,4 +1,5 @@
 #include "eco_perf/eco_std/algo.h"
+#include "eco_perf/eco_std/comparison.h"
 #include "eco_perf/eco_std/container.h"
 #include "eco_perf/eco_std/map.h"
 #include "eco_perf/eco_std/vector.h"
@@ -18,30 +19,6 @@ bool weird_int_order(es_cref_t A, es_cref_t B)
         return a & 1;
     }
     return a > b;
-}
-
-es_hash_t int_hash(es_cref_t i)
-{
-    return *(int const *)i;
-}
-
-bool int_comp(es_cref_t A, es_cref_t B)
-{
-    return *(int const *)A == *(int const *)B;
-}
-
-es_hash_t str_hash(es_cref_t key)
-{
-    char const *s = *(char const **)key;
-    es_hash_t hashval;
-    for (hashval = 0; *s; s++)
-        hashval = *s + 31 * hashval;
-    return hashval;
-}
-
-bool str_comp(es_cref_t A, es_cref_t B)
-{
-    return strcmp(*(char const **)A, *(char const **)B) == 0;
 }
 
 int main()
@@ -128,7 +105,7 @@ int main()
 
     es_map_t map;
     // es_map_init(&map, 10, int_hash, int_comp);
-    es_map_init(&map, 4, es_string_hash, es_string_comp);
+    es_map_init(&map, 4, es_string_hash, es_string_eq);
     char *values[] = {
         "Hello",
         "World",
@@ -147,7 +124,7 @@ int main()
         printf("Map[%s] = %s\n", values[i], val);
     }
 
-    es_map_init(&map, 10, int_hash, int_comp);
+    es_map_init(&map, 10, es_int_hash, es_int_eq);
     int int_values[] = {0, 1, 2, 3, 4, 5, 6, 7, 9, 10};
     for (int i = 0; i != sizeof(int_values) / 4; ++i)
     {
