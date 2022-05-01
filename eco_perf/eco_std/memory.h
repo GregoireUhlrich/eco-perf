@@ -5,8 +5,10 @@
 
 void *es_malloc(es_size_t size);
 
-void es_free(void *ptr);
+void *es_calloc(es_size_t num, es_size_t size);
 
 void *es_realloc(void *ptr, es_size_t size);
+
+void es_free(void *ptr);
 
 #endif

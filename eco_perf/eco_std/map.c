@@ -1,39 +1,16 @@
 #include "map.h"
+#include "error.h"
+#include "memory.h"
 
-/*
-static const uint64_t OEISprimes[] = {
-    7, 13, 31, 61, 127, 251, 509, 1021, 2039, 4093, 8191,
-    16381, 32749, 65521, 131071, 262139, 524287, 1048573,
-    2097143, 4194301, 8388593, 16777213, 33554393,
-    67108859, 134217689, 268435399, 536870909, 1073741789,
-    2147483647, 4294967291, 8589934583, 17179869143,
-    34359738337, 68719476731, 137438953447};
+static es_size_t _next_prime(es_size_t n);
 
-static size_t nextPrime(size_t n)
+void es_map_init(es_map_t *map, es_size_t size)
 {
-    for (size_t i = 0; i < ARRAYSIZE(OEISprimes) && OEISprimes[i] < SIZE_MAX; i++)
-    {
-        if (n <= OEISprimes[i])
-            return OEISprimes[i];
-    }
-
-    CRT_fatalError("Hashtable: no prime found");
-}
-
-es_map_t *es_map_init(size_t size, bool owner)
-{
-    es_map_t *map;
-
-    map = xMalloc(sizeof(es_map_t));
     map->items = 0;
-    map->size = size ? nextPrime(size) : 13;
-    map->buckets = (es_map_item_t *)xCalloc(map->size, sizeof(es_map_item_t));
-    map->owner = owner;
-
-    assert(Hashtable_isConsistent(map));
-    return map;
+    map->size = size ? _next_prime(size) : 13;
+    map->buckets = (es_map_item_t *)es_calloc(map->size, sizeof(es_map_item_t));
 }
-
+/*
 void es_map_free(es_map_t *map)
 {
     es_map_clear(map);
@@ -47,7 +24,7 @@ void es_map_clear(es_map_t *map)
     assert(Hashtable_isConsistent(map));
 
     if (map->owner)
-        for (size_t i = 0; i < map->size; i++)
+        for (es_size_t i = 0; i < map->size; i++)
             free(map->buckets[i].value);
 
     memset(map->buckets, 0, map->size * sizeof(es_map_item_t));
@@ -58,8 +35,8 @@ void es_map_clear(es_map_t *map)
 
 static void insert(es_map_t *map, es_map_key_t key, void *value)
 {
-    size_t index = key % map->size;
-    size_t probe = 0;
+    es_size_t index = key % map->size;
+    es_size_t probe = 0;
 
     for (;;)
     {
@@ -100,24 +77,24 @@ static void insert(es_map_t *map, es_map_key_t key, void *value)
     }
 }
 
-void es_map_set_size(es_map_t *map, size_t size)
+void es_map_set_size(es_map_t *map, es_size_t size)
 {
 
     if (size <= map->items)
         return;
 
-    size_t newSize = nextPrime(size);
+    es_size_t newSize = nextPrime(size);
     if (newSize == map->size)
         return;
 
     es_map_item_t *oldBuckets = map->buckets;
-    size_t oldSize = map->size;
+    es_size_t oldSize = map->size;
 
     map->size = newSize;
     map->buckets = (es_map_item_t *)xCalloc(map->size, sizeof(es_map_item_t));
     map->items = 0;
 
-    for (size_t i = 0; i < oldSize; i++)
+    for (es_size_t i = 0; i < oldSize; i++)
     {
         if (!oldBuckets[i].value)
             continue;
@@ -154,8 +131,8 @@ void es_map_put(es_map_t *map, es_map_key_t key, void *value)
 
 void *es_map_remove(es_map_t *map, es_map_key_t key)
 {
-    size_t index = key % map->size;
-    size_t probe = 0;
+    es_size_t index = key % map->size;
+    es_size_t probe = 0;
 
     assert(Hashtable_isConsistent(map));
 
@@ -174,7 +151,7 @@ void *es_map_remove(es_map_t *map, es_map_key_t key)
                 res = map->buckets[index].value;
             }
 
-            size_t next = (index + 1) % map->size;
+            es_size_t next = (index + 1) % map->size;
 
             while (map->buckets[next].value && map->buckets[next].probe > 0)
             {
@@ -211,8 +188,8 @@ void *es_map_remove(es_map_t *map, es_map_key_t key)
 
 void *es_map_get(es_map_t *map, es_map_key_t key)
 {
-    size_t index = key % map->size;
-    size_t probe = 0;
+    es_size_t index = key % map->size;
+    es_size_t probe = 0;
     void *res = NULL;
 
     assert(Hashtable_isConsistent(map));
@@ -240,7 +217,7 @@ void *es_map_get(es_map_t *map, es_map_key_t key)
 void es_map_for_each(es_map_t *map, es_map_pair_function_t f, void *userData)
 {
     assert(Hashtable_isConsistent(map));
-    for (size_t i = 0; i < map->size; i++)
+    for (es_size_t i = 0; i < map->size; i++)
     {
         es_map_item_t *walk = &map->buckets[i];
         if (walk->value)
@@ -249,3 +226,34 @@ void es_map_for_each(es_map_t *map, es_map_pair_function_t f, void *userData)
     assert(Hashtable_isConsistent(map));
 }
 */
+
+#if ES_USE_LONG_SIZE
+static const es_size_t primes[] = {
+    7, 13, 31, 61, 127, 251, 509, 1021, 2039, 4093, 8191,
+    16381, 32749, 65521, 131071, 262139, 524287, 1048573,
+    2097143, 4194301, 8388593, 16777213, 33554393,
+    67108859, 134217689, 268435399, 536870909, 1073741789,
+    2147483647, 4294967291, 8589934583, 17179869143,
+    34359738337, 68719476731, 137438953447};
+#else
+static const es_size_t primes[] = {
+    7, 13, 31, 61, 127, 251, 509, 1021, 2039, 4093, 8191,
+    16381, 32749, 65521, 131071, 262139, 524287, 1048573,
+    2097143, 4194301, 8388593, 16777213, 33554393,
+    67108859, 134217689, 268435399, 536870909, 1073741789,
+    2147483647, 4294967291};
+#endif
+static const es_size_t n_primes = sizeof(primes) / sizeof(es_size_t);
+
+es_size_t _next_prime(es_size_t n)
+{
+    for (es_size_t i = 0; i < n_primes && primes[i] < ES_MAX_SIZE; i++)
+    {
+        if (n <= primes[i])
+            return primes[i];
+    }
+    ES_ERROR(
+        ES_OVERFLOW_ERROR,
+        "Cannot build a map of size %d.",
+        n)
+}

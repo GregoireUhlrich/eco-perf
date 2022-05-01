@@ -9,10 +9,11 @@ void *es_malloc(es_size_t size)
     return ptr;
 }
 
-void es_free(void *ptr)
+void *es_calloc(es_size_t num, es_size_t size)
 {
-    ES_ASSERT(ptr, ES_MEMORY_ERROR, "Double free.")
-    free(ptr);
+    void *ptr = calloc(num, size);
+    ES_ASSERT(ptr, ES_MEMORY_ERROR, "Bad allocation.")
+    return ptr;
 }
 
 void *es_realloc(void *ptr, es_size_t size)
@@ -20,4 +21,10 @@ void *es_realloc(void *ptr, es_size_t size)
     ptr = realloc(ptr, size);
     ES_ASSERT(ptr, ES_MEMORY_ERROR, "Bad allocation.")
     return ptr;
+}
+
+void es_free(void *ptr)
+{
+    ES_ASSERT(ptr, ES_MEMORY_ERROR, "Double free.")
+    free(ptr);
 }

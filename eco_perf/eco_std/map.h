@@ -25,13 +25,13 @@ typedef void (*es_map_pair_function_t)(
     void *value,
     void *userdata);
 
-void es_map_init(size_t size, bool owner);
+void es_map_init(es_map_t *map, es_size_t size);
 
 void es_map_free(es_map_t *map);
 
 void es_map_clear(es_map_t *map);
 
-void es_map_set_size(es_map_t *map, size_t size);
+void es_map_set_size(es_map_t *map, es_size_t size);
 
 void es_map_put(es_map_t *map, es_map_key_t key, void *value);
 
