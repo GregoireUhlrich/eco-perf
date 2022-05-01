@@ -2,6 +2,7 @@
 #define ECO_PERF_PROCESS_H_INCLUDED
 
 #include "cpu_usage.h"
+#include "eco_perf/eco_std/container.h"
 #include "memory_usage.h"
 #include <limits.h>
 #include <stddef.h>
@@ -50,10 +51,10 @@ void list_processes();
 
 void free_process_data(process_data_t *process);
 
-process_data_t *create_process_list(size_t *n_processes);
+void create_process_list(es_container_t *container);
 
-process_data_t *update_process_list(process_data_t *list, size_t *n_processes);
+void update_process_list(es_container_t *container);
 
-void free_process_list(process_data_t *list);
+void free_process_list(es_container_t *container);
 
 #endif

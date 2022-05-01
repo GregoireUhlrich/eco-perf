@@ -73,7 +73,7 @@ void init_twidget(twidget_t *widget)
     widget->interface = &default_twidget_interface;
 
     widget->parent = NULL;
-    init_twidget_array(&widget->children);
+    es_vector_init(&widget->children);
 }
 
 void update_twidget(twidget_t *widget)
@@ -83,7 +83,7 @@ void update_twidget(twidget_t *widget)
     apply_twidget_layout(widget);
     for (int i = 0; i != widget->children.size; ++i)
     {
-        update_twidget(widget->children.widgets[i]);
+        update_twidget((twidget_t *)widget->children.data[i]);
     }
 }
 
@@ -119,14 +119,17 @@ void add_twidget_child(
         CT_VALUE_ERROR,
         "Child already has a parent!")
     child->parent = parent;
-    twidget_array_push_back(&parent->children, child);
+    es_vector_push(&parent->children, child);
 }
 
 int twidget_child_index(
     twidget_t *parent,
     twidget_t *child)
 {
-    return twidget_array_index_of(&parent->children, child);
+    for (int i = 0; i != parent->children.size; ++i)
+        if (parent->children.data[i] == child)
+            return i;
+    return -1;
 }
 
 void remove_twidget_child(
@@ -134,15 +137,16 @@ void remove_twidget_child(
     twidget_t *child,
     int free_child)
 {
+    int pos = twidget_child_index(parent, child);
+    CT_ASSERT(pos >= 0,
+              CT_VALUE_ERROR,
+              "Child not found in parent for removal.")
     if (free_child)
     {
         free_twidget(child);
     }
-    else
-    {
-        child->parent = NULL;
-    }
-    twidget_array_remove(&parent->children, child);
+    child->parent = NULL;
+    es_vector_erase(&parent->children, pos);
 }
 
 void free_twidget_children(twidget_t *widget)
@@ -151,13 +155,13 @@ void free_twidget_children(twidget_t *widget)
     {
         return;
     }
-    if (widget->children.widgets)
+    if (widget->children.data)
     {
         for (int i = 0; i != widget->children.size; ++i)
         {
-            free_twidget(widget->children.widgets[i]);
+            free_twidget((twidget_t *)widget->children.data[i]);
         }
-        free_twidget_array(&widget->children);
+        es_vector_free(&widget->children);
     }
 }
 void free_twidget(twidget_t *widget)

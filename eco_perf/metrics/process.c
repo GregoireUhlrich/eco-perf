@@ -1,6 +1,5 @@
 #include "process.h"
 #include "../system/list_dir.h"
-#include "eco_perf/cute_terminal/tools/memory.h"
 #include <ctype.h>
 #include <errno.h>
 #include <stddef.h>
@@ -130,18 +129,17 @@ void list_processes()
     close_directory_lister(&lister);
 }
 
-process_data_t *create_process_list(size_t *n_processes)
+void create_process_list(es_container_t *container)
 {
-    process_data_t *list;
     directory_lister_t lister;
     open_directory_lister(&lister, "/proc");
     char const *next;
-    *n_processes = 0;
+    int n_processes = 0;
     while ((next = get_next_directory(&lister)))
     {
         if (is_integer(next))
         {
-            ++(*n_processes);
+            ++n_processes;
         }
     }
     close_directory_lister(&lister);
@@ -152,40 +150,33 @@ process_data_t *create_process_list(size_t *n_processes)
         exit(1);
     }
 
-    list = (process_data_t *)malloc(2 * (*n_processes) * sizeof(process_data_t));
-    list = update_process_list(list, n_processes);
-    return list;
+    es_container_init(container, sizeof(process_data_t));
+    es_container_reserve(container, 2 * n_processes);
+    update_process_list(container);
 }
 
-process_data_t *update_process_list(process_data_t *list, size_t *n_processes)
+void update_process_list(es_container_t *container)
 {
     directory_lister_t lister;
     open_directory_lister(&lister, "/proc");
     char const *next;
-    size_t memory_size = *n_processes;
-    *n_processes = 0;
+    es_container_clear(container);
     while ((next = get_next_directory(&lister)))
     {
         if (is_integer(next))
         {
-            if (memory_size == *n_processes)
-            {
-                list = (process_data_t *)realloc(
-                    list,
-                    2 * memory_size * sizeof(process_data_t));
-                memory_size *= 2;
-            }
-            read_process_data(&list[*n_processes], atoi(next));
-            ++(*n_processes);
+            es_container_push(container, ES_NULL);
+            read_process_data(
+                es_container_get(container, container->size - 1),
+                atoi(next));
         }
     }
     close_directory_lister(&lister);
-    return list;
 }
 
-void free_process(process_data_t *list)
+void free_process_list(es_container_t *container)
 {
-    free(list);
+    es_container_free(container);
 }
 
 void free_process_data(process_data_t *process)

@@ -1,6 +1,6 @@
 add_library(eco_perf INTERFACE)
 
-target_link_libraries(eco_perf INTERFACE eco_std metrics cute_terminal system)
+target_link_libraries(eco_perf INTERFACE metrics cute_terminal system eco_std)
 
 add_subdirectory(eco_std)
 add_subdirectory(metrics)

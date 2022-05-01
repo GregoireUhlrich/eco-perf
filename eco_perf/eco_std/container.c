@@ -60,10 +60,20 @@ void es_container_push(
     {
         _es_container_alloc(container);
     }
-    memcpy(
-        container->data + container->object_size * container->size,
-        value_ptr,
-        container->object_size);
+    if (value_ptr)
+    {
+        memcpy(
+            container->data + container->object_size * container->size,
+            value_ptr,
+            container->object_size);
+    }
+    else
+    {
+        memset(
+            container->data + container->object_size * container->size,
+            0,
+            container->object_size);
+    }
     ++container->size;
 }
 

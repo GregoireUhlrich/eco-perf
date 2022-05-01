@@ -14,7 +14,7 @@ void print_drawable(twidget_t *drawable)
     for (int i = 0; i != drawable->children.size; ++i)
     {
         printf(" -> child %d: ", i);
-        print_drawable(drawable->children.widgets[i]);
+        print_drawable(drawable->children.data[i]);
     }
 }
 

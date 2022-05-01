@@ -20,4 +20,9 @@ void es_qsort(
     es_ref_t *last,
     es_comparator_t comp);
 
+void es_isort(
+    es_ref_t *first,
+    es_ref_t *last,
+    es_comparator_t comp);
+
 #endif

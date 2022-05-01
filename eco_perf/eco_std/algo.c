@@ -50,10 +50,44 @@ es_size_t es_bsearch_find(
     return comp(*(pos - 1), value_ref) ? ES_NPOS : (pos - first - 1);
 }
 
-es_ref_t *_qsort_partition(
+void es_isort(
+    es_ref_t *first,
+    es_ref_t *last,
+    es_comparator_t comp)
+{
+    if (first == last)
+    {
+        return;
+    }
+    es_ref_t *i = first + 1;
+    while (i != last)
+    {
+        const es_ref_t x = *i;
+        es_ref_t *j = i - 1;
+        while (j >= first && comp(x, *j))
+        {
+            *(j + 1) = *j;
+            --j;
+        }
+        *(j + 1) = x;
+        ++i;
+    }
+}
+
+#define USE_HOARE_PARTITION 1
+#define THRESHOLD_INSERTION_SORT 10
+
+#if USE_HOARE_PARTITION == 0
+static es_ref_t *_qsort_lomuto_partition(
     es_ref_t *first,
     es_ref_t *last,
     es_comparator_t comp);
+#else
+static es_ref_t *_qsort_hoare_partition(
+    es_ref_t *first,
+    es_ref_t *last,
+    es_comparator_t comp);
+#endif
 
 void es_qsort(
     es_ref_t *first,
@@ -64,12 +98,42 @@ void es_qsort(
     {
         return;
     }
-    es_ref_t *pivot = _qsort_partition(first, last, comp);
-    es_qsort(first, pivot, comp);
-    es_qsort(pivot, last, comp);
+    if (last - first < THRESHOLD_INSERTION_SORT)
+    {
+        return es_isort(first, last, comp);
+    }
+#if USE_HOARE_PARTITION == 1
+    es_ref_t *pivot = _qsort_hoare_partition(first, last, comp);
+    if (pivot - first < last - pivot - 1)
+    {
+        es_qsort(first, pivot, comp);
+        es_qsort(pivot + 1, last, comp);
+    }
+    else
+    {
+        es_qsort(pivot + 1, last, comp);
+        es_qsort(first, pivot, comp);
+    }
+#else
+    es_ref_t *pivot = _qsort_lomuto_partition(first, last, comp);
+    if (pivot - first < last - pivot)
+    {
+        es_qsort(first, pivot - 1, comp);
+        es_qsort(pivot + 1, last, comp);
+    }
+    else
+    {
+        es_qsort(pivot + 1, last, comp);
+        es_qsort(first, pivot - 1, comp);
+    }
+#endif
 }
 
-es_ref_t *_qsort_partition(
+// Source: https://en.wikipedia.org/wiki/Quicksort
+
+#if USE_HOARE_PARTITION == 0
+
+es_ref_t *_qsort_lomuto_partition(
     es_ref_t *first,
     es_ref_t *last,
     es_comparator_t comp)
@@ -93,3 +157,36 @@ es_ref_t *_qsort_partition(
 
     return pivot_pos;
 }
+
+#else
+
+es_ref_t *_qsort_hoare_partition(
+    es_ref_t *first,
+    es_ref_t *last,
+    es_comparator_t comp)
+{
+    --last; // put last on a valid value
+    const es_diff_t diff = last - first;
+    es_ref_t *middle = first + diff / 2;
+    es_ref_t pivot = *middle;
+    es_ref_t *i = first - 1;
+    es_ref_t *j = last + 1;
+    while (true)
+    {
+        do
+        {
+            ++i;
+        } while (comp(*i, pivot));
+        do
+        {
+            --j;
+        } while (comp(pivot, *j));
+        if (i >= j)
+            return j;
+        const es_ref_t foo = *i;
+        *i = *j;
+        *j = foo;
+    }
+}
+
+#endif

@@ -34,7 +34,8 @@ void _update_terminal(twidget_t *terminal)
         CT_VALUE_ERROR,
         "Terminal should have exactly one child widget, found %d.",
         terminal->children.size)
-    terminal->children.widgets[0]->size = terminal->size;
+    twidget_t *child = terminal->children.data[0];
+    child->size = terminal->size;
 }
 
 void _draw_terminal(twidget_t *terminal)

@@ -2,7 +2,7 @@
 
 static const char *error_strings[7];
 
-void _init_error_strings()
+static void _init_error_strings()
 {
     error_strings[ES_TYPE_ERROR] = "eco_std.TypeError";
     error_strings[ES_VALUE_ERROR] = "eco_std.ValueError";

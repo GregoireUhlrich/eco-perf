@@ -1,8 +1,8 @@
 #ifndef CUTE_TERMINAL_TERM_DRAWABLE_H_INCLUDED
 #define CUTE_TERMINAL_TERM_DRAWABLE_H_INCLUDED
 
+#include "../../eco_std/vector.h"
 #include "../terminal/vector.h"
-#include "../tools/twidget_array.h"
 #include "layouts/layout.h"
 #include "twidget_interface.h"
 
@@ -29,7 +29,7 @@ typedef struct TWidget
     twidget_interface_t const *interface; // interface functions
 
     struct TWidget *parent;
-    twidget_array_t children;
+    es_vector_t children;
 } twidget_t;
 
 void init_twidget(twidget_t *widget);
