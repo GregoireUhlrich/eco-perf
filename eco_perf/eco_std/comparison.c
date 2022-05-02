@@ -37,3 +37,13 @@ bool es_string_comp(es_cref_t left, es_cref_t right)
 {
     return strcmp(*(char const **)left, *(char const **)right) < 0;
 }
+
+bool es_char_array_eq(es_cref_t left, es_cref_t right)
+{
+    return strcmp((char const *)left, (char const *)right) == 0;
+}
+
+bool es_char_array_comp(es_cref_t left, es_cref_t right)
+{
+    return strcmp((char const *)left, (char const *)right) < 0;
+}

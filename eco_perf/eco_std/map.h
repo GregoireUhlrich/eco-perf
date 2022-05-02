@@ -21,7 +21,7 @@ typedef struct ESMap
     es_map_item_t *buckets;
     es_size_t size;
     es_hash_function_t hash;
-    es_comparator_t key_comp;
+    es_comparator_t key_eq;
 } es_map_t;
 
 typedef void (*es_map_pair_function_t)(
@@ -33,7 +33,7 @@ void es_map_init(
     es_map_t *map,
     es_size_t size,
     es_hash_function_t hash,
-    es_comparator_t key_comp);
+    es_comparator_t key_eq);
 
 void es_map_free(es_map_t *map);
 

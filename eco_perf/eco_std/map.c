@@ -8,13 +8,13 @@ void es_map_init(
     es_map_t *map,
     es_size_t size,
     es_hash_function_t hash,
-    es_comparator_t key_comp)
+    es_comparator_t key_eq)
 {
     map->size = 0;
     map->n_buckets = _next_prime(size);
     map->buckets = (es_map_item_t *)es_calloc(map->n_buckets, sizeof(es_map_item_t));
     map->hash = hash;
-    map->key_comp = key_comp;
+    map->key_eq = key_eq;
 }
 
 void es_map_free(es_map_t *map)
@@ -50,7 +50,7 @@ static void _insert_map_pair(
             return;
         }
 
-        if (map->key_comp(map->buckets[index].key, key))
+        if (map->key_eq(map->buckets[index].key, key))
         {
             map->buckets[index].value = value;
             return;
@@ -118,7 +118,7 @@ es_ref_t es_map_remove(es_map_t *map, es_ref_t key)
 
     while (map->buckets[index].value)
     {
-        if (map->key_comp(map->buckets[index].key, key))
+        if (map->key_eq(map->buckets[index].key, key))
         {
             res = map->buckets[index].value;
             es_size_t next = (index + 1) % map->n_buckets;
@@ -160,7 +160,7 @@ es_ref_t es_map_get(es_map_t *map, es_ref_t key)
 
     while (map->buckets[index].value)
     {
-        if (map->key_comp(map->buckets[index].key, key))
+        if (map->key_eq(map->buckets[index].key, key))
         {
             res = map->buckets[index].value;
             break;
