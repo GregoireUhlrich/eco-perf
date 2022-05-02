@@ -4,6 +4,8 @@ project(eco_perf C)
 
 set(C_STANDARD 11)
 
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -O3")
+set(CMAKE_CXX_FLAGS_DEBUG "-g")
 include_directories(${CMAKE_SOURCE_DIR})
 
 add_subdirectory(eco_perf)
