@@ -3,6 +3,7 @@
 
 #include "cpu_usage.h"
 #include "eco_perf/eco_std/container.h"
+#include "eco_perf/eco_std/es_string.h"
 #include "memory_usage.h"
 #include <limits.h>
 #include <stddef.h>
@@ -14,7 +15,7 @@ typedef struct ProcessData
     int pid;
     int directory;
     char state;
-    char executable[NAME_MAX];
+    es_string_t executable;
 
     int parent_pid;
     int pgroup;
@@ -41,11 +42,11 @@ void init_process_data(process_data_t *process);
 
 void read_process_data(process_data_t *process, int pid);
 
-void print_process_data_summary(process_data_t const *process);
+void print_process_data_summary(process_data_t *process);
 
 void get_process_command_line(
     char *destination,
-    process_data_t const *process);
+    process_data_t *process);
 
 void list_processes();
 

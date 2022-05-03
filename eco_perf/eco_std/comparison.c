@@ -1,4 +1,5 @@
 #include "comparison.h"
+#include "es_string.h"
 #include <string.h>
 
 #define DEFINE_DEFAULT_COMP(type, name)                    \
@@ -30,20 +31,14 @@ DEFINE_DEFAULT_FUNCTIONS(double, double)
 
 bool es_string_eq(es_cref_t left, es_cref_t right)
 {
-    return strcmp(*(char const **)left, *(char const **)right) == 0;
+    return strcmp(
+        es_string_get((es_string_t *)left),
+        es_string_get((es_string_t *)right));
 }
 
 bool es_string_comp(es_cref_t left, es_cref_t right)
 {
-    return strcmp(*(char const **)left, *(char const **)right) < 0;
-}
-
-bool es_char_array_eq(es_cref_t left, es_cref_t right)
-{
-    return strcmp((char const *)left, (char const *)right) == 0;
-}
-
-bool es_char_array_comp(es_cref_t left, es_cref_t right)
-{
-    return strcmp((char const *)left, (char const *)right) < 0;
+    return 0 > strcmp(
+                   es_string_get((es_string_t *)left),
+                   es_string_get((es_string_t *)right));
 }

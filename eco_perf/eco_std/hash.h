@@ -17,7 +17,6 @@ es_hash_t es_uint_hash(es_cref_t key);
 es_hash_t es_long_hash(es_cref_t key);
 es_hash_t es_ulong_hash(es_cref_t key);
 
-es_hash_t es_char_array_hash(es_cref_t key);
 es_hash_t es_string_hash(es_cref_t key);
 
 #endif

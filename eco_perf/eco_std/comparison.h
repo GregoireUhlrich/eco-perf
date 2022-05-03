@@ -17,7 +17,6 @@ bool es_ulong_eq(es_cref_t left, es_cref_t right);
 bool es_float_eq(es_cref_t left, es_cref_t right);
 bool es_double_eq(es_cref_t left, es_cref_t right);
 
-bool es_char_array_eq(es_cref_t left, es_cref_t right);
 bool es_string_eq(es_cref_t left, es_cref_t right);
 
 // Built-in comparison functions
@@ -33,7 +32,6 @@ bool es_ulong_comp(es_cref_t left, es_cref_t right);
 bool es_float_comp(es_cref_t left, es_cref_t right);
 bool es_double_comp(es_cref_t left, es_cref_t right);
 
-bool es_char_array_comp(es_cref_t left, es_cref_t right);
 bool es_string_comp(es_cref_t left, es_cref_t right);
 
 #endif

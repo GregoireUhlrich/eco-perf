@@ -15,7 +15,7 @@ void init_process_data(process_data_t *process)
     process->valid = 0;
     process->pid = -1;
     process->directory = -1;
-    *process->executable = '\0';
+    es_string_init(&process->executable);
     process->memory_usage.real = 0;
     process->memory_usage.virt = 0;
     process->memory_usage.shared = 0;
@@ -61,7 +61,7 @@ void read_process_data(process_data_t *process, int dir)
 
 void get_process_command_line(
     char *destination,
-    process_data_t const *process)
+    process_data_t *process)
 {
     char process_file_name[60];
     sprintf(process_file_name, "/proc/%d/cmdline", process->directory);
@@ -78,7 +78,7 @@ void get_process_command_line(
     }
 }
 
-void print_process_data_summary(process_data_t const *process)
+void print_process_data_summary(process_data_t *process)
 {
     char real_mem[100], virt_mem[100];
     char command_line[4096];
@@ -88,7 +88,8 @@ void print_process_data_summary(process_data_t const *process)
     printf(
         "Process '%s' (pid=%d, ppid=%d): cpu_time (user: %.3fs, sys: %.3fs), "
         "mem (real: %s, virt: %s) -- [%s]\n",
-        process->executable, process->pid, process->parent_pid,
+        es_string_get(&process->executable),
+        process->pid, process->parent_pid,
         process->cpu_usage.user_time, process->cpu_usage.sys_time,
         real_mem, virt_mem,
         command_line);
@@ -160,6 +161,10 @@ void update_process_list(es_container_t *container)
     directory_lister_t lister;
     open_directory_lister(&lister, "/proc");
     char const *next;
+    for (int i = 0; i != container->size; ++i)
+    {
+        free_process_data(es_container_get(container, i));
+    }
     es_container_clear(container);
     while ((next = get_next_directory(&lister)))
     {
@@ -181,6 +186,7 @@ void free_process_list(es_container_t *container)
 
 void free_process_data(process_data_t *process)
 {
+    es_string_free(&process->executable);
 }
 
 void _read_process_stat_data(FILE *file, process_data_t *process)
@@ -212,7 +218,10 @@ void _read_process_stat_data(FILE *file, process_data_t *process)
     char const *const first = comm + 1;
     const int len = strlen(comm) - 1;
     comm[len] = 0;
-    strncpy(process->executable, first, len);
+    es_string_assign_n(
+        &process->executable,
+        first,
+        len);
     process->state = state;
     process->parent_pid = ppid;
     process->pgroup = pgrp;

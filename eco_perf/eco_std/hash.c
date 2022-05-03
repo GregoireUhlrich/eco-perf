@@ -1,4 +1,5 @@
 #include "hash.h"
+#include "es_string.h"
 #include <stdint.h>
 
 #define DEFINE_DEFAULT_HASH(type, name)         \
@@ -44,19 +45,10 @@ static uint64_t MurmurOAAT64(const char *key)
 
 es_hash_t es_string_hash(es_cref_t str_ref)
 {
-    char const *str = *(char const **)str_ref;
+    char const *c_str = es_string_get((es_string_t *)str_ref);
 #if ES_USE_LONG_SIZE
-    return MurmurOAAT64(str);
+    return MurmurOAAT64(c_str);
 #else
-    return MurmurOAAT32(str);
-#endif
-}
-
-es_hash_t es_char_array_hash(es_cref_t str_ref)
-{
-#if ES_USE_LONG_SIZE
-    return MurmurOAAT64((char const *)str_ref);
-#else
-    return MurmurOAAT32((char const *)str_ref);
+    return MurmurOAAT32(c_str);
 #endif
 }

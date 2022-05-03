@@ -30,7 +30,7 @@ int cpu_increasing_int(es_cref_t lv, es_cref_t rv)
 
 void print_map_item(es_ref_t key, es_ref_t value, es_ref_t data)
 {
-    printf("map[\"%s\"] = %d  ;", (char const *)key, *(int const *)value);
+    printf("map[\"%s\"] = %d  ;", es_string_get(key), *(int const *)value);
 }
 
 int main()
@@ -47,7 +47,9 @@ int main()
     es_vector_init(&list_view);
 
     es_map_t n_process_map;
-    es_map_init(&n_process_map, 250, es_char_array_hash, es_char_array_eq);
+    es_map_init(
+        &n_process_map, 250, ES_MAP_NOT_OWNER,
+        es_string_hash, es_string_eq);
     es_container_t counters;
     es_container_init(&counters, sizeof(int));
     es_container_reserve(&counters, 250);
@@ -89,14 +91,14 @@ int main()
         for (int i = 0; i != list_view.size; ++i)
         {
             process_data_t *process = (process_data_t *)list_view.data[i];
-            int *value = (int *)es_map_get(&n_process_map, process->executable);
+            int *value = (int *)es_map_get(&n_process_map, &process->executable);
             if (value)
             {
                 ++(*value);
             }
             else
             {
-                int value = 0;
+                int value = 1;
                 es_container_push(&counters, &value);
                 es_map_put(&n_process_map, (char **)&process->executable, es_container_get(&counters, counters.size - 1));
             }
@@ -117,6 +119,15 @@ int main()
         printf("*********************************\n");
         sleep(1);
     }
+
+    es_map_free(&n_process_map);
+    es_container_free(&counters);
+    for (int i = 0; i != list_view.size; ++i)
+    {
+        free_process_data(list_view.data[i]);
+    }
+    es_container_free(&list);
+    es_vector_free(&list_view);
 
     return 0;
 }

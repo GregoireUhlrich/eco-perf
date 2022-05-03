@@ -1,14 +1,15 @@
 #include "es_string.h"
 #include "memory.h"
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 void es_string_init(es_string_t *string)
 {
     string->size = 0;
-    string->_alloc = 0;
     memset(string->_buffer, 0, sizeof(string->_buffer));
+    string->_alloc = 0;
 }
 
 es_string_t es_string_create()
@@ -62,21 +63,25 @@ void es_string_resize(es_string_t *string, es_size_t size)
             es_free(string->_heap_str.str);
             _alloc_str(string, size);
         }
-        if (!string->_alloc)
+        else if (!string->_alloc)
         {
             _alloc_str(string, size);
         }
         string->_alloc = 1;
-    }
-    else
-    {
-        string->_alloc = 0;
     }
 }
 
 void es_string_assign(es_string_t *string, char const *str)
 {
     const es_size_t size = strlen(str);
+    es_string_assign_n(string, str, size);
+}
+
+void es_string_assign_n(
+    es_string_t *string,
+    char const *str,
+    es_size_t size)
+{
     es_string_clear(string);
     es_string_resize(string, size);
     strcpy(es_string_get(string), str);

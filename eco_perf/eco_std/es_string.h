@@ -43,6 +43,11 @@ void es_string_resize(es_string_t *string, es_size_t size);
 
 void es_string_assign(es_string_t *string, char const *str);
 
+void es_string_assign_n(
+    es_string_t *string,
+    char const *str,
+    es_size_t size);
+
 void es_string_clear(es_string_t *string);
 
 void es_string_concat(

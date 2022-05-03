@@ -7,6 +7,14 @@
 
 // Inspired from https://github.com/htop-dev/htop (HashTable.h/c)
 
+typedef enum ESMapOwnership
+{
+    ES_MAP_NOT_OWNER = 0,
+    ES_MAP_OWNS_KEY = 1 >> 1,
+    ES_MAP_OWNS_VALUE = 1 >> 2,
+    ES_MAP_OWNER = (ES_MAP_OWNS_KEY) | (ES_MAP_OWNS_VALUE)
+} es_map_ownership_t;
+
 typedef struct ESMapItem
 {
     es_hash_t hash;
@@ -22,6 +30,7 @@ typedef struct ESMap
     es_size_t size;
     es_hash_function_t hash;
     es_comparator_t key_eq;
+    es_map_ownership_t ownership;
 } es_map_t;
 
 typedef void (*es_map_pair_function_t)(
@@ -32,6 +41,7 @@ typedef void (*es_map_pair_function_t)(
 void es_map_init(
     es_map_t *map,
     es_size_t size,
+    es_map_ownership_t ownership,
     es_hash_function_t hash,
     es_comparator_t key_eq);
 
