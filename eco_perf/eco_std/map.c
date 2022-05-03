@@ -7,7 +7,7 @@ static es_size_t _next_prime(es_size_t n);
 void es_map_init(
     es_map_t *map,
     es_size_t size,
-    es_map_ownership_t ownership,
+    bool ownership,
     es_hash_function_t hash,
     es_comparator_t key_eq)
 {
@@ -27,17 +27,14 @@ void es_map_free(es_map_t *map)
 
 void es_map_clear(es_map_t *map)
 {
-    if (map->ownership != ES_MAP_NOT_OWNER)
+    if (map->ownership)
     {
         for (es_size_t i = 0; i < map->n_buckets; i++)
         {
             es_map_item_t *walk = &map->buckets[i];
             if (walk->value)
             {
-                if (map->ownership & ES_MAP_OWNS_KEY)
-                    es_free(walk->key);
-                if (map->ownership & ES_MAP_OWNS_VALUE)
-                    es_free(walk->value);
+                es_free(walk->value);
             }
         }
     }
@@ -68,7 +65,7 @@ static void _insert_map_pair(
 
         if (map->key_eq(map->buckets[index].key, key))
         {
-            if (map->ownership & ES_MAP_OWNS_VALUE)
+            if (map->ownership)
                 es_free(map->buckets[index].value);
             map->buckets[index].value = value;
             return;
@@ -150,11 +147,7 @@ es_ref_t es_map_remove(es_map_t *map, es_ref_t key)
                 next = (index + 1) % map->n_buckets;
             }
 
-            if (map->ownership & ES_MAP_OWNS_KEY)
-            {
-                es_free(map->buckets[index].key);
-            }
-            if (map->ownership & ES_MAP_OWNS_VALUE)
+            if (map->ownership)
             {
                 es_free(map->buckets[index].value);
             }

@@ -33,6 +33,11 @@ void print_map_item(es_ref_t key, es_ref_t value, es_ref_t data)
     printf("map[\"%s\"] = %d  ;", es_string_get(key), *(int const *)value);
 }
 
+void free_strings(es_ref_t key, es_ref_t value, es_ref_t data)
+{
+    es_string_free(key);
+}
+
 int main()
 {
     list_directories("./");
@@ -48,7 +53,7 @@ int main()
 
     es_map_t n_process_map;
     es_map_init(
-        &n_process_map, 250, ES_MAP_NOT_OWNER,
+        &n_process_map, 250, true,
         es_string_hash, es_string_eq);
     es_container_t counters;
     es_container_init(&counters, sizeof(int));
@@ -98,14 +103,15 @@ int main()
             }
             else
             {
-                int value = 1;
-                es_container_push(&counters, &value);
-                es_map_put(&n_process_map, (char **)&process->executable, es_container_get(&counters, counters.size - 1));
+                int *value = malloc(sizeof(int));
+                *value = 1;
+                es_map_put(&n_process_map, &process->executable, value);
             }
         }
         times[5] = (clock() - start) * 1000. / CLOCKS_PER_SEC;
         es_map_for_each(&n_process_map, print_map_item, NULL);
         puts("");
+        es_map_for_each(&n_process_map, free_strings, NULL);
         es_map_clear(&n_process_map);
         es_container_clear(&counters);
 
@@ -120,6 +126,7 @@ int main()
         sleep(1);
     }
 
+    es_map_for_each(&n_process_map, free_strings, NULL);
     es_map_free(&n_process_map);
     es_container_free(&counters);
     for (int i = 0; i != list_view.size; ++i)
