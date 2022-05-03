@@ -11,6 +11,35 @@ void es_string_init(es_string_t *string)
     memset(string->_buffer, 0, sizeof(string->_buffer));
 }
 
+es_string_t es_string_create()
+{
+    es_string_t string;
+    es_string_init(&string);
+    return string;
+}
+
+void es_string_free(es_string_t *string)
+{
+    if (string->_alloc)
+    {
+        es_free(string->_heap_str.str);
+    }
+    es_string_init(string);
+}
+
+es_string_t *es_string_create_new()
+{
+    void *string = es_malloc(sizeof(es_string_t));
+    es_string_init(string);
+    return (es_string_t *)string;
+}
+
+void es_string_delete(es_string_t *string)
+{
+    es_string_free(string);
+    es_free(string);
+}
+
 char *es_string_get(es_string_t *string)
 {
     return string->_alloc ? string->_heap_str.str : string->_buffer;
@@ -58,14 +87,6 @@ void es_string_clear(es_string_t *string)
 {
     *es_string_get(string) = 0;
     string->size = 0;
-}
-void es_string_free(es_string_t *string)
-{
-    if (string->_alloc)
-    {
-        es_free(string->_heap_str.str);
-    }
-    es_string_init(string);
 }
 
 void es_string_concat(

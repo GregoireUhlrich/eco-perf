@@ -29,6 +29,14 @@ typedef struct ESString
 
 void es_string_init(es_string_t *string);
 
+es_string_t es_string_create();
+
+void es_string_free(es_string_t *string);
+
+es_string_t *es_string_create_new();
+
+void es_string_delete(es_string_t *string);
+
 char *es_string_get(es_string_t *string);
 
 void es_string_resize(es_string_t *string, es_size_t size);
@@ -36,8 +44,6 @@ void es_string_resize(es_string_t *string, es_size_t size);
 void es_string_assign(es_string_t *string, char const *str);
 
 void es_string_clear(es_string_t *string);
-
-void es_string_free(es_string_t *string);
 
 void es_string_concat(
     es_string_t *destination,

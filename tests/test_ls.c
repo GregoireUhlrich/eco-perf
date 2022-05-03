@@ -96,7 +96,7 @@ int main()
             }
             else
             {
-                int value = 1;
+                int value = 0;
                 es_container_push(&counters, &value);
                 es_map_put(&n_process_map, (char **)&process->executable, es_container_get(&counters, counters.size - 1));
             }
