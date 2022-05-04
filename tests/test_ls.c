@@ -11,6 +11,8 @@
 #include <time.h>
 #include <unistd.h>
 
+const bool verbose = false;
+
 bool cpu_increasing(es_cref_t lv, es_cref_t rv)
 {
     process_data_t const *l = (process_data_t const *)lv;
@@ -31,11 +33,6 @@ int cpu_increasing_int(es_cref_t lv, es_cref_t rv)
 void print_map_item(es_ref_t key, es_ref_t value, es_ref_t data)
 {
     printf("map[\"%s\"] = %d  ;", es_string_get(key), *(int const *)value);
-}
-
-void free_strings(es_ref_t key, es_ref_t value, es_ref_t data)
-{
-    es_string_free(key);
 }
 
 int main()
@@ -86,9 +83,12 @@ int main()
         times[3] = (clock() - start) * 1000. / CLOCKS_PER_SEC;
 
         start = clock();
-        for (int i = 0; i != list_view.size; ++i)
+        if (verbose)
         {
-            print_process_data_summary(list_view.data[i]);
+            for (int i = 0; i != list_view.size; ++i)
+            {
+                print_process_data_summary(list_view.data[i]);
+            }
         }
         times[4] = (clock() - start) * 1000. / CLOCKS_PER_SEC;
 
@@ -109,24 +109,28 @@ int main()
             }
         }
         times[5] = (clock() - start) * 1000. / CLOCKS_PER_SEC;
-        es_map_for_each(&n_process_map, print_map_item, NULL);
-        puts("");
-        es_map_for_each(&n_process_map, free_strings, NULL);
+        if (verbose)
+        {
+            es_map_for_each(&n_process_map, print_map_item, NULL);
+            puts("");
+        }
         es_map_clear(&n_process_map);
         es_container_clear(&counters);
 
-        printf("%u processes in total\n", list_view.size);
-        printf("Create           took %.2f milli-seconds\n", times[0]);
-        printf("Copy             took %.2f milli-seconds\n", times[1]);
-        printf("Sort (vector)    took %.2f milli-seconds\n", times[2]);
-        printf("Sort (container) took %.2f milli-seconds\n", times[3]);
-        printf("Print            took %.2f milli-seconds\n", times[4]);
-        printf("Mapping          took %.2f milli-seconds\n", times[5]);
-        printf("*********************************\n");
+        if (verbose)
+        {
+            printf("%u processes in total\n", list_view.size);
+            printf("Create           took %.2f milli-seconds\n", times[0]);
+            printf("Copy             took %.2f milli-seconds\n", times[1]);
+            printf("Sort (vector)    took %.2f milli-seconds\n", times[2]);
+            printf("Sort (container) took %.2f milli-seconds\n", times[3]);
+            printf("Print            took %.2f milli-seconds\n", times[4]);
+            printf("Mapping          took %.2f milli-seconds\n", times[5]);
+            printf("*********************************\n");
+        }
         sleep(1);
     }
 
-    es_map_for_each(&n_process_map, free_strings, NULL);
     es_map_free(&n_process_map);
     es_container_free(&counters);
     for (int i = 0; i != list_view.size; ++i)

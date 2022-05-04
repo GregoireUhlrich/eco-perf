@@ -5,6 +5,9 @@
 #include "eco_perf/eco_std/vector.h"
 #include <stdio.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <time.h>
 
 ES_DEFINE_DEFAULT_COMP(int, int_comparator)
 
@@ -21,8 +24,26 @@ bool weird_int_order(es_cref_t A, es_cref_t B)
     return a > b;
 }
 
+void file_()
+{
+    char file[] = "/home/laptopgva/Desktop/eco_perf/tests/test_std.c";
+    char t[100] = "";
+    struct stat b;
+    if (!stat(file, &b))
+    {
+        strftime(t, 100, "%d/%m/%Y %H:%M:%S", localtime(&b.st_mtime));
+        printf("\nLast modified date and time = %s\n", t);
+    }
+    else
+    {
+        printf("Cannot display the time.\n");
+    }
+}
+
 int main()
 {
+    file_();
+    return 0;
     es_container_t int_container;
     es_container_init(&int_container, sizeof(int));
     es_container_summary(&int_container);
@@ -105,7 +126,7 @@ int main()
 
     es_map_t map;
     // es_map_init(&map, 10, int_hash, int_comp);
-    es_map_init(&map, 4, es_string_hash, es_string_eq);
+    es_map_init(&map, 4, false, es_string_hash, es_string_eq);
     char *values[] = {
         "Hello",
         "World",
@@ -124,7 +145,7 @@ int main()
         printf("Map[%s] = %s\n", values[i], val);
     }
 
-    es_map_init(&map, 10, es_int_hash, es_int_eq);
+    es_map_init(&map, 10, false, es_int_hash, es_int_eq);
     int int_values[] = {0, 1, 2, 3, 4, 5, 6, 7, 9, 10};
     for (int i = 0; i != sizeof(int_values) / 4; ++i)
     {
