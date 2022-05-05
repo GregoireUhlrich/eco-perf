@@ -14,6 +14,32 @@ void es_container_init(es_container_t *container, es_size_t object_size)
     container->_memory_size = 0;
 }
 
+es_container_t es_container_create(es_size_t object_size)
+{
+    es_container_t container;
+    es_container_init(&container, object_size);
+    return container;
+}
+
+void es_container_free(es_container_t *container)
+{
+    es_free(container->data);
+    es_container_init(container, container->object_size);
+}
+
+es_container_t *es_container_new(es_size_t object_size)
+{
+    void *container = es_malloc(sizeof(es_container_t));
+    es_container_init(container, object_size);
+    return container;
+}
+
+void es_container_delete(es_container_t *container)
+{
+    es_container_free(container);
+    es_free(container);
+}
+
 void _es_container_alloc(es_container_t *container)
 {
     if (container->_memory_size == 0)
@@ -46,19 +72,15 @@ void es_container_clear(es_container_t *container)
     container->size = 0;
 }
 
-void es_container_free(es_container_t *container)
-{
-    es_free(container->data);
-    es_container_init(container, container->object_size);
-}
-
-void es_container_push(
+bool es_container_push(
     es_container_t *container,
     es_cref_t value_ptr)
 {
+    bool alloc = false;
     if (container->size == container->_memory_size)
     {
         _es_container_alloc(container);
+        alloc = true;
     }
     if (value_ptr)
     {
@@ -75,6 +97,7 @@ void es_container_push(
             container->object_size);
     }
     ++container->size;
+    return alloc;
 }
 
 void es_container_erase(es_container_t *container, es_size_t pos)

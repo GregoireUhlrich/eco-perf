@@ -14,7 +14,15 @@ struct ESContainer;
 
 void es_vector_init(es_vector_t *vector);
 
-void es_vector_init_from_container(
+es_vector_t es_vector_create();
+
+void es_vector_free(es_vector_t *vector);
+
+es_vector_t *es_vector_new();
+
+void es_vector_delete(es_vector_t *vector);
+
+void es_vector_copy_container(
     es_vector_t *vector,
     struct ESContainer *container);
 
@@ -23,8 +31,6 @@ void es_vector_reserve(es_vector_t *vector, es_size_t size);
 void es_vector_resize(es_vector_t *vector, es_size_t size);
 
 void es_vector_clear(es_vector_t *vector);
-
-void es_vector_free(es_vector_t *vector);
 
 es_ref_t *es_vector_begin(const es_vector_t *vector);
 

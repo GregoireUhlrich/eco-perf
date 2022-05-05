@@ -12,13 +12,19 @@ typedef struct ESContainer
 
 void es_container_init(es_container_t *container, es_size_t object_size);
 
+es_container_t es_container_create(es_size_t object_size);
+
+void es_container_free(es_container_t *container);
+
+es_container_t *es_container_new(es_size_t object_size);
+
+void es_container_delete(es_container_t *container);
+
 void es_container_reserve(es_container_t *container, es_size_t size);
 
 void es_container_clear(es_container_t *container);
 
-void es_container_free(es_container_t *container);
-
-void es_container_push(es_container_t *container, es_cref_t value_ptr);
+bool es_container_push(es_container_t *container, es_cref_t value_ptr);
 
 void es_container_erase(es_container_t *container, es_size_t pos);
 

@@ -33,7 +33,7 @@ es_string_t es_string_create();
 
 void es_string_free(es_string_t *string);
 
-es_string_t *es_string_create_new();
+es_string_t *es_string_new();
 
 void es_string_delete(es_string_t *string);
 

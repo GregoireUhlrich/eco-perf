@@ -28,11 +28,11 @@ void es_string_free(es_string_t *string)
     es_string_init(string);
 }
 
-es_string_t *es_string_create_new()
+es_string_t *es_string_new()
 {
     void *string = es_malloc(sizeof(es_string_t));
     es_string_init(string);
-    return (es_string_t *)string;
+    return string;
 }
 
 void es_string_delete(es_string_t *string)

@@ -37,6 +37,20 @@ void es_map_init(
     es_hash_function_t hash,
     es_comparator_t key_eq);
 
+es_map_t es_map_create(
+    es_size_t size,
+    bool ownership,
+    es_hash_function_t hash,
+    es_comparator_t key_eq);
+
+void es_map_free(es_map_t *map);
+
+es_map_t *es_map_new(
+    es_size_t size,
+    bool ownership,
+    es_hash_function_t hash,
+    es_comparator_t key_eq);
+
 void es_map_free(es_map_t *map);
 
 void es_map_clear(es_map_t *map);

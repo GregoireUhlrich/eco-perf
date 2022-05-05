@@ -11,7 +11,33 @@ void es_vector_init(es_vector_t *vector)
     vector->_memory_size = 0;
 }
 
-void es_vector_init_from_container(
+es_vector_t es_vector_create()
+{
+    es_vector_t vector;
+    es_vector_init(&vector);
+    return vector;
+}
+
+void es_vector_free(es_vector_t *vector)
+{
+    es_free(vector->data);
+    es_vector_init(vector);
+}
+
+es_vector_t *es_vector_new()
+{
+    void *vector = es_malloc(sizeof(es_vector_t));
+    es_vector_init(vector);
+    return vector;
+}
+
+void es_vector_delete(es_vector_t *vector)
+{
+    es_vector_free(vector);
+    es_free(vector);
+}
+
+void es_vector_copy_container(
     es_vector_t *vector,
     es_container_t *container)
 {
@@ -56,12 +82,6 @@ void es_vector_resize(es_vector_t *vector, es_size_t size)
 void es_vector_clear(es_vector_t *vector)
 {
     vector->size = 0;
-}
-
-void es_vector_free(es_vector_t *vector)
-{
-    es_free(vector->data);
-    es_vector_init(vector);
 }
 
 es_ref_t *es_vector_begin(const es_vector_t *vector)
