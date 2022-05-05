@@ -29,11 +29,11 @@ typedef struct ESString
 
 void es_string_init(es_string_t *string);
 
-es_string_t es_string_create();
+es_string_t es_string_create(const char *str);
 
 void es_string_free(es_string_t *string);
 
-es_string_t *es_string_new();
+es_string_t *es_string_new(const char *str);
 
 void es_string_delete(es_string_t *string);
 

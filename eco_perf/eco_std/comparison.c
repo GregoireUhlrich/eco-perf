@@ -31,9 +31,9 @@ DEFINE_DEFAULT_FUNCTIONS(double, double)
 
 bool es_string_eq(es_cref_t left, es_cref_t right)
 {
-    return strcmp(
-        es_string_get((es_string_t *)left),
-        es_string_get((es_string_t *)right));
+    return 0 == strcmp(
+                    es_string_get((es_string_t *)left),
+                    es_string_get((es_string_t *)right));
 }
 
 bool es_string_comp(es_cref_t left, es_cref_t right)

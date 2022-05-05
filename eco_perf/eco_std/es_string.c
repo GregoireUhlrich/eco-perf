@@ -12,10 +12,14 @@ void es_string_init(es_string_t *string)
     string->_alloc = 0;
 }
 
-es_string_t es_string_create()
+es_string_t es_string_create(const char *str)
 {
     es_string_t string;
     es_string_init(&string);
+    if (str && *str)
+    {
+        es_string_assign(&string, str);
+    }
     return string;
 }
 
@@ -28,10 +32,14 @@ void es_string_free(es_string_t *string)
     es_string_init(string);
 }
 
-es_string_t *es_string_new()
+es_string_t *es_string_new(const char *str)
 {
     void *string = es_malloc(sizeof(es_string_t));
     es_string_init(string);
+    if (str && *str)
+    {
+        es_string_assign(string, str);
+    }
     return string;
 }
 

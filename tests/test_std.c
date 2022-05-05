@@ -1,6 +1,7 @@
 #include "eco_perf/eco_std/algo.h"
 #include "eco_perf/eco_std/comparison.h"
 #include "eco_perf/eco_std/container.h"
+#include "eco_perf/eco_std/es_string.h"
 #include "eco_perf/eco_std/map.h"
 #include "eco_perf/eco_std/vector.h"
 #include <stdio.h>
@@ -106,25 +107,24 @@ int main()
     es_container_free(&string);
     es_container_summary(&string);
 
-    es_map_t map;
-    // es_map_init(&map, 10, int_hash, int_comp);
-    es_map_init(&map, 4, false, es_string_hash, es_string_eq);
-    char *values[] = {
-        "Hello",
-        "World",
-        "Greg",
-        "C is cool",
-        "Maps are cooler",
-        "Did you say hashing ?",
-        "Did you say Hacking ?"};
-    for (int i = 0; i != sizeof(values) / 8; ++i)
+    es_map_t map = es_map_create(4, false, es_string_hash, es_string_eq);
+    const es_size_t n_strings = 7;
+    es_string_t values[] = {
+        es_string_create("Hello"),
+        es_string_create("World"),
+        es_string_create("Greg"),
+        es_string_create("C is cool"),
+        es_string_create("Maps are cooler"),
+        es_string_create("Did you say hashing ?"),
+        es_string_create("Did you say Hacking ?")};
+    for (int i = 0; i != n_strings; ++i)
     {
         es_map_put(&map, &values[i], &values[i]);
     }
-    for (int i = 0; i != sizeof(values) / 8; ++i)
+    for (int i = 0; i != n_strings; ++i)
     {
-        char *val = *(char **)es_map_get(&map, &values[i]);
-        printf("Map[%s] = %s\n", values[i], val);
+        char *val = es_string_get(es_map_get(&map, &values[i]));
+        printf("Map[%s] = %s\n", es_string_get(&values[i]), val);
     }
 
     es_map_init(&map, 10, false, es_int_hash, es_int_eq);

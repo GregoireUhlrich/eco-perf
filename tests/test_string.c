@@ -2,11 +2,9 @@
 
 int main()
 {
-    es_string_t hello = es_string_create();
-    es_string_assign(&hello, "Heeeello ");
+    es_string_t hello = es_string_create("Heeeeello ");
 
-    es_string_t *world = es_string_new();
-    es_string_assign(world, "World!");
+    es_string_t *world = es_string_new("World!");
 
     es_string_t hello_world;
     es_string_init(&hello_world);
