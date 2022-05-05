@@ -26,13 +26,13 @@ void init_cpu_monitor_twidget_config(cpu_monitor_twidget_config_t *config)
 
 void init_cpu_monitor_tstack(cpu_monitor_tstack_t *monitor)
 {
-    init_twidget(&monitor->twidget);
+    twidget_init(&monitor->twidget);
 
     init_cpu_monitor_twidget_data(&monitor->data);
     init_cpu_monitor_twidget_config(&monitor->config);
 
-    init_twidget_linear_layout(&monitor->layout, CT_VERTICAL);
-    set_twidget_layout(&monitor->twidget, &monitor->layout);
+    twidget_linear_layout_init(&monitor->layout, CT_VERTICAL);
+    twidget_set_layout(&monitor->twidget, &monitor->layout);
 
     monitor->twidget.stack = (void *)monitor;
     monitor->n_core_monitors = 0;
@@ -42,7 +42,7 @@ void init_cpu_monitor_tstack(cpu_monitor_tstack_t *monitor)
 
 void free_cpu_monitor_tstack(cpu_monitor_tstack_t *monitor)
 {
-    free_twidget(&monitor->twidget);
+    twidget_free(&monitor->twidget);
 }
 
 void _ensure_core_monitor_size(

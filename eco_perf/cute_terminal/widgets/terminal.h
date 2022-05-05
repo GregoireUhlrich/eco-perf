@@ -11,7 +11,7 @@ typedef struct TerminalTStack
 
 extern const twidget_interface_t terminal_twidget_interface;
 
-void init_terminal_tstack(
+void terminal_tstack_init(
     terminal_tstack_t *terminal,
     twidget_t *main_twidget);
 

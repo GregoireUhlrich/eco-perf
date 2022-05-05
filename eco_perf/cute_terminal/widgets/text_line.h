@@ -26,10 +26,10 @@ extern const twidget_interface_t text_line_twidget_interface;
 void init_text_line_tstack(
     text_line_tstack_t *stack);
 
-void init_text_line_twidget_data(text_line_twidget_data_t *data);
-void init_text_line_twidget_config(text_line_twidget_config_t *config);
+void text_line_twidget_data_init(text_line_twidget_data_t *data);
+void text_line_twidget_config_init(text_line_twidget_config_t *config);
 
-void set_text_line_content(
+void text_line_set_content(
     text_line_tstack_t *line_stack,
     char const *line);
 

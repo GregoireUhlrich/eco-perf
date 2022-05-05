@@ -27,22 +27,22 @@ typedef struct CPUData
     cpu_core_data_t *core_data;
 } cpu_data_t;
 
-void init_cpu_data(cpu_data_t *cpu_data);
+void cpu_data_init(cpu_data_t *cpu_data);
 
-void set_n_cpus(cpu_data_t *cpu_data, int n_cpus);
+void cpu_data_set_ncpus(cpu_data_t *cpu_data, int n_cpus);
 
-void read_cpu_data(cpu_data_t *cpu_data);
+void cpu_data_read(cpu_data_t *cpu_data);
 
-void print_cpu_data(cpu_data_t const *cpu_data);
+void cpu_data_print(cpu_data_t const *cpu_data);
 
-void free_cpu_data(cpu_data_t *cpu_data);
+void cpu_data_free(cpu_data_t *cpu_data);
 
-void diff_cpu_data(
+void cpu_data_diff(
     cpu_data_t const *first,
     cpu_data_t const *last,
     cpu_data_t *diff);
 
-void calculate_ratio(
+void cpu_data_ratio(
     cpu_data_t const *diff,
     cpu_data_t *ratio,
     double n_sec);

@@ -7,7 +7,7 @@ void init_terminal_application(
     terminal_application_t *app,
     twidget_t *main_twidget)
 {
-    init_terminal_tstack(&app->terminal_stack, main_twidget);
+    terminal_tstack_init(&app->terminal_stack, main_twidget);
     app->sleep_duration = CT_DEFAULT_SLEEP_DURATION;
     app->is_open = 0;
 }
@@ -16,7 +16,7 @@ void update_terminal_application(terminal_application_t *app)
 {
     twidget_t *terminal_twidget = &app->terminal_stack.terminal_container_twidget;
     update_twidget(terminal_twidget);
-    draw_twidget(terminal_twidget);
+    twidget_draw(terminal_twidget);
     fflush(stdout);
     usleep(app->sleep_duration * 1e6);
 }
@@ -36,5 +36,5 @@ void free_terminal_application(terminal_application_t *app)
 #ifndef DISABLE_TERMINAL_DRAWING
     terminal_twidget->interface->draw(terminal_twidget);
 #endif
-    free_twidget(terminal_twidget);
+    twidget_free(terminal_twidget);
 }

@@ -11,10 +11,10 @@ const twidget_interface_t box_twidget_interface = {
     _draw_box,
     default_twidget_free};
 
-void init_box_tstack(
+void box_tstack_init(
     box_tstack_t *box)
 {
-    init_twidget(&box->twidget);
+    twidget_init(&box->twidget);
     box->config.background = ' ';
     box->twidget.stack = (void *)box;
     box->twidget.interface = &box_twidget_interface;

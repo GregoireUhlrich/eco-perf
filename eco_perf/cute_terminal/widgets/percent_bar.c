@@ -19,14 +19,14 @@ void init_percent_bar_twidget(
 {
 }
 
-void init_percent_bar_tstack(
+void percent_bar_tstack_init(
     percent_bar_tstack_t *stack)
 {
     init_percent_bar_config(&stack->config);
-    init_percent_bar_data(&stack->data);
+    percent_bar_data_init(&stack->data);
 
     twidget_t *twidget = &stack->twidget;
-    init_twidget(twidget);
+    twidget_init(twidget);
     twidget->size.x = 30;
     twidget->size.y = 1;
     twidget->fixed_size.y = 1;
@@ -67,7 +67,7 @@ void _draw_percent_bar(twidget_t *percent_bar)
     percent_bar_tstack_t *stack = (percent_bar_tstack_t *)percent_bar->stack;
     percent_bar_data_t *data = &stack->data;
     percent_bar_config_t *config = &stack->config;
-    create_percent_bar(buffer, data, config);
+    percent_bar_fill(buffer, data, config);
     int line_size = get_effective_string_length(buffer);
     printf("%s", buffer);
     move_cursor_left(line_size);

@@ -26,15 +26,15 @@ void test_boxes()
     pos.y = 5;
     size.x = 100;
     size.y = 10;
-    init_box_tstack(&bigger_box);
+    box_tstack_init(&bigger_box);
     bigger_box.twidget.pos = pos;
     bigger_box.twidget.size = size;
 
     clear_terminal();
     box_tstack_t box1, box2, box3;
-    init_box_tstack(&box1);
-    init_box_tstack(&box2);
-    init_box_tstack(&box3);
+    box_tstack_init(&box1);
+    box_tstack_init(&box2);
+    box_tstack_init(&box3);
 
     pos.x = 0;
     pos.y = 1;
@@ -57,11 +57,11 @@ void test_boxes()
     box3.twidget.size = size;
     box3.config.background = '*';
 
-    add_twidget_child(&bigger_box.twidget, &box1.twidget);
-    add_twidget_child(&bigger_box.twidget, &box2.twidget);
-    add_twidget_child(&bigger_box.twidget, &box3.twidget);
+    twidget_add_child(&bigger_box.twidget, &box1.twidget);
+    twidget_add_child(&bigger_box.twidget, &box2.twidget);
+    twidget_add_child(&bigger_box.twidget, &box3.twidget);
 
-    draw_twidget(&bigger_box.twidget);
+    twidget_draw(&bigger_box.twidget);
     char c;
     scanf("%c", &c);
 }
@@ -69,33 +69,33 @@ void test_boxes()
 int main(int argc, char const *argv[])
 {
     twidget_t terminal;
-    init_twidget(&terminal);
+    twidget_init(&terminal);
 
     twidget_t panel1, panel2, panel3;
-    init_twidget(&panel1);
-    init_twidget(&panel2);
-    init_twidget(&panel3);
+    twidget_init(&panel1);
+    twidget_init(&panel2);
+    twidget_init(&panel3);
 
     twidget_t element1, element2;
-    init_twidget(&element1);
-    init_twidget(&element2);
+    twidget_init(&element1);
+    twidget_init(&element2);
 
-    add_twidget_child(&panel1, &element1);
-    add_twidget_child(&panel1, &element2);
+    twidget_add_child(&panel1, &element1);
+    twidget_add_child(&panel1, &element2);
 
-    add_twidget_child(&terminal, &panel1);
-    add_twidget_child(&terminal, &panel2);
-    add_twidget_child(&terminal, &panel3);
+    twidget_add_child(&terminal, &panel1);
+    twidget_add_child(&terminal, &panel2);
+    twidget_add_child(&terminal, &panel3);
 
     print_drawable(&element1);
     print_drawable(&panel1);
     print_drawable(&terminal);
 
-    remove_twidget_child(&panel1, &element2, 1);
-    remove_twidget_child(&terminal, &panel1, 1);
+    twidget_remove_child(&panel1, &element2, 1);
+    twidget_remove_child(&terminal, &panel1, 1);
     print_drawable(&terminal);
 
-    free_twidget(&terminal);
+    twidget_free(&terminal);
 
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);

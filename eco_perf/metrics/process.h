@@ -41,18 +41,18 @@ typedef struct ProcessData
     unsigned long data_memory; // kB
 } process_data_t;
 
-void init_process_data(process_data_t *process);
+void process_data_init(process_data_t *process);
 
-void read_process_data(process_data_t *process, int pid);
+void process_data_read(process_data_t *process, int pid);
 
-void print_process_data_summary(process_data_t *process);
+void process_data_summary(process_data_t *process);
 
-void get_process_command_line(
+void process_data_get_cmdline(
     char *destination,
     process_data_t *process);
 
 void list_processes();
 
-void free_process_data(process_data_t *process);
+void process_data_free(process_data_t *process);
 
 #endif

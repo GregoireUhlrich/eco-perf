@@ -34,19 +34,19 @@ void init_term_vector(terminal_vector_t *vector)
     vector->y = 0;
 }
 
-void init_tstack(tstack_t *stack)
+void tstack_init(tstack_t *stack)
 {
-    init_twidget(&stack->twidget);
+    twidget_init(&stack->twidget);
 }
 
-void set_twidget_layout(
+void twidget_set_layout(
     twidget_t *widget,
     twidget_layout_t *layout)
 {
     widget->layout = layout;
 }
 
-void apply_twidget_layout(twidget_t *widget)
+void twidget_apply_layout(twidget_t *widget)
 {
     if (widget->floating)
     {
@@ -58,7 +58,7 @@ void apply_twidget_layout(twidget_t *widget)
     }
 }
 
-void init_twidget(twidget_t *widget)
+void twidget_init(twidget_t *widget)
 {
     widget->hidden = 0;
     widget->floating = 0;
@@ -80,14 +80,14 @@ void update_twidget(twidget_t *widget)
 {
     const twidget_update_function_t update = get_twidget_update_function(widget);
     update(widget);
-    apply_twidget_layout(widget);
+    twidget_apply_layout(widget);
     for (int i = 0; i != widget->children.size; ++i)
     {
         update_twidget((twidget_t *)widget->children.data[i]);
     }
 }
 
-int draw_twidget(twidget_t *widget)
+int twidget_draw(twidget_t *widget)
 {
 #ifdef DISABLE_TERMINAL_DRAWING
     return 0;
@@ -100,7 +100,7 @@ int draw_twidget(twidget_t *widget)
         draw(widget);
         for (int i = 0; i != widget->children.size; ++i)
         {
-            draw_twidget(widget->children.data[i]);
+            twidget_draw(widget->children.data[i]);
         }
         move_cursor_left(widget->pos.x);
         move_cursor_up(widget->pos.y);
@@ -110,7 +110,7 @@ int draw_twidget(twidget_t *widget)
 #endif
 }
 
-void add_twidget_child(
+void twidget_add_child(
     twidget_t *parent,
     twidget_t *child)
 {
@@ -132,7 +132,7 @@ int twidget_child_index(
     return -1;
 }
 
-void remove_twidget_child(
+void twidget_remove_child(
     twidget_t *parent,
     twidget_t *child,
     int free_child)
@@ -143,13 +143,13 @@ void remove_twidget_child(
               "Child not found in parent for removal.")
     if (free_child)
     {
-        free_twidget(child);
+        twidget_free(child);
     }
     child->parent = NULL;
     es_vector_erase(&parent->children, pos);
 }
 
-void free_twidget_children(twidget_t *widget)
+void twidget_free_children(twidget_t *widget)
 {
     if (!widget)
     {
@@ -159,18 +159,18 @@ void free_twidget_children(twidget_t *widget)
     {
         for (int i = 0; i != widget->children.size; ++i)
         {
-            free_twidget((twidget_t *)widget->children.data[i]);
+            twidget_free((twidget_t *)widget->children.data[i]);
         }
         es_vector_free(&widget->children);
     }
 }
-void free_twidget(twidget_t *widget)
+void twidget_free(twidget_t *widget)
 {
     if (!widget)
     {
         return;
     }
-    free_twidget_children(widget);
+    twidget_free_children(widget);
     const twidget_free_function_t free_ = get_twidget_free_function(widget);
     if (free_)
     {

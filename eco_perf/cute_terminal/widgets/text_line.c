@@ -14,9 +14,9 @@ void init_text_line_tstack(
     text_line_tstack_t *stack)
 {
     twidget_t *widget = &stack->twidget;
-    init_twidget(widget);
-    init_text_line_twidget_data(&stack->data);
-    init_text_line_twidget_config(&stack->config);
+    twidget_init(widget);
+    text_line_twidget_data_init(&stack->data);
+    text_line_twidget_config_init(&stack->config);
     widget->size.y = 1;
     widget->fixed_size.x = 1;
     widget->fixed_size.y = 1;
@@ -24,17 +24,17 @@ void init_text_line_tstack(
     widget->interface = &text_line_twidget_interface;
 }
 
-void init_text_line_twidget_data(text_line_twidget_data_t *data)
+void text_line_twidget_data_init(text_line_twidget_data_t *data)
 {
     data->_line = "";
     data->_effective_line_length = 0;
 }
 
-void init_text_line_twidget_config(text_line_twidget_config_t *config)
+void text_line_twidget_config_init(text_line_twidget_config_t *config)
 {
 }
 
-void set_text_line_content(
+void text_line_set_content(
     text_line_tstack_t *line_stack,
     char const *line)
 {

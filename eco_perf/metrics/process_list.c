@@ -62,7 +62,7 @@ void process_list_print(process_list_t *list)
     for (int i = 0; i != list->processes.size; ++i)
     {
         process_data_t *process = list->processes.data[i];
-        print_process_data_summary(process);
+        process_data_summary(process);
     }
     printf("%u processes in total\n", list->processes.size);
 }
@@ -83,16 +83,16 @@ es_size_t _get_n_processes()
 {
     es_size_t n_processes = 0;
     directory_lister_t lister;
-    open_directory_lister(&lister, "/proc");
+    directory_lister_open(&lister, "/proc");
     char const *next;
-    while ((next = get_next_directory(&lister)))
+    while ((next = directory_lister_next(&lister)))
     {
         if (is_integer(next))
         {
             ++n_processes;
         }
     }
-    close_directory_lister(&lister);
+    directory_lister_close(&lister);
     if (n_processes < 0)
     {
         errno = EINVAL;
@@ -136,9 +136,9 @@ void _read_processes(process_list_t *list)
     es_container_init(&list->_processes_data, sizeof(process_data_t));
     es_container_reserve(&list->_processes_data, 2 * n_processes);
     directory_lister_t lister;
-    open_directory_lister(&lister, "/proc");
+    directory_lister_open(&lister, "/proc");
     char const *next;
-    while ((next = get_next_directory(&lister)))
+    while ((next = directory_lister_next(&lister)))
     {
         if (is_integer(next))
         {
@@ -147,14 +147,14 @@ void _read_processes(process_list_t *list)
             process_data_t *process = es_container_get(
                 &list->_processes_data,
                 list->_processes_data.size - 1);
-            read_process_data(process, directory);
+            process_data_read(process, directory);
             if (!process->valid)
             {
                 --(list->_processes_data.size);
             }
         }
     }
-    close_directory_lister(&lister);
+    directory_lister_close(&lister);
     _set_process_view(list);
     _set_process_metadata(list);
 }
@@ -162,10 +162,10 @@ void _read_processes(process_list_t *list)
 void _update_processes(process_list_t *list)
 {
     directory_lister_t lister;
-    open_directory_lister(&lister, "/proc");
+    directory_lister_open(&lister, "/proc");
     char const *next;
     es_size_t n_invalid = 0;
-    while ((next = get_next_directory(&lister)))
+    while ((next = directory_lister_next(&lister)))
     {
         if (is_integer(next))
         {
@@ -175,7 +175,7 @@ void _update_processes(process_list_t *list)
             {
                 if (old_process->valid)
                 {
-                    read_process_data(old_process, directory);
+                    process_data_read(old_process, directory);
                 }
                 else
                 {
@@ -195,12 +195,12 @@ void _update_processes(process_list_t *list)
                 process_data_t *process = es_container_get(
                     &list->_processes_data,
                     list->_processes_data.size - 1);
-                read_process_data(process, directory);
+                process_data_read(process, directory);
                 es_map_put(&list->_dir_map, &process->directory, process);
             }
         }
     }
-    close_directory_lister(&lister);
+    directory_lister_close(&lister);
     _set_process_view(list);
     if (n_invalid > 0.3 * list->_processes_data.size)
     {
@@ -211,7 +211,7 @@ void _update_processes(process_list_t *list)
 void _read_process_stat_data(FILE *file, process_data_t *process);
 void _read_process_statm_data(FILE *file, process_data_t *process);
 
-void read_process_data(process_data_t *process, int dir)
+void process_data_read(process_data_t *process, int dir)
 {
     process->directory = dir;
     char process_file_name[50];

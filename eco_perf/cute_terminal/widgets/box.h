@@ -16,7 +16,7 @@ typedef struct BoxTStack
 
 extern const twidget_interface_t box_twidget_interface;
 
-void init_box_tstack(
+void box_tstack_init(
     box_tstack_t *box);
 
 #endif
