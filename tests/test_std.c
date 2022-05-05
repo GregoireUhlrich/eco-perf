@@ -10,8 +10,6 @@
 #include <sys/types.h>
 #include <time.h>
 
-ES_DEFINE_DEFAULT_COMP(int, int_comparator)
-
 bool weird_int_order(es_cref_t A, es_cref_t B)
 {
     const int a = *(int const *)A;
@@ -70,10 +68,11 @@ int main()
     {
         printf("vector el %d : %d\n", i, *(int *)int_references.data[i]);
     }
+    bool (*int_comp)(es_cref_t, es_cref_t) = weird_int_order;
     es_qsort(
         es_vector_begin(&int_references),
         es_vector_end(&int_references),
-        weird_int_order);
+        int_comp);
     printf("sorted vector:\n");
     for (int i = 0; i != int_references.size; ++i)
     {
@@ -83,8 +82,8 @@ int main()
     {
         es_ref_t *begin = es_vector_begin(&int_references);
         es_ref_t *end = es_vector_end(&int_references);
-        es_ref_t *pos_insert = es_bsearch(begin, end, &i, int_comparator);
-        es_size_t pos_find = es_bsearch_find(begin, end, &i, int_comparator);
+        es_ref_t *pos_insert = es_bsearch(begin, end, &i, int_comp);
+        es_size_t pos_find = es_bsearch_find(begin, end, &i, int_comp);
         printf("Insert position of %d in vec is %lu\n", i, pos_insert - begin);
         printf("Position of %d in vec is %u\n", i, pos_find);
     }

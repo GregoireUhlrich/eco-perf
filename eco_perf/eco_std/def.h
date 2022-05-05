@@ -30,12 +30,6 @@ typedef void *es_iterator_t;
 
 typedef bool (*es_comparator_t)(es_cref_t, es_cref_t);
 
-#define ES_DEFINE_DEFAULT_COMP(type, func_name)     \
-    bool func_name(es_cref_t A, es_cref_t B)        \
-    {                                               \
-        return *(const type *)A < *(const type *)B; \
-    }
-
 #ifndef ES_ECO_MODE
 #define _BOUND_CHECK(pos, size)                                   \
     {                                                             \

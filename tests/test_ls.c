@@ -11,7 +11,7 @@
 #include <time.h>
 #include <unistd.h>
 
-const bool verbose = false;
+const bool verbose = true;
 
 bool cpu_increasing(es_cref_t lv, es_cref_t rv)
 {
