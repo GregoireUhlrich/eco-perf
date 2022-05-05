@@ -7,13 +7,16 @@
 #include "memory_usage.h"
 #include <limits.h>
 #include <stddef.h>
+#include <time.h>
 
 typedef struct ProcessData
 {
     int valid;
+    int directory;
+    time_t last_stat_modified;
+    time_t last_statm_modified;
 
     int pid;
-    int directory;
     char state;
     es_string_t executable;
 

@@ -10,7 +10,8 @@ typedef struct ProcessList
 {
     es_vector_t processes;
     es_container_t _processes_data;
-    es_map_t _metadata;
+    es_map_t _dir_map;
+    bool _clear_next;
 } process_list_t;
 
 void process_list_init(process_list_t *list);

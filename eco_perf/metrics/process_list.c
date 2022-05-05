@@ -13,21 +13,21 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/times.h>
-#include <time.h>
 #include <unistd.h>
 
 void process_list_init(process_list_t *list)
 {
     es_container_init(&list->_processes_data, sizeof(process_data_t));
     es_vector_init(&list->processes);
-    es_map_init(&list->_metadata, 500, false, es_int_hash, es_int_eq);
+    es_map_init(&list->_dir_map, 500, false, es_int_hash, es_int_eq);
+    list->_clear_next = false;
 }
 
 void process_list_free(process_list_t *list)
 {
     es_container_free(&list->_processes_data);
     es_vector_free(&list->processes);
-    es_map_free(&list->_metadata);
+    es_map_free(&list->_dir_map);
 }
 
 static void _read_processes(process_list_t *list);
@@ -36,9 +36,10 @@ static void _update_processes(process_list_t *list);
 
 void process_list_update(process_list_t *list)
 {
-    if (list->_processes_data.size == 0)
+    if (list->_processes_data.size == 0 || list->_clear_next)
     {
         _read_processes(list);
+        list->_clear_next = false;
     }
     else
     {
@@ -60,7 +61,8 @@ void process_list_print(process_list_t *list)
 {
     for (int i = 0; i != list->processes.size; ++i)
     {
-        print_process_data_summary(list->processes.data[i]);
+        process_data_t *process = list->processes.data[i];
+        print_process_data_summary(process);
     }
     printf("%u processes in total\n", list->processes.size);
 }
@@ -100,6 +102,33 @@ es_size_t _get_n_processes()
     return n_processes;
 }
 
+void _set_process_view(process_list_t *list)
+{
+    const es_size_t size = list->_processes_data.size;
+    es_vector_resize(&list->processes, size);
+    list->processes.size = 0;
+    for (int i = 0; i != size; ++i)
+    {
+        process_data_t *process = es_container_get(&list->_processes_data, i);
+        if (process->valid)
+        {
+            es_vector_push(
+                &list->processes,
+                es_container_get(&list->_processes_data, i));
+        }
+    }
+}
+
+void _set_process_metadata(process_list_t *list)
+{
+    es_map_clear(&list->_dir_map);
+    for (int i = 0; i != list->_processes_data.size; ++i)
+    {
+        process_data_t *process = es_container_get(&list->_processes_data, i);
+        es_map_put(&list->_dir_map, &process->directory, process);
+    }
+}
+
 void _read_processes(process_list_t *list)
 {
     const es_size_t n_processes = _get_n_processes();
@@ -113,11 +142,12 @@ void _read_processes(process_list_t *list)
     {
         if (is_integer(next))
         {
+            const int directory = atoi(next);
             es_container_push(&list->_processes_data, ES_NULL);
             process_data_t *process = es_container_get(
                 &list->_processes_data,
                 list->_processes_data.size - 1);
-            read_process_data(process, atoi(next));
+            read_process_data(process, directory);
             if (!process->valid)
             {
                 --(list->_processes_data.size);
@@ -125,11 +155,57 @@ void _read_processes(process_list_t *list)
         }
     }
     close_directory_lister(&lister);
+    _set_process_view(list);
+    _set_process_metadata(list);
 }
 
 void _update_processes(process_list_t *list)
 {
-    _read_processes(list);
+    directory_lister_t lister;
+    open_directory_lister(&lister, "/proc");
+    char const *next;
+    es_size_t n_invalid = 0;
+    while ((next = get_next_directory(&lister)))
+    {
+        if (is_integer(next))
+        {
+            int directory = atoi(next);
+            process_data_t *old_process = es_map_get(&list->_dir_map, &directory);
+            if (old_process)
+            {
+                if (old_process->valid)
+                {
+                    read_process_data(old_process, directory);
+                }
+                else
+                {
+                    ++n_invalid;
+                }
+            }
+            else
+            {
+                int realloc = es_container_push(&list->_processes_data, ES_NULL);
+                if (realloc)
+                {
+                    // Objects have been moved: start over
+                    // This should be rare as the memory is never released
+                    _read_processes(list);
+                    return;
+                }
+                process_data_t *process = es_container_get(
+                    &list->_processes_data,
+                    list->_processes_data.size - 1);
+                read_process_data(process, directory);
+                es_map_put(&list->_dir_map, &process->directory, process);
+            }
+        }
+    }
+    close_directory_lister(&lister);
+    _set_process_view(list);
+    if (n_invalid > 0.3 * list->_processes_data.size)
+    {
+        list->_clear_next = true;
+    }
 }
 
 void _read_process_stat_data(FILE *file, process_data_t *process);
@@ -140,30 +216,42 @@ void read_process_data(process_data_t *process, int dir)
     process->directory = dir;
     char process_file_name[50];
     sprintf(process_file_name, "/proc/%d/stat", dir);
-    FILE *stat_file = fopen(process_file_name, "r");
-    if (stat_file)
+    time_t last_stat_modified = get_file_time_last_modified(
+        process_file_name);
+    if (!process->valid || last_stat_modified > process->last_stat_modified)
     {
         process->valid = 1;
-        _read_process_stat_data(stat_file, process);
-        fclose(stat_file);
-    }
-    else
-    {
-        process->valid = 0;
-        return;
+        process->last_stat_modified = last_stat_modified;
+        FILE *stat_file = fopen(process_file_name, "r");
+        if (stat_file)
+        {
+            _read_process_stat_data(stat_file, process);
+            fclose(stat_file);
+        }
+        else
+        {
+            process->valid = 0;
+            return;
+        }
     }
 
     sprintf(process_file_name, "/proc/%d/statm", dir);
-    stat_file = fopen(process_file_name, "r");
-    if (stat_file)
+    time_t last_statm_modified = get_file_time_last_modified(
+        process_file_name);
+    if (!process->valid || last_statm_modified > process->last_statm_modified)
     {
-        _read_process_statm_data(stat_file, process);
-        fclose(stat_file);
-    }
-    else
-    {
-        process->valid = 0;
-        return;
+        process->last_statm_modified = last_statm_modified;
+        FILE *stat_file = fopen(process_file_name, "r");
+        if (stat_file)
+        {
+            _read_process_statm_data(stat_file, process);
+            fclose(stat_file);
+        }
+        else
+        {
+            process->valid = 0;
+            return;
+        }
     }
 }
 
