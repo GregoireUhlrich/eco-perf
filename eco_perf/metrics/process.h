@@ -52,10 +52,4 @@ void list_processes();
 
 void free_process_data(process_data_t *process);
 
-void create_process_list(es_container_t *container);
-
-void update_process_list(es_container_t *container);
-
-void free_process_list(es_container_t *container);
-
 #endif

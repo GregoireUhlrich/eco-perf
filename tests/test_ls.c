@@ -4,6 +4,7 @@
 #include "eco_perf/eco_std/map.h"
 #include "eco_perf/eco_std/vector.h"
 #include "eco_perf/metrics/process.h"
+#include "eco_perf/metrics/process_list.h"
 #include "eco_perf/system/list_dir.h"
 #include <assert.h>
 #include <stdio.h>
@@ -37,24 +38,8 @@ void print_map_item(es_ref_t key, es_ref_t value, es_ref_t data)
 
 int main()
 {
-    list_directories("./");
-    list_directories("/home");
-
-    list_processes();
-
-    es_container_t list;
-    create_process_list(&list);
-
-    es_vector_t list_view;
-    es_vector_init(&list_view);
-
-    es_map_t n_process_map;
-    es_map_init(
-        &n_process_map, 250, true,
-        es_string_hash, es_string_eq);
-    es_container_t counters;
-    es_container_init(&counters, sizeof(int));
-    es_container_reserve(&counters, 250);
+    process_list_t processes;
+    process_list_init(&processes);
 
     int iter = 0;
     int max_iter = 10;
@@ -63,82 +48,27 @@ int main()
         float times[6];
 
         time_t start = clock();
-        update_process_list(&list);
+        process_list_update(&processes);
         times[0] = (clock() - start) * 1000. / CLOCKS_PER_SEC;
 
         start = clock();
-        es_vector_resize(&list_view, list.size);
-        for (int i = 0; i != list.size; ++i)
+        if (verbose)
         {
-            list_view.data[i] = es_container_get(&list, i);
+            process_list_print(&processes);
         }
         times[1] = (clock() - start) * 1000. / CLOCKS_PER_SEC;
 
-        start = clock();
-        es_vector_sort(&list_view, cpu_increasing);
-        times[2] = (clock() - start) * 1000. / CLOCKS_PER_SEC;
-
-        start = clock();
-        qsort(list.data, list.size, sizeof(process_data_t), cpu_increasing_int);
-        times[3] = (clock() - start) * 1000. / CLOCKS_PER_SEC;
-
-        start = clock();
         if (verbose)
         {
-            for (int i = 0; i != list_view.size; ++i)
-            {
-                print_process_data_summary(list_view.data[i]);
-            }
-        }
-        times[4] = (clock() - start) * 1000. / CLOCKS_PER_SEC;
-
-        start = clock();
-        for (int i = 0; i != list_view.size; ++i)
-        {
-            process_data_t *process = (process_data_t *)list_view.data[i];
-            int *value = (int *)es_map_get(&n_process_map, &process->executable);
-            if (value)
-            {
-                ++(*value);
-            }
-            else
-            {
-                int *value = malloc(sizeof(int));
-                *value = 1;
-                es_map_put(&n_process_map, &process->executable, value);
-            }
-        }
-        times[5] = (clock() - start) * 1000. / CLOCKS_PER_SEC;
-        if (verbose)
-        {
-            es_map_for_each(&n_process_map, print_map_item, NULL);
-            puts("");
-        }
-        es_map_clear(&n_process_map);
-        es_container_clear(&counters);
-
-        if (verbose)
-        {
-            printf("%u processes in total\n", list_view.size);
+            printf("%u processes in total\n", processes.processes.size);
             printf("Create           took %.2f milli-seconds\n", times[0]);
-            printf("Copy             took %.2f milli-seconds\n", times[1]);
-            printf("Sort (vector)    took %.2f milli-seconds\n", times[2]);
-            printf("Sort (container) took %.2f milli-seconds\n", times[3]);
-            printf("Print            took %.2f milli-seconds\n", times[4]);
-            printf("Mapping          took %.2f milli-seconds\n", times[5]);
+            printf("Print            took %.2f milli-seconds\n", times[1]);
             printf("*********************************\n");
         }
         sleep(1);
     }
 
-    es_map_free(&n_process_map);
-    es_container_free(&counters);
-    for (int i = 0; i != list_view.size; ++i)
-    {
-        free_process_data(list_view.data[i]);
-    }
-    es_container_free(&list);
-    es_vector_free(&list_view);
+    process_list_free(&processes);
 
     return 0;
 }

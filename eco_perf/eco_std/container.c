@@ -23,7 +23,11 @@ es_container_t es_container_create(es_size_t object_size)
 
 void es_container_free(es_container_t *container)
 {
-    es_free(container->data);
+    if (container->data)
+    {
+        es_free(container->data);
+        container->data = NULL;
+    }
     es_container_init(container, container->object_size);
 }
 
