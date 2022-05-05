@@ -10,9 +10,9 @@ const twidget_interface_t list_twidget_interface = {
 void init_list_tstack_t(list_tstack_t *list)
 {
     twidget_init(&list->twidget);
-    list->line_height = 1;
-    list->line_spacing = 0;
-    twidget_linear_layout_init(&list->layout, CT_VERTICAL);
+    list->config.line_height = 1;
+    list->config.line_spacing = 0;
+    list_tstack_set_direction(list, CT_VERTICAL);
     twidget_set_layout(&list->twidget, &list->layout);
 }
 
@@ -23,14 +23,34 @@ list_tstack_t list_tstack_create()
     return stack;
 }
 
+void list_tstack_set_direction(
+    list_tstack_t *list,
+    ct_direction_t direction)
+{
+    twidget_linear_layout_init(&list->layout, direction);
+    list->layout.config.vertical_align_mode = CT_TOP_OR_LEFT;
+    list->layout.config.horizontal_align_mode = CT_TOP_OR_LEFT;
+    list->config.layout_direction = direction;
+}
+
+void list_tstack_set_alignement(
+    list_tstack_t *list,
+    ct_alignement_policy_t alignement)
+{
+    if (list->config.layout_direction == CT_VERTICAL)
+        list->layout.config.horizontal_align_mode = alignement;
+    else
+        list->layout.config.vertical_align_mode = alignement;
+}
+
 void _update_list(twidget_t *twidget)
 {
     list_tstack_t *stack = (list_tstack_t *)twidget->stack;
-    twidget->layout->config.spacing = stack->line_spacing;
+    twidget->layout->config.spacing = stack->config.line_spacing;
     for (int i = 0; i != twidget->children.size; ++i)
     {
         twidget_t *child = twidget->children.data[i];
-        child->size.y = stack->line_height;
+        child->size.y = stack->config.line_height;
         child->fixed_size.y = 1;
     }
 }
