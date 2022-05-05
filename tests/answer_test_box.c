@@ -38,7 +38,7 @@ int main()
 
     // Define title for the box
     text_line_tstack_t box_title;
-    init_text_line_tstack(&box_title);
+    text_line_tstack_init(&box_title);
     twidget_add_child(&box.twidget, &box_title.twidget);
 
     // Define cpu_bar widget with dummy data (does not change)

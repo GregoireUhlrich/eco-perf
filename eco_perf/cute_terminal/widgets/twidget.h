@@ -69,6 +69,8 @@ typedef struct TStack
 
 void tstack_init(tstack_t *stack);
 
+tstack_t tstack_create();
+
 #undef DEF_TERMINAL_VECTOR
 
 #endif

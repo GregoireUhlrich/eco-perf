@@ -34,6 +34,13 @@ void percent_bar_tstack_init(
     twidget->interface = &percent_bar_twidget_interface;
 }
 
+percent_bar_tstack_t percent_bar_data_create()
+{
+    percent_bar_tstack_t stack;
+    percent_bar_tstack_init(&stack);
+    return stack;
+}
+
 void _set_bar_cursor_pos(terminal_vector_t bar_pos)
 {
     move_cursor_down(bar_pos.y);

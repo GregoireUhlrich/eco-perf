@@ -16,6 +16,13 @@ void init_list_tstack_t(list_tstack_t *list)
     twidget_set_layout(&list->twidget, &list->layout);
 }
 
+list_tstack_t list_tstack_create()
+{
+    list_tstack_t stack;
+    list_tstack_init(&stack);
+    return stack;
+}
+
 void _update_list(twidget_t *twidget)
 {
     list_tstack_t *stack = (list_tstack_t *)twidget->stack;

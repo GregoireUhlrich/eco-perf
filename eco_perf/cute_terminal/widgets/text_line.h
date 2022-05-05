@@ -23,8 +23,10 @@ typedef struct TextLineTStack
 
 extern const twidget_interface_t text_line_twidget_interface;
 
-void init_text_line_tstack(
+void text_line_tstack_init(
     text_line_tstack_t *stack);
+
+text_line_tstack_t text_line_tstack_create();
 
 void text_line_twidget_data_init(text_line_twidget_data_t *data);
 void text_line_twidget_config_init(text_line_twidget_config_t *config);

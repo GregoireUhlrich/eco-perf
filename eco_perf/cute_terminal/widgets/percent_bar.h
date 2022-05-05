@@ -16,4 +16,6 @@ extern const twidget_interface_t percent_bar_twidget_interface;
 void percent_bar_tstack_init(
     percent_bar_tstack_t *container);
 
+percent_bar_tstack_t percent_bar_data_create();
+
 #endif

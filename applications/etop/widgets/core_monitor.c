@@ -36,7 +36,7 @@ void init_core_monitor_tstack(core_monitor_tstack_t *stack)
     stack->layout.config.horizontal_align_mode = CT_TOP_OR_LEFT;
     twidget_set_layout(widget, &stack->layout);
 
-    init_text_line_tstack(&stack->title);
+    text_line_tstack_init(&stack->title);
     percent_bar_tstack_init(&stack->percent_bar);
 
     twidget_add_child(widget, &stack->title.twidget);

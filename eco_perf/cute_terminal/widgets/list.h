@@ -16,4 +16,6 @@ extern const twidget_interface_t list_twidget_interface;
 
 void list_tstack_init(list_tstack_t *list);
 
+list_tstack_t list_tstack_create();
+
 #endif

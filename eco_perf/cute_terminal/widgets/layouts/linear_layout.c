@@ -32,6 +32,14 @@ void twidget_linear_layout_init(
     }
 }
 
+twidget_linear_layout_t twidget_layout_config_create(
+    ct_direction_t direction)
+{
+    twidget_linear_layout_t layout;
+    twidget_linear_layout_init(&layout, direction);
+    return layout;
+}
+
 void _apply_hlayout(
     twidget_layout_t const *layout,
     twidget_t *widget)

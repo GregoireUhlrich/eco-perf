@@ -19,4 +19,6 @@ extern const twidget_interface_t box_twidget_interface;
 void box_tstack_init(
     box_tstack_t *box);
 
+box_tstack_t box_tstack_create();
+
 #endif

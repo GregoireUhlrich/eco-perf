@@ -15,4 +15,6 @@ void terminal_tstack_init(
     terminal_tstack_t *terminal,
     twidget_t *main_twidget);
 
+terminal_tstack_t terminal_tstack_create(twidget_t *main_twidget);
+
 #endif

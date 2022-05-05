@@ -39,6 +39,13 @@ void tstack_init(tstack_t *stack)
     twidget_init(&stack->twidget);
 }
 
+tstack_t tstack_create()
+{
+    tstack_t stack;
+    tstack_init(&stack);
+    return stack;
+}
+
 void twidget_set_layout(
     twidget_t *widget,
     twidget_layout_t *layout)

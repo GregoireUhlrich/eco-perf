@@ -10,7 +10,7 @@ const twidget_interface_t text_line_twidget_interface = {
     _draw_line_widget,
     default_twidget_free};
 
-void init_text_line_tstack(
+void text_line_tstack_init(
     text_line_tstack_t *stack)
 {
     twidget_t *widget = &stack->twidget;
@@ -22,6 +22,13 @@ void init_text_line_tstack(
     widget->fixed_size.y = 1;
     widget->stack = (void *)stack;
     widget->interface = &text_line_twidget_interface;
+}
+
+text_line_tstack_t text_line_tstack_create()
+{
+    text_line_tstack_t stack;
+    text_line_tstack_init(&stack);
+    return stack;
 }
 
 void text_line_twidget_data_init(text_line_twidget_data_t *data)
