@@ -100,7 +100,7 @@ int draw_twidget(twidget_t *widget)
         draw(widget);
         for (int i = 0; i != widget->children.size; ++i)
         {
-            draw_twidget(widget->children.widgets[i]);
+            draw_twidget(widget->children.data[i]);
         }
         move_cursor_left(widget->pos.x);
         move_cursor_up(widget->pos.y);

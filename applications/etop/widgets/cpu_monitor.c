@@ -87,7 +87,7 @@ void _update_cpu_monitor_bounds(cpu_monitor_tstack_t *monitor)
 }
 
 void _ensure_twidget_children_size(
-    twidget_array_t *array,
+    es_vector_t *array,
     int n_children);
 
 void _update_cpu_monitor(twidget_t *twidget)
@@ -99,7 +99,7 @@ void _update_cpu_monitor(twidget_t *twidget)
     _ensure_twidget_children_size(&twidget->children, n_cores);
     for (int i = 0; i != n_cores; ++i)
     {
-        twidget->children.widgets[i] = &monitor->core_monitors[first_core + i].twidget;
+        twidget->children.data[i] = &monitor->core_monitors[first_core + i].twidget;
     }
 }
 
@@ -185,8 +185,8 @@ void _check_cpu_monitor_bounds(cpu_monitor_tstack_t *monitor)
 }
 
 void _ensure_twidget_children_size(
-    twidget_array_t *array,
+    es_vector_t *array,
     int n_children)
 {
-    resize_twidget_array(array, n_children);
+    es_vector_resize(array, n_children);
 }

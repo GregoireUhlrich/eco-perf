@@ -173,7 +173,7 @@ void _apply_fixed_in_layout_direction(
     for (int i = 0; i != children->size; ++i)
     {
         twidget_t *child = children->data[i];
-        if (child->floating)
+        if (!child->floating)
         {
             ++n_fixed_size_children;
             total_fixed_size += child->size_v[direction];
@@ -224,25 +224,22 @@ void _apply_perpendicular_to_layout(
         {
             continue;
         }
-        if (!config->auto_children_resize || child->fixed_size_v[perpendicular])
+        if (config->auto_children_resize && !child->fixed_size_v[perpendicular])
         {
-            const int size_delta = parent_size - child->size_v[perpendicular];
-            if (alignement == CT_CENTER)
-            {
-                child->pos_v[perpendicular] = size_delta / 2;
-            }
-            else if (alignement == CT_BOTTOM_OR_RIGHT)
-            {
-                child->pos_v[perpendicular] = size_delta;
-            }
-            else
-            {
-                child->pos_v[perpendicular] = 0;
-            }
+            child->size_v[perpendicular] = parent_size;
+        }
+        const int size_delta = parent_size - child->size_v[perpendicular];
+        if (alignement == CT_CENTER)
+        {
+            child->pos_v[perpendicular] = size_delta / 2;
+        }
+        else if (alignement == CT_BOTTOM_OR_RIGHT)
+        {
+            child->pos_v[perpendicular] = size_delta;
         }
         else
         {
-            child->size_v[perpendicular] = parent_size;
+            child->pos_v[perpendicular] = 0;
         }
     }
 }

@@ -24,26 +24,8 @@ bool weird_int_order(es_cref_t A, es_cref_t B)
     return a > b;
 }
 
-void file_()
-{
-    char file[] = "/home/laptopgva/Desktop/eco_perf/tests/test_std.c";
-    char t[100] = "";
-    struct stat b;
-    if (!stat(file, &b))
-    {
-        strftime(t, 100, "%d/%m/%Y %H:%M:%S", localtime(&b.st_mtime));
-        printf("\nLast modified date and time = %s\n", t);
-    }
-    else
-    {
-        printf("Cannot display the time.\n");
-    }
-}
-
 int main()
 {
-    file_();
-    return 0;
     es_container_t int_container;
     es_container_init(&int_container, sizeof(int));
     es_container_summary(&int_container);
