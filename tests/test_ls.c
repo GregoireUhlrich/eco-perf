@@ -12,7 +12,7 @@
 #include <time.h>
 #include <unistd.h>
 
-const bool verbose = true;
+const bool verbose = false;
 
 bool cpu_increasing(es_cref_t lv, es_cref_t rv)
 {
@@ -42,7 +42,7 @@ int main()
     process_list_init(&processes);
 
     int iter = 0;
-    int max_iter = 10;
+    int max_iter = 20;
     while (iter++ < max_iter)
     {
         float times[6];
