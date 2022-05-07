@@ -3,18 +3,20 @@
 
 #include "twidget.h"
 
-typedef twidget_t box_twidget_t;
-
 typedef struct BoxTWidgetConfig
 {
     char background;
 } box_twidget_config_t;
 
-void init_box_twidget(
-    box_twidget_t *box);
+typedef struct BoxTStack
+{
+    twidget_t twidget;
+    box_twidget_config_t config;
+} box_tstack_t;
 
-void set_box_twidget_config(
-    box_twidget_t *box,
-    box_twidget_config_t *config);
+extern const twidget_interface_t box_twidget_interface;
+
+void box_tstack_init(
+    box_tstack_t *box);
 
 #endif

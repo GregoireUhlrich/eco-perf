@@ -34,14 +34,14 @@ typedef struct PercentBarData
     term_color_t colors[CT_MAX_PERCENT_BAR_N_DATA];
 } percent_bar_data_t;
 
-void init_percent_bar_data(percent_bar_data_t *data);
+void percent_bar_data_init(percent_bar_data_t *data);
 
-void add_percent_data(
+void percent_data_add(
     percent_bar_data_t *data,
     double ratio,
     term_color_t color);
 
-int create_percent_bar(
+int percent_bar_fill(
     char *buffer,
     percent_bar_data_t const *data,
     percent_bar_config_t const *config);

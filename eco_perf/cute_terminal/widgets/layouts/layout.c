@@ -2,7 +2,7 @@
 #include "../twidget.h"
 #include <stdlib.h>
 
-void init_twidget_layout_config(twidget_layout_config_t *config)
+void twidget_layout_config_init(twidget_layout_config_t *config)
 {
     config->auto_children_resize = 1;
     config->horizontal_align_mode = CT_CENTER;
@@ -10,9 +10,9 @@ void init_twidget_layout_config(twidget_layout_config_t *config)
     config->spacing = 0;
 }
 
-void init_twidget_layout(twidget_layout_t *layout)
+void twidget_layout_init(twidget_layout_t *layout)
 {
-    init_twidget_layout_config(&layout->config);
+    twidget_layout_config_init(&layout->config);
     layout->apply_layout = NULL;
 }
 
@@ -30,7 +30,7 @@ void _apply_default_twidget_layout(
 twidget_layout_t default_twidget_layout()
 {
     twidget_layout_t layout;
-    init_twidget_layout(&layout);
+    twidget_layout_init(&layout);
     layout.apply_layout = _apply_default_twidget_layout;
     return layout;
 }

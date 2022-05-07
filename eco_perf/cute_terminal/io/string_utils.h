@@ -6,4 +6,20 @@ char *fill_str(char *destination, char filler, int n_repeat);
 int is_single_line_string(char const *str);
 int get_effective_string_length(char const *str);
 
+void lfill(
+    char *destination,
+    char const *str,
+    int length,
+    char filler);
+void rfill(
+    char *destination,
+    char const *str,
+    int length,
+    char filler);
+void cfill(
+    char *destination,
+    char const *str,
+    int length,
+    char filler);
+
 #endif

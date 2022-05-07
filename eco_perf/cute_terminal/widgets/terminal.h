@@ -3,10 +3,16 @@
 
 #include "twidget.h"
 
-typedef twidget_t terminal_twidget_t;
+typedef struct TerminalTStack
+{
+    twidget_t terminal_container_twidget;
+    twidget_t *main_twidget;
+} terminal_tstack_t;
 
-void init_terminal_twidget(
-    terminal_twidget_t *terminal,
-    twidget_t *main_drawable);
+extern const twidget_interface_t terminal_twidget_interface;
+
+void terminal_tstack_init(
+    terminal_tstack_t *terminal,
+    twidget_t *main_twidget);
 
 #endif

@@ -6,8 +6,11 @@
 
 typedef twidget_layout_t twidget_linear_layout_t;
 
-void init_twidget_linear_layout(
+void twidget_linear_layout_init(
     twidget_linear_layout_t *layout,
+    ct_direction_t direction);
+
+twidget_linear_layout_t twidget_layout_config_create(
     ct_direction_t direction);
 
 #endif

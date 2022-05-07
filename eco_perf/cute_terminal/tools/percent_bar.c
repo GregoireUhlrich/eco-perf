@@ -15,12 +15,12 @@ void init_percent_bar_config(percent_bar_config_t *config)
     config->empty = ' ';
 }
 
-void init_percent_bar_data(percent_bar_data_t *data)
+void percent_bar_data_init(percent_bar_data_t *data)
 {
     data->n_data = 0;
 }
 
-void add_percent_data(
+void percent_data_add(
     percent_bar_data_t *data,
     double ratio,
     term_color_t color)
@@ -35,7 +35,7 @@ void add_percent_data(
     ++data->n_data;
 }
 
-int create_percent_bar(
+int percent_bar_fill(
     char *destination,
     percent_bar_data_t const *data,
     percent_bar_config_t const *config)

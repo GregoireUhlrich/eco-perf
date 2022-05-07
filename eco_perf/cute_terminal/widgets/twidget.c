@@ -1,8 +1,32 @@
 #include "twidget.h"
 #include "../definitions/error.h"
 #include "../terminal/cursor.h"
+#include "layouts/compute_layout.h"
 #include <stddef.h>
 #include <string.h>
+
+const twidget_interface_t default_twidget_interface = {
+    default_twidget_update,
+    default_twidget_draw,
+    default_twidget_free};
+
+twidget_update_function_t get_twidget_update_function(
+    twidget_t const *widget)
+{
+    return widget->interface->update;
+}
+
+twidget_draw_function_t get_twidget_draw_function(
+    twidget_t const *widget)
+{
+    return widget->interface->draw;
+}
+
+twidget_free_function_t get_twidget_free_function(
+    twidget_t const *widget)
+{
+    return widget->interface->free;
+}
 
 void init_term_vector(terminal_vector_t *vector)
 {
@@ -10,95 +34,83 @@ void init_term_vector(terminal_vector_t *vector)
     vector->y = 0;
 }
 
-void set_twidget_layout(
+void tstack_init(tstack_t *stack)
+{
+    twidget_init(&stack->twidget);
+}
+
+void twidget_set_layout(
     twidget_t *widget,
     twidget_layout_t *layout)
 {
     widget->layout = layout;
 }
 
-void apply_twidget_layout(twidget_t *widget)
+void twidget_apply_layout(twidget_t *widget)
 {
+    if (widget->floating)
+    {
+        place_floating_twidget(widget);
+    }
     if (widget->layout && widget->layout->apply_layout)
     {
         widget->layout->apply_layout(widget->layout, widget);
     }
 }
 
-void _default_update(twidget_t *widget)
-{
-}
-
-int _default_draw(twidget_t const *widget)
-{
-    return 0;
-}
-
-terminal_vector_t _default_get_origin(twidget_t const *widget)
-{
-    static const terminal_vector_t default_origin = {0, 0};
-    return default_origin;
-}
-
-void init_twidget(twidget_t *widget)
+void twidget_init(twidget_t *widget)
 {
     widget->hidden = 0;
     widget->floating = 0;
-    widget->parent = NULL;
-    widget->layout = NULL;
+
     init_term_vector(&widget->pos);
     init_term_vector(&widget->size);
     init_term_vector(&widget->fixed_size);
-    init_twidget_array(&widget->children);
-    widget->config = NULL;
 
-    widget->get_origin = _default_get_origin;
-    widget->update = _default_update;
-    widget->draw_self = _default_draw;
-}
+    widget->layout = NULL;
 
-terminal_vector_t get_default_twidget_origin()
-{
-    terminal_vector_t origin = {0, 0};
-    return origin;
+    widget->stack = NULL;
+    widget->interface = &default_twidget_interface;
+
+    widget->parent = NULL;
+    es_vector_init(&widget->children);
 }
 
 void update_twidget(twidget_t *widget)
 {
-    widget->update(widget);
-    apply_twidget_layout(widget);
+    const twidget_update_function_t update = get_twidget_update_function(widget);
+    update(widget);
+    twidget_apply_layout(widget);
     for (int i = 0; i != widget->children.size; ++i)
     {
-        update_twidget(widget->children.widgets[i]);
+        update_twidget((twidget_t *)widget->children.data[i]);
     }
 }
 
-int draw_twidget(twidget_t *widget)
+int twidget_draw(twidget_t *widget)
 {
 #ifdef DISABLE_TERMINAL_DRAWING
     return 0;
 #else
-    if (widget && widget->draw_self && !widget->hidden)
+    const twidget_draw_function_t draw = get_twidget_draw_function(widget);
+    if (widget && draw && !widget->hidden)
     {
-        terminal_vector_t origin = widget->get_origin(widget);
         move_cursor_right(widget->pos.x);
         move_cursor_down(widget->pos.y);
-        widget->draw_self(widget);
-        move_cursor_right(origin.x);
-        move_cursor_down(origin.y);
+        draw(widget);
         for (int i = 0; i != widget->children.size; ++i)
         {
-            draw_twidget(widget->children.widgets[i]);
+            twidget_draw(widget->children.data[i]);
         }
-        move_cursor_left(widget->pos.x + origin.x);
-        move_cursor_up(widget->pos.y + origin.y);
+        move_cursor_left(widget->pos.x);
+        move_cursor_up(widget->pos.y);
         return 1;
     }
     return 0;
 #endif
 }
 
-void add_twidget_child(
+void twidget_add_child(
     twidget_t *parent,
     twidget_t *child)
 {
@@ -107,41 +119,61 @@ void add_twidget_child(
         CT_VALUE_ERROR,
         "Child already has a parent!")
     child->parent = parent;
-    twidget_array_push_back(&parent->children, child);
+    es_vector_push(&parent->children, child);
 }
 
 int twidget_child_index(
     twidget_t *parent,
     twidget_t *child)
 {
-    return twidget_array_index_of(&parent->children, child);
+    for (int i = 0; i != parent->children.size; ++i)
+        if (parent->children.data[i] == child)
+            return i;
+    return -1;
 }
 
-void remove_twidget_child(
+void twidget_remove_child(
     twidget_t *parent,
     twidget_t *child,
     int free_child)
 {
+    int pos = twidget_child_index(parent, child);
+    CT_ASSERT(pos >= 0,
+              CT_VALUE_ERROR,
+              "Child not found in parent for removal.")
     if (free_child)
     {
-        free_twidget(child);
+        twidget_free(child);
     }
-    else
-    {
-        child->parent = NULL;
-    }
-    twidget_array_remove(&parent->children, child);
+    child->parent = NULL;
+    es_vector_erase(&parent->children, pos);
 }
 
-void free_twidget(twidget_t *widget)
+void twidget_free_children(twidget_t *widget)
 {
-    if (!widget->children.widgets)
+    if (!widget)
     {
         return;
     }
-    for (int i = 0; i != widget->children.size; ++i)
+    if (widget->children.data)
     {
-        free_twidget(widget->children.widgets[i]);
+        for (int i = 0; i != widget->children.size; ++i)
+        {
+            twidget_free((twidget_t *)widget->children.data[i]);
+        }
+        es_vector_free(&widget->children);
     }
-    free_twidget_array(&widget->children);
+}
+void twidget_free(twidget_t *widget)
+{
+    if (!widget)
+    {
+        return;
+    }
+    twidget_free_children(widget);
+    const twidget_free_function_t free_ = get_twidget_free_function(widget);
+    if (free_)
+    {
+        free_(widget);
+    }
 }

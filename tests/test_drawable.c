@@ -2,6 +2,7 @@
 #include "eco_perf/cute_terminal/widgets/box.h"
 #include "eco_perf/cute_terminal/widgets/twidget.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
 
@@ -13,84 +14,88 @@ void print_drawable(twidget_t *drawable)
     for (int i = 0; i != drawable->children.size; ++i)
     {
         printf(" -> child %d: ", i);
-        print_drawable(drawable->children.widgets[i]);
+        print_drawable(drawable->children.data[i]);
     }
 }
 
 void test_boxes()
 {
-    box_twidget_t bigger_box;
+    box_tstack_t bigger_box;
     terminal_vector_t pos, size;
     pos.x = 10;
     pos.y = 5;
     size.x = 100;
-    size.y = 100;
-    init_box_twidget(&bigger_box);
+    size.y = 10;
+    box_tstack_init(&bigger_box);
+    bigger_box.twidget.pos = pos;
+    bigger_box.twidget.size = size;
 
     clear_terminal();
-    box_twidget_t box1, box2, box3;
+    box_tstack_t box1, box2, box3;
+    box_tstack_init(&box1);
+    box_tstack_init(&box2);
+    box_tstack_init(&box3);
 
     pos.x = 0;
     pos.y = 1;
     size.x = 5;
     size.y = 5;
-    init_box_twidget(&box1);
+    box1.twidget.pos = pos;
+    box1.twidget.size = size;
 
     pos.x += 10;
-    size.x += 30;
-    box_twidget_config_t config_box2;
-    init_box_twidget(&box2);
-    config_box2.background = 'x';
-    box2.config = (void *)(&config_box2);
+    size.x += 2;
+    box2.twidget.pos = pos;
+    box2.twidget.size = size;
+    box2.config.background = 'x';
 
     pos.x = 3;
     pos.y = 4;
     size.x = 20;
-    size.y = 10;
-    box_twidget_config_t config_box3;
-    config_box3.background = '*';
-    init_box_twidget(&box3);
-    box3.config = (void *)(&config_box3);
+    size.y = 8;
+    box3.twidget.pos = pos;
+    box3.twidget.size = size;
+    box3.config.background = '*';
 
-    add_twidget_child(&bigger_box, &box1);
-    add_twidget_child(&bigger_box, &box2);
-    add_twidget_child(&bigger_box, &box3);
+    twidget_add_child(&bigger_box.twidget, &box1.twidget);
+    twidget_add_child(&bigger_box.twidget, &box2.twidget);
+    twidget_add_child(&bigger_box.twidget, &box3.twidget);
 
-    draw_twidget(&bigger_box);
+    twidget_draw(&bigger_box.twidget);
     char c;
     scanf("%c", &c);
 }
 
-int main()
+int main(int argc, char const *argv[])
 {
     twidget_t terminal;
-    init_twidget(&terminal);
+    twidget_init(&terminal);
 
     twidget_t panel1, panel2, panel3;
-    init_twidget(&panel1);
-    init_twidget(&panel2);
-    init_twidget(&panel3);
+    twidget_init(&panel1);
+    twidget_init(&panel2);
+    twidget_init(&panel3);
 
     twidget_t element1, element2;
-    init_twidget(&element1);
-    init_twidget(&element2);
+    twidget_init(&element1);
+    twidget_init(&element2);
 
-    add_twidget_child(&panel1, &element1);
-    add_twidget_child(&panel1, &element2);
+    twidget_add_child(&panel1, &element1);
+    twidget_add_child(&panel1, &element2);
 
-    add_twidget_child(&terminal, &panel1);
-    add_twidget_child(&terminal, &panel2);
-    add_twidget_child(&terminal, &panel3);
+    twidget_add_child(&terminal, &panel1);
+    twidget_add_child(&terminal, &panel2);
+    twidget_add_child(&terminal, &panel3);
 
     print_drawable(&element1);
     print_drawable(&panel1);
     print_drawable(&terminal);
 
-    remove_twidget_child(&panel1, &element2, 1);
-    remove_twidget_child(&terminal, &panel1, 1);
+    twidget_remove_child(&panel1, &element2, 1);
+    twidget_remove_child(&terminal, &panel1, 1);
     print_drawable(&terminal);
 
-    free_twidget(&terminal);
+    twidget_free(&terminal);
 
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
@@ -98,7 +103,10 @@ int main()
     printf("lines %d\n", w.ws_row);
     printf("columns %d\n", w.ws_col);
 
-    // test_boxes();
+    if (argc > 1 && atoi(argv[1]))
+    {
+        test_boxes();
+    }
 
     return 0;
 }

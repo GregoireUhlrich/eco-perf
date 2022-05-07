@@ -6,13 +6,13 @@
 
 extern int errno;
 
-void init_cpu_data(cpu_data_t *cpu_data)
+void cpu_data_init(cpu_data_t *cpu_data)
 {
     cpu_data->n_cpus = 0;
     cpu_data->core_data = NULL;
 }
 
-void set_n_cpus(cpu_data_t *cpu_data, int n_cpus)
+void cpu_data_set_ncpus(cpu_data_t *cpu_data, int n_cpus)
 {
     if (cpu_data->core_data != NULL)
     {
@@ -69,7 +69,7 @@ void _read_cpu_core_data_line(FILE *file, cpu_core_data_t *core_data)
 void _read_cpu_data(FILE *file, cpu_data_t *cpu_data)
 {
     int n_cpu = _count_cpu_data(file);
-    set_n_cpus(cpu_data, n_cpu);
+    cpu_data_set_ncpus(cpu_data, n_cpu);
     if (n_cpu > 0)
     {
         cpu_core_data_t core_data;
@@ -81,7 +81,7 @@ void _read_cpu_data(FILE *file, cpu_data_t *cpu_data)
     }
 }
 
-void read_cpu_data(cpu_data_t *cpu_data)
+void cpu_data_read(cpu_data_t *cpu_data)
 {
     FILE *proc_stats = fopen("/proc/stat", "r");
     if (!proc_stats)
@@ -93,7 +93,7 @@ void read_cpu_data(cpu_data_t *cpu_data)
     fclose(proc_stats);
 }
 
-void print_cpu_data(cpu_data_t const *cpu_data)
+void cpu_data_print(cpu_data_t const *cpu_data)
 {
     printf("CPU data for %d CPUs\n", cpu_data->n_cpus);
     for (int i = 0; i != cpu_data->n_cpus; ++i)
@@ -107,13 +107,13 @@ void print_cpu_data(cpu_data_t const *cpu_data)
     }
 }
 
-void free_cpu_data(cpu_data_t *cpu_data)
+void cpu_data_free(cpu_data_t *cpu_data)
 {
     free(cpu_data->core_data);
-    init_cpu_data(cpu_data);
+    cpu_data_init(cpu_data);
 }
 
-void diff_cpu_data(
+void cpu_data_diff(
     cpu_data_t const *first,
     cpu_data_t const *last,
     cpu_data_t *diff)
@@ -136,7 +136,7 @@ void diff_cpu_data(
         perror("Diff cannot be calculated for a non-positive cpu number.");
         exit(1);
     }
-    set_n_cpus(diff, first->n_cpus);
+    cpu_data_set_ncpus(diff, first->n_cpus);
     for (int i = 0; i != diff->n_cpus; ++i)
     {
         diff->core_data[i].sys_time =
@@ -148,11 +148,11 @@ void diff_cpu_data(
     }
 }
 
-void calculate_ratio(cpu_data_t const *cpu_data, cpu_data_t *ratio, double n_sec)
+void cpu_data_ratio(cpu_data_t const *cpu_data, cpu_data_t *ratio, double n_sec)
 {
     if (cpu_data->n_cpus > 0)
     {
-        set_n_cpus(ratio, cpu_data->n_cpus);
+        cpu_data_set_ncpus(ratio, cpu_data->n_cpus);
         for (int i = 0; i != ratio->n_cpus; ++i)
         {
             ratio->core_data[i].user_ratio = cpu_data->core_data[i].user_time / n_sec;

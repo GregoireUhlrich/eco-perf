@@ -4,6 +4,22 @@
 #include "../terminal/cursor.h"
 #include <stdio.h>
 
+void _draw_box(twidget_t *box);
+
+const twidget_interface_t box_twidget_interface = {
+    default_twidget_update,
+    _draw_box,
+    default_twidget_free};
+
+void box_tstack_init(
+    box_tstack_t *box)
+{
+    twidget_init(&box->twidget);
+    box->config.background = ' ';
+    box->twidget.stack = (void *)box;
+    box->twidget.interface = &box_twidget_interface;
+}
+
 void _new_box_line(int line_size)
 {
     move_cursor_down(1);
@@ -24,12 +40,13 @@ void _reset_box_cursor_pos(terminal_vector_t box_size)
     move_cursor_up(box_size.y);
 }
 
-int _draw_box(box_twidget_t const *box)
+void _draw_box(twidget_t *box)
 {
     char background = ' ';
-    if (box->config)
+    box_twidget_config_t *config = &((box_tstack_t *)box->stack)->config;
+    if (config)
     {
-        background = ((box_twidget_config_t *)box->config)->background;
+        background = config->background;
     }
     const int lx = box->size.x + 2; // 2 = external border
     const int ly = box->size.y + 2; // 2 = external border
@@ -48,20 +65,4 @@ int _draw_box(box_twidget_t const *box)
     fill_str(buffer, '-', lx);
     printf("%s", buffer);
     _reset_box_cursor_pos(box->size);
-
-    return 1;
-}
-
-void init_box_twidget(
-    box_twidget_t *box)
-{
-    init_twidget(box);
-    box->draw_self = _draw_box;
-}
-
-void set_box_twidget_config(
-    box_twidget_t *box,
-    box_twidget_config_t *config)
-{
-    box->config = (void *)config;
 }

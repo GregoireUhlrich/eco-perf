@@ -7,6 +7,6 @@ typedef struct TerminalWindow
     unsigned int height;
 } terminal_window_t;
 
-void init_terminal_window(terminal_window_t *data);
+void terminal_window_init(terminal_window_t *data);
 
 #endif

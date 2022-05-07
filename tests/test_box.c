@@ -26,15 +26,15 @@ int main()
 
     // Init the application and the main widget
     terminal_application_t app;
-    box_twidget_t main_widget;
-    init_box_twidget(&main_widget);
-    init_terminal_application(&app, &main_widget);
+    box_tstack_t main_stack;
+    box_tstack_init(&main_stack);
+    init_terminal_application(&app, &main_stack.twidget);
 
     // Set layout for main widget. It should not resize the box,
     // only center it.
     twidget_linear_layout_t main_layout;
-    init_twidget_linear_layout(&main_layout, CT_VERTICAL);
-    set_twidget_layout(&main_widget, &main_layout);
+    twidget_linear_layout_init(&main_layout, CT_VERTICAL);
+    twidget_set_layout(&main_stack.twidget, &main_layout);
 
     while (1)
     {

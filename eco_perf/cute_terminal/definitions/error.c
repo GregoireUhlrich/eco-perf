@@ -2,7 +2,7 @@
 
 static const char *error_strings[6];
 
-void _init_error_strings()
+static void _init_error_strings()
 {
     error_strings[CT_TYPE_ERROR] = "CuteTerminal.TypeError";
     error_strings[CT_VALUE_ERROR] = "CuteTerminal.ValueError";

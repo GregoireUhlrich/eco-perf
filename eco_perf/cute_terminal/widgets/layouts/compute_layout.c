@@ -1,4 +1,6 @@
 #include "compute_layout.h"
+#include "../../definitions/error.h"
+#include "eco_perf/eco_std/vector.h"
 
 void _compute_layout_stretching(
     twidget_t const *widget,
@@ -18,12 +20,12 @@ void _compute_layout_stretching(
     *n_stretchable_elements = 0;
     for (int i = 0; i != widget->children.size; ++i)
     {
-        twidget_t const *child = widget->children.widgets[i];
+        twidget_t const *child = widget->children.data[i];
         if (child->fixed_size_v[direction])
         {
             available_size -= child->size_v[direction];
         }
-        else
+        else if (!child->floating)
         {
             ++*n_stretchable_elements;
         }
@@ -37,53 +39,25 @@ void _apply_in_layout_direction(
     int direction,
     twidget_layout_config_t const *config)
 {
-    int alignement = (direction == 0) ? config->horizontal_align_mode
-                                      : config->vertical_align_mode;
+    if (stretchable_size <= 0)
+    {
+        stretchable_size = 1;
+    }
     int current_pos = 0;
-    twidget_array_t *children = &widget->children;
+    es_vector_t *children = &widget->children;
     for (int i = 0; i != children->size; ++i)
     {
-        twidget_t *child = children->widgets[i];
+        twidget_t *child = children->data[i];
         if (child->floating)
         {
             continue;
         }
         if (!child->fixed_size_v[direction] && config->auto_children_resize)
         {
-            unsigned int *child_size = &child->size_v[direction];
-            if (!*child_size || *child_size > stretchable_size)
-            {
-                // Size invalid or too big: adapt to layout
-                *child_size = stretchable_size;
-                child->pos_v[direction] = current_pos;
-                current_pos += stretchable_size;
-            }
-            else
-            {
-                // Good size, we apply simply the alignement
-                int delta_size = stretchable_size - *child_size;
-                switch (alignement)
-                {
-                case CT_CENTER:
-                    child->pos_v[direction] = current_pos + delta_size / 2;
-                    current_pos += stretchable_size;
-                    break;
-                case CT_BOTTOM_OR_RIGHT:
-                    child->pos_v[direction] = current_pos + delta_size;
-                    current_pos += stretchable_size;
-                    break;
-                default:
-                    child->pos_v[direction] = current_pos;
-                    current_pos += stretchable_size;
-                    break;
-                }
-            }
+            child->size_v[direction] = stretchable_size;
         }
-        else
-        {
-            child->pos_v[direction] = current_pos;
-            current_pos += child->size_v[direction];
-        }
+        child->pos_v[direction] = current_pos;
+        current_pos += child->size_v[direction];
         current_pos += config->spacing;
     }
 }
@@ -94,12 +68,12 @@ void _align_fixed_elements_on_top(
     twidget_layout_config_t const *config)
 {
     int current_pos = 0;
-    twidget_array_t *children = &widget->children;
+    es_vector_t *children = &widget->children;
     for (int i = 0; i != children->size; ++i)
     {
-        if (children->widgets[i]->floating)
+        twidget_t *child = children->data[i];
+        if (child->floating)
             continue;
-        twidget_t *child = children->widgets[i];
         child->pos_v[direction] = current_pos;
         current_pos += child->size_v[direction] + config->spacing;
     }
@@ -113,12 +87,12 @@ void _center_fixed_elements(
 {
     int current_pos = 0;
     int total_stretchable_size = widget->size_v[direction];
-    twidget_array_t *children = &widget->children;
+    es_vector_t *children = &widget->children;
     for (int i = 0; i != children->size; ++i)
     {
-        if (children->widgets[i]->floating)
+        twidget_t *child = children->data[i];
+        if (child->floating)
             continue;
-        twidget_t *child = children->widgets[i];
         int size_expand_into = total_stretchable_size / n_fixed_size_children - config->spacing;
         int delta_size = size_expand_into - child->size_v[direction];
         if (delta_size > 0)
@@ -146,12 +120,12 @@ void _align_fixed_elements_at_bottom(
 {
     int total_stretchable_size = widget->size_v[direction];
     int current_pos = total_stretchable_size - total_fixed_size - (n_fixed_size_children - 1) * config->spacing;
-    twidget_array_t *children = &widget->children;
+    es_vector_t *children = &widget->children;
     for (int i = 0; i != children->size; ++i)
     {
-        if (children->widgets[i]->floating)
+        twidget_t *child = children->data[i];
+        if (child->floating)
             continue;
-        twidget_t *child = children->widgets[i];
         child->pos_v[direction] = current_pos;
         current_pos += child->size_v[direction] + config->spacing;
     }
@@ -167,13 +141,14 @@ void _apply_fixed_in_layout_direction(
                                       : config->vertical_align_mode;
     int total_fixed_size = 0;
     int n_fixed_size_children = 0;
-    twidget_array_t *children = &widget->children;
+    es_vector_t *children = &widget->children;
     for (int i = 0; i != children->size; ++i)
     {
-        if (!children->widgets[i]->floating)
+        twidget_t *child = children->data[i];
+        if (!child->floating)
         {
             ++n_fixed_size_children;
-            total_fixed_size += children->widgets[i]->size_v[direction];
+            total_fixed_size += child->size_v[direction];
         }
     }
 
@@ -209,37 +184,34 @@ void _apply_perpendicular_to_layout(
     twidget_layout_config_t const *config)
 {
     const int perpendicular = 1 - direction;
-    twidget_array_t *children = &widget->children;
+    es_vector_t *children = &widget->children;
     const int parent_size = widget->size_v[perpendicular];
     const int alignement =
         (direction == 1) ? config->horizontal_align_mode
                          : config->vertical_align_mode;
     for (int i = 0; i != children->size; ++i)
     {
-        twidget_t *child = children->widgets[i];
+        twidget_t *child = children->data[i];
         if (child->floating)
         {
-            return;
+            continue;
         }
-        if (!config->auto_children_resize || child->fixed_size_v[perpendicular])
+        if (config->auto_children_resize && !child->fixed_size_v[perpendicular])
         {
-            const int size_delta = parent_size - child->size_v[perpendicular];
-            if (alignement == CT_CENTER)
-            {
-                child->pos_v[perpendicular] = size_delta / 2;
-            }
-            else if (alignement == CT_BOTTOM_OR_RIGHT)
-            {
-                child->pos_v[perpendicular] = size_delta;
-            }
-            else
-            {
-                child->pos_v[perpendicular] = 0;
-            }
+            child->size_v[perpendicular] = parent_size;
+        }
+        const int size_delta = parent_size - child->size_v[perpendicular];
+        if (alignement == CT_CENTER)
+        {
+            child->pos_v[perpendicular] = size_delta / 2;
+        }
+        else if (alignement == CT_BOTTOM_OR_RIGHT)
+        {
+            child->pos_v[perpendicular] = size_delta;
         }
         else
         {
-            child->size_v[perpendicular] = parent_size;
+            child->pos_v[perpendicular] = 0;
         }
     }
 }
@@ -270,4 +242,17 @@ void align_widget_for_linear_layout(
     }
     _apply_perpendicular_to_layout(
         widget, direction, config);
+}
+
+void place_floating_twidget(
+    twidget_t *twidget)
+{
+    CT_ASSERT(
+        twidget->size.x > 0 && twidget->size.y > 0,
+        CT_VALUE_ERROR,
+        "The size of floating widgets must be defined. "
+        "Found size (%d, %d) for twidget at address %p.",
+        twidget->size.x,
+        twidget->size.y,
+        twidget)
 }
