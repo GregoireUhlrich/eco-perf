@@ -39,8 +39,10 @@ void _apply_in_layout_direction(
     int direction,
     twidget_layout_config_t const *config)
 {
-    int alignement = (direction == 0) ? config->horizontal_align_mode
-                                      : config->vertical_align_mode;
+    if (stretchable_size <= 0)
+    {
+        stretchable_size = 1;
+    }
     int current_pos = 0;
     es_vector_t *children = &widget->children;
     for (int i = 0; i != children->size; ++i)
@@ -52,40 +54,10 @@ void _apply_in_layout_direction(
         }
         if (!child->fixed_size_v[direction] && config->auto_children_resize)
         {
-            unsigned int *child_size = &child->size_v[direction];
-            if (!*child_size || *child_size > stretchable_size)
-            {
-                // Size invalid or too big: adapt to layout
-                *child_size = stretchable_size;
-                child->pos_v[direction] = current_pos;
-                current_pos += stretchable_size;
-            }
-            else
-            {
-                // Good size, we apply simply the alignement
-                int delta_size = stretchable_size - *child_size;
-                switch (alignement)
-                {
-                case CT_CENTER:
-                    child->pos_v[direction] = current_pos + delta_size / 2;
-                    current_pos += stretchable_size;
-                    break;
-                case CT_BOTTOM_OR_RIGHT:
-                    child->pos_v[direction] = current_pos + delta_size;
-                    current_pos += stretchable_size;
-                    break;
-                default:
-                    child->pos_v[direction] = current_pos;
-                    current_pos += stretchable_size;
-                    break;
-                }
-            }
+            child->size_v[direction] = stretchable_size;
         }
-        else
-        {
-            child->pos_v[direction] = current_pos;
-            current_pos += child->size_v[direction];
-        }
+        child->pos_v[direction] = current_pos;
+        current_pos += child->size_v[direction];
         current_pos += config->spacing;
     }
 }

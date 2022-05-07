@@ -55,7 +55,7 @@ void es_isort(
     es_ref_t *last,
     es_comparator_t comp)
 {
-    if (first == last)
+    if (last - first < 2)
     {
         return;
     }
@@ -120,7 +120,7 @@ void es_qsort(
     es_ref_t *last,
     es_comparator_t comp)
 {
-    if (last - first < 3) // 0 or 1 element, nothing to sort
+    if (last - first < 2) // 0 or 1 element, nothing to sort
     {
         return;
     }
@@ -130,28 +130,12 @@ void es_qsort(
     }
 #if USE_HOARE_PARTITION == 1
     es_ref_t *pivot = _qsort_hoare_partition(first, last, comp);
-    if (pivot - first < last - pivot - 1)
-    {
-        es_qsort(first, pivot, comp);
-        es_qsort(pivot + 1, last, comp);
-    }
-    else
-    {
-        es_qsort(pivot + 1, last, comp);
-        es_qsort(first, pivot, comp);
-    }
+    es_qsort(first, pivot + 1, comp);
+    es_qsort(pivot + 1, last, comp);
 #else
     es_ref_t *pivot = _qsort_lomuto_partition(first, last, comp);
-    if (pivot - first < last - pivot)
-    {
-        es_qsort(first, pivot - 1, comp);
-        es_qsort(pivot + 1, last, comp);
-    }
-    else
-    {
-        es_qsort(pivot + 1, last, comp);
-        es_qsort(first, pivot - 1, comp);
-    }
+    es_qsort(first, pivot, comp);
+    es_qsort(pivot + 1, last, comp);
 #endif
 }
 
@@ -171,39 +155,17 @@ void es_partial_qsort(
     }
 #if USE_HOARE_PARTITION == 1
     es_ref_t *pivot = _qsort_hoare_partition(first, last, comp);
-    if (pivot - first < last - pivot - 1)
+    es_partial_qsort(first, pivot + 1, n_sorted, comp);
+    if (pivot - first <= n_sorted)
     {
-        es_partial_qsort(first, pivot, n_sorted, comp);
-        if (pivot - first <= n_sorted)
-        {
-            es_partial_qsort(pivot + 1, last, n_sorted - (pivot - first), comp);
-        }
-    }
-    else
-    {
-        if (pivot - first <= n_sorted)
-        {
-            es_partial_qsort(pivot + 1, last, n_sorted - (pivot - first), comp);
-        }
-        es_partial_qsort(first, pivot, n_sorted, comp);
+        es_partial_qsort(pivot + 1, last, n_sorted - (pivot - first), comp);
     }
 #else
     es_ref_t *pivot = _qsort_lomuto_partition(first, last, comp);
-    if (pivot - first < last - pivot - 1)
+    es_partial_qsort(first, pivot, n_sorted, comp);
+    if (pivot - first <= n_sorted)
     {
-        es_partial_qsort(first, pivot - 1, n_sorted, comp);
-        if (pivot - first <= n_sorted)
-        {
-            es_partial_qsort(pivot + 1, last, n_sorted - (pivot - first), comp);
-        }
-    }
-    else
-    {
-        if (pivot - first <= n_sorted)
-        {
-            es_partial_qsort(pivot + 1, last, n_sorted - (pivot - first), comp);
-        }
-        es_partial_qsort(first, pivot - 1, n_sorted, comp);
+        es_partial_qsort(pivot + 1, last, n_sorted - (pivot - first), comp);
     }
 #endif
 }

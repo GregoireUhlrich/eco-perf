@@ -20,13 +20,6 @@ void box_tstack_init(
     box->twidget.interface = &box_twidget_interface;
 }
 
-box_tstack_t box_tstack_create()
-{
-    box_tstack_t stack;
-    box_tstack_init(&stack);
-    return stack;
-}
-
 void _new_box_line(int line_size)
 {
     move_cursor_down(1);

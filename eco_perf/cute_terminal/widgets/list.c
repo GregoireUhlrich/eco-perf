@@ -7,13 +7,14 @@ const twidget_interface_t list_twidget_interface = {
     default_twidget_draw,
     default_twidget_free};
 
-void init_list_tstack_t(list_tstack_t *list)
+void list_tstack_init(list_tstack_t *list)
 {
     twidget_init(&list->twidget);
     list->config.line_height = 1;
     list->config.line_spacing = 0;
+    list->twidget.interface = &list_twidget_interface;
+    list->twidget.stack = list;
     list_tstack_set_direction(list, CT_VERTICAL);
-    twidget_set_layout(&list->twidget, &list->layout);
 }
 
 list_tstack_t list_tstack_create()
@@ -31,6 +32,7 @@ void list_tstack_set_direction(
     list->layout.config.vertical_align_mode = CT_TOP_OR_LEFT;
     list->layout.config.horizontal_align_mode = CT_TOP_OR_LEFT;
     list->config.layout_direction = direction;
+    twidget_set_layout(&list->twidget, &list->layout);
 }
 
 void list_tstack_set_alignement(

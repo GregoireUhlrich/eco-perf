@@ -21,13 +21,6 @@ void terminal_tstack_init(
     twidget_add_child(term_twidget, main_twidget);
 }
 
-terminal_tstack_t terminal_tstack_create(twidget_t *main_twidget)
-{
-    terminal_tstack_t stack;
-    terminal_tstack_init(&stack, main_twidget);
-    return stack;
-}
-
 void _update_terminal(twidget_t *terminal)
 {
     terminal_window_t terminal_window;

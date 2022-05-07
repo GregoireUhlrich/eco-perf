@@ -1,11 +1,12 @@
 #ifndef CUTE_TERMINAL_TEXT_LINE_H_INCLUDED
 #define CUTE_TERMINAL_TEXT_LINE_H_INCLUDED
 
+#include "eco_perf/eco_std/es_string.h"
 #include "twidget.h"
 
 typedef struct TextLineTWidgetData
 {
-    char const *_line;
+    es_string_t line;
     int _effective_line_length;
 } text_line_twidget_data_t;
 
@@ -25,8 +26,6 @@ extern const twidget_interface_t text_line_twidget_interface;
 
 void text_line_tstack_init(
     text_line_tstack_t *stack);
-
-text_line_tstack_t text_line_tstack_create();
 
 void text_line_twidget_data_init(text_line_twidget_data_t *data);
 void text_line_twidget_config_init(text_line_twidget_config_t *config);

@@ -147,6 +147,7 @@ void _read_processes(process_list_t *list)
             process_data_t *process = es_container_get(
                 &list->_processes_data,
                 list->_processes_data.size - 1);
+            process->valid = 1;
             process_data_read(process, directory);
             if (!process->valid)
             {
@@ -195,6 +196,7 @@ void _update_processes(process_list_t *list)
                 process_data_t *process = es_container_get(
                     &list->_processes_data,
                     list->_processes_data.size - 1);
+                process->valid = 1;
                 process_data_read(process, directory);
                 es_map_put(&list->_dir_map, &process->directory, process);
             }
@@ -218,7 +220,7 @@ void process_data_read(process_data_t *process, int dir)
     sprintf(process_file_name, "/proc/%d/stat", dir);
     time_t last_stat_modified = get_file_time_last_modified(
         process_file_name);
-    if (!process->valid || last_stat_modified > process->last_stat_modified)
+    if (process->valid || last_stat_modified > process->last_stat_modified)
     {
         process->valid = 1;
         process->last_stat_modified = last_stat_modified;
@@ -314,6 +316,8 @@ void _read_process_stat_data(FILE *file, process_data_t *process)
         process->instruction_pointer = 0;
         return;
     }
+    process->memory_usage.real = rss * UNIX_PAGE_SIZE / 1024; // in kB
+    process->memory_usage.virt = vsize / 1024;                // in kB
     process->start_stack = startstack;
     process->stack_pointer = kstkesp;
     process->instruction_pointer = kstseip;
@@ -343,9 +347,7 @@ void _read_process_statm_data(FILE *file, process_data_t *process)
     unsigned long size, resident, shared, text, lib, data, dt;
     fscanf(file, "%lu %lu %lu %lu %lu %lu %lu",
            &size, &resident, &shared, &text, &lib, &data, &dt);
-    process->memory_usage.real = resident;
-    process->memory_usage.virt = size - resident;
-    process->memory_usage.shared = shared;
+    process->memory_usage.shared = shared * UNIX_PAGE_SIZE / 1024; // in kB
     process->text_memory = text;
     process->data_memory = text;
 }

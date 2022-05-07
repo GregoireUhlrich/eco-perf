@@ -1,6 +1,7 @@
 #include "cpu_monitor.h"
 #include "eco_perf/cute_terminal/definitions/error.h"
 #include "eco_perf/cute_terminal/io/string_utils.h"
+#include "eco_perf/eco_std/memory.h"
 #include <math.h>
 #include <stddef.h>
 #include <stdlib.h>
@@ -62,7 +63,7 @@ void set_cpu_monitor_data(
         monitor,
         cpu_data->n_cpus);
     _set_core_monitor_data(monitor);
-    _update_cpu_monitor_bounds(monitor);
+    set_cpu_monitor_bounds(monitor, -1, -1);
 }
 
 void _check_cpu_monitor_bounds(cpu_monitor_tstack_t *monitor);
@@ -82,8 +83,7 @@ void _update_cpu_monitor_bounds(cpu_monitor_tstack_t *monitor)
 {
     const int n_cores = monitor->config.n_core_monitors;
     monitor->twidget.size.y = n_cores;
-    if (n_cores > 0)
-        monitor->twidget.size.x = monitor->core_monitors[0].twidget.size.x;
+    monitor->twidget.fixed_size.y = 1;
 }
 
 void _ensure_twidget_children_size(
@@ -106,7 +106,7 @@ void _update_cpu_monitor(twidget_t *twidget)
 void _free_cpu_monitor(twidget_t *twidget)
 {
     cpu_monitor_tstack_t *monitor = (cpu_monitor_tstack_t *)twidget->stack;
-    free(monitor->core_monitors);
+    es_free(monitor->core_monitors);
 }
 
 void _ensure_core_monitor_size(
@@ -128,7 +128,7 @@ void _ensure_core_monitor_size(
     }
     if (!core_monitors)
     {
-        core_monitors = (core_monitor_tstack_t *)malloc(size * sizeof(core_monitor_tstack_t));
+        core_monitors = (core_monitor_tstack_t *)es_malloc(size * sizeof(core_monitor_tstack_t));
         for (int i = 0; i != size; ++i)
         {
             init_core_monitor_tstack(&core_monitors[i]);
