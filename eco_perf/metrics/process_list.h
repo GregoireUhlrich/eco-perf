@@ -23,7 +23,8 @@ void process_list_update(process_list_t *list);
 
 void process_list_sort_view(
     process_list_t *list,
-    es_comparator_t process_comp);
+    es_comparator_t process_comp,
+    es_size_t sort_size);
 
 void process_list_print(process_list_t *list);
 

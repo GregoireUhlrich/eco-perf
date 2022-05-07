@@ -49,11 +49,17 @@ void process_list_update(process_list_t *list)
 
 void process_list_sort_view(
     process_list_t *list,
-    es_comparator_t process_comp)
+    es_comparator_t process_comp,
+    es_size_t sort_size)
 {
-    es_qsort(
+    if (sort_size == ES_NPOS)
+    {
+        sort_size = list->processes.size;
+    }
+    es_partial_qsort(
         es_vector_begin(&list->processes),
         es_vector_end(&list->processes),
+        sort_size,
         process_comp);
 }
 

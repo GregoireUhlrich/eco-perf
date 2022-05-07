@@ -66,7 +66,10 @@ void _update_proc_monitor(twidget_t *twidget)
     {
         n_list_elements = stack->data.process_list.processes.size;
     }
-    process_list_sort_view(&stack->data.process_list, _sort_cpu_decreasing);
+    process_list_sort_view(
+        &stack->data.process_list,
+        _sort_cpu_decreasing,
+        n_list_elements);
     es_container_clear(&stack->lines);
     es_vector_clear(&stack->list.twidget.children);
     for (int i = 0; i != n_list_elements; ++i)
