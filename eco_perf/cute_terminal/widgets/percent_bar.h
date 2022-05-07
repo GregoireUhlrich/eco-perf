@@ -13,7 +13,7 @@ typedef struct PercentBarTStack
 
 extern const twidget_interface_t percent_bar_twidget_interface;
 
-void init_percent_bar_tstack(
+void percent_bar_tstack_init(
     percent_bar_tstack_t *container);
 
 #endif

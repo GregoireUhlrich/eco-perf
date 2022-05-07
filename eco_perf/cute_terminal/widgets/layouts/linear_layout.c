@@ -11,11 +11,11 @@ void _apply_vlayout(
     twidget_layout_t const *layout,
     twidget_t *widget);
 
-void init_twidget_linear_layout(
+void twidget_linear_layout_init(
     twidget_linear_layout_t *layout,
     ct_direction_t direction)
 {
-    init_twidget_layout(layout);
+    twidget_layout_init(layout);
     switch (direction)
     {
     case CT_HORIZONTAL:
@@ -30,6 +30,14 @@ void init_twidget_linear_layout(
             "Unknown linear direction for layout %d.",
             direction)
     }
+}
+
+twidget_linear_layout_t twidget_layout_config_create(
+    ct_direction_t direction)
+{
+    twidget_linear_layout_t layout;
+    twidget_linear_layout_init(&layout, direction);
+    return layout;
 }
 
 void _apply_hlayout(

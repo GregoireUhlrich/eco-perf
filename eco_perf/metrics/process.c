@@ -10,7 +10,7 @@
 #include <time.h>
 #include <unistd.h>
 
-void init_process_data(process_data_t *process)
+void process_data_init(process_data_t *process)
 {
     process->valid = 0;
     process->pid = -1;
@@ -24,7 +24,7 @@ void init_process_data(process_data_t *process)
     process->cpu_usage.nice_time = 0;
 }
 
-void get_process_command_line(
+void process_data_get_cmdline(
     char *destination,
     process_data_t *process)
 {
@@ -43,11 +43,11 @@ void get_process_command_line(
     }
 }
 
-void print_process_data_summary(process_data_t *process)
+void process_data_summary(process_data_t *process)
 {
     char real_mem[100], virt_mem[100];
     char command_line[4096];
-    get_process_command_line(command_line, process);
+    process_data_get_cmdline(command_line, process);
     print_nice_memory(real_mem, process->memory_usage.real);
     print_nice_memory(virt_mem, process->memory_usage.virt);
     printf(
@@ -60,7 +60,7 @@ void print_process_data_summary(process_data_t *process)
         command_line);
 }
 
-void free_process_data(process_data_t *process)
+void process_data_free(process_data_t *process)
 {
     es_string_free(&process->executable);
 }

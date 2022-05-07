@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void open_directory_lister(
+void directory_lister_open(
     directory_lister_t *lister,
     char const *root)
 {
@@ -18,7 +18,7 @@ void open_directory_lister(
     lister->directory = dir;
 }
 
-char const *get_next_directory(
+char const *directory_lister_next(
     directory_lister_t *lister)
 {
     struct dirent *entry;
@@ -35,7 +35,7 @@ char const *get_next_directory(
     return lister->next;
 }
 
-void close_directory_lister(directory_lister_t *lister)
+void directory_lister_close(directory_lister_t *lister)
 {
     closedir(lister->directory);
 }
@@ -43,12 +43,12 @@ void close_directory_lister(directory_lister_t *lister)
 void list_directories(char const *path)
 {
     directory_lister_t lister;
-    open_directory_lister(&lister, path);
+    directory_lister_open(&lister, path);
     printf("Directories in \'%s\':\n", path);
     char const *next;
-    while ((next = get_next_directory(&lister)))
+    while ((next = directory_lister_next(&lister)))
     {
         puts(next);
     }
-    close_directory_lister(&lister);
+    directory_lister_close(&lister);
 }

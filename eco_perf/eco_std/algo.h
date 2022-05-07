@@ -25,4 +25,16 @@ void es_isort(
     es_ref_t *last,
     es_comparator_t comp);
 
+void es_partial_qsort(
+    es_ref_t *first,
+    es_ref_t *last,
+    int n_sorted,
+    es_comparator_t comp);
+
+void es_partial_isort(
+    es_ref_t *first,
+    es_ref_t *last,
+    int n_sorted,
+    es_comparator_t comp);
+
 #endif

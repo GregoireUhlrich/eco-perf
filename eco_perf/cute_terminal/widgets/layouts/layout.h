@@ -22,9 +22,9 @@ typedef struct TWidgetLayout
         struct TWidget *widget);
 } twidget_layout_t;
 
-void init_twidget_layout(twidget_layout_t *layout);
+void twidget_layout_init(twidget_layout_t *layout);
 
-void init_twidget_layout_config(twidget_layout_config_t *config);
+void twidget_layout_config_init(twidget_layout_config_t *config);
 
 twidget_layout_t default_twidget_layout();
 

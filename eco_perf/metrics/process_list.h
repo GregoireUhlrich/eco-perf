@@ -6,6 +6,7 @@
 #include "eco_perf/eco_std/vector.h"
 #include "process.h"
 
+#define UNIX_PAGE_SIZE 4096
 typedef struct ProcessList
 {
     es_vector_t processes;

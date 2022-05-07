@@ -1,6 +1,7 @@
 #include "cpu_monitor.h"
 #include "eco_perf/cute_terminal/definitions/error.h"
 #include "eco_perf/cute_terminal/io/string_utils.h"
+#include "eco_perf/eco_std/memory.h"
 #include <math.h>
 #include <stddef.h>
 #include <stdlib.h>
@@ -26,13 +27,13 @@ void init_cpu_monitor_twidget_config(cpu_monitor_twidget_config_t *config)
 
 void init_cpu_monitor_tstack(cpu_monitor_tstack_t *monitor)
 {
-    init_twidget(&monitor->twidget);
+    twidget_init(&monitor->twidget);
 
     init_cpu_monitor_twidget_data(&monitor->data);
     init_cpu_monitor_twidget_config(&monitor->config);
 
-    init_twidget_linear_layout(&monitor->layout, CT_VERTICAL);
-    set_twidget_layout(&monitor->twidget, &monitor->layout);
+    twidget_linear_layout_init(&monitor->layout, CT_VERTICAL);
+    twidget_set_layout(&monitor->twidget, &monitor->layout);
 
     monitor->twidget.stack = (void *)monitor;
     monitor->n_core_monitors = 0;
@@ -42,7 +43,7 @@ void init_cpu_monitor_tstack(cpu_monitor_tstack_t *monitor)
 
 void free_cpu_monitor_tstack(cpu_monitor_tstack_t *monitor)
 {
-    free_twidget(&monitor->twidget);
+    twidget_free(&monitor->twidget);
 }
 
 void _ensure_core_monitor_size(
@@ -62,7 +63,7 @@ void set_cpu_monitor_data(
         monitor,
         cpu_data->n_cpus);
     _set_core_monitor_data(monitor);
-    _update_cpu_monitor_bounds(monitor);
+    set_cpu_monitor_bounds(monitor, -1, -1);
 }
 
 void _check_cpu_monitor_bounds(cpu_monitor_tstack_t *monitor);
@@ -82,8 +83,7 @@ void _update_cpu_monitor_bounds(cpu_monitor_tstack_t *monitor)
 {
     const int n_cores = monitor->config.n_core_monitors;
     monitor->twidget.size.y = n_cores;
-    if (n_cores > 0)
-        monitor->twidget.size.x = monitor->core_monitors[0].twidget.size.x;
+    monitor->twidget.fixed_size.y = 1;
 }
 
 void _ensure_twidget_children_size(
@@ -106,7 +106,7 @@ void _update_cpu_monitor(twidget_t *twidget)
 void _free_cpu_monitor(twidget_t *twidget)
 {
     cpu_monitor_tstack_t *monitor = (cpu_monitor_tstack_t *)twidget->stack;
-    free(monitor->core_monitors);
+    es_free(monitor->core_monitors);
 }
 
 void _ensure_core_monitor_size(
@@ -128,7 +128,7 @@ void _ensure_core_monitor_size(
     }
     if (!core_monitors)
     {
-        core_monitors = (core_monitor_tstack_t *)malloc(size * sizeof(core_monitor_tstack_t));
+        core_monitors = (core_monitor_tstack_t *)es_malloc(size * sizeof(core_monitor_tstack_t));
         for (int i = 0; i != size; ++i)
         {
             init_core_monitor_tstack(&core_monitors[i]);

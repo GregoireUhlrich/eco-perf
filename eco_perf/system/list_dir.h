@@ -11,14 +11,14 @@ typedef struct DirectoryLister
     char next[MAXIMUM_FILE_NAME_SIZE];
 } directory_lister_t;
 
-void open_directory_lister(
+void directory_lister_open(
     directory_lister_t *lister,
     char const *root);
 
-char const *get_next_directory(
+char const *directory_lister_next(
     directory_lister_t *lister);
 
-void close_directory_lister(
+void directory_lister_close(
     directory_lister_t *lister);
 
 void list_directories(char const *path);

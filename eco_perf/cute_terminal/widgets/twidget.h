@@ -31,23 +31,23 @@ typedef struct TWidget
     es_vector_t children;
 } twidget_t;
 
-void init_twidget(twidget_t *widget);
+void twidget_init(twidget_t *widget);
 
-void set_twidget_layout(
+void twidget_set_layout(
     twidget_t *widget,
     twidget_layout_t *layout);
 
 void update_twidget(twidget_t *widget);
 
-int draw_twidget(twidget_t *widget);
+int twidget_draw(twidget_t *widget);
 
-void free_twidget_children(twidget_t *widget);
+void twidget_free_children(twidget_t *widget);
 
-void free_twidget(twidget_t *widget);
+void twidget_free(twidget_t *widget);
 
-void apply_twidget_layout(twidget_t *widget);
+void twidget_apply_layout(twidget_t *widget);
 
-void add_twidget_child(
+void twidget_add_child(
     twidget_t *parent,
     twidget_t *child);
 
@@ -55,7 +55,7 @@ int twidget_child_index(
     twidget_t *parent,
     twidget_t *child);
 
-void remove_twidget_child(
+void twidget_remove_child(
     twidget_t *parent,
     twidget_t *child,
     int free_child);
@@ -67,7 +67,7 @@ typedef struct TStack
     twidget_t twidget;
 } tstack_t;
 
-void init_tstack(tstack_t *stack);
+void tstack_init(tstack_t *stack);
 
 #undef DEF_TERMINAL_VECTOR
 

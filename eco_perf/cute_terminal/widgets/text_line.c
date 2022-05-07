@@ -10,13 +10,13 @@ const twidget_interface_t text_line_twidget_interface = {
     _draw_line_widget,
     default_twidget_free};
 
-void init_text_line_tstack(
+void text_line_tstack_init(
     text_line_tstack_t *stack)
 {
     twidget_t *widget = &stack->twidget;
-    init_twidget(widget);
-    init_text_line_twidget_data(&stack->data);
-    init_text_line_twidget_config(&stack->config);
+    twidget_init(widget);
+    text_line_twidget_data_init(&stack->data);
+    text_line_twidget_config_init(&stack->config);
     widget->size.y = 1;
     widget->fixed_size.x = 1;
     widget->fixed_size.y = 1;
@@ -24,22 +24,22 @@ void init_text_line_tstack(
     widget->interface = &text_line_twidget_interface;
 }
 
-void init_text_line_twidget_data(text_line_twidget_data_t *data)
+void text_line_twidget_data_init(text_line_twidget_data_t *data)
 {
-    data->_line = "";
+    es_string_init(&data->line);
     data->_effective_line_length = 0;
 }
 
-void init_text_line_twidget_config(text_line_twidget_config_t *config)
+void text_line_twidget_config_init(text_line_twidget_config_t *config)
 {
 }
 
-void set_text_line_content(
+void text_line_set_content(
     text_line_tstack_t *line_stack,
     char const *line)
 {
     text_line_twidget_data_t *data = &line_stack->data;
-    data->_line = line;
+    es_string_assign(&line_stack->data.line, line);
     data->_effective_line_length = get_effective_string_length(line);
     line_stack->twidget.size.x = data->_effective_line_length;
 }
@@ -48,6 +48,6 @@ void _draw_line_widget(twidget_t *line_widget)
 {
     text_line_tstack_t *stack = (text_line_tstack_t *)line_widget;
     text_line_twidget_data_t *data = &stack->data;
-    printf("%s", data->_line);
+    printf("%s", es_string_get(&data->line));
     move_cursor_left(data->_effective_line_length);
 }

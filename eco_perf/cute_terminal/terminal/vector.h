@@ -7,13 +7,13 @@ typedef struct TerminalVector
     unsigned int y;
 } terminal_vector_t;
 
-void init_terminal_vector(terminal_vector_t *vector);
+void terminal_vector_init(terminal_vector_t *vector);
 
-void set_terminal_vector(
+void terminal_vector_set(
     terminal_vector_t *vector,
     unsigned int x,
     unsigned int y);
 
-terminal_vector_t get_terminal_vector();
+terminal_vector_t terminal_vector_create();
 
 #endif
