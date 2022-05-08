@@ -54,6 +54,10 @@ void _update_program_list(program_list_t *list, es_size_t n_sorted)
     for (int i = 0; i != list->processes.processes.size; ++i)
     {
         process_data_t *process = es_container_get(&list->processes.processes, i);
+        if (!process->valid)
+        {
+            continue;
+        }
         program_data_t *program = es_map_get(&list->name_map, &process->executable);
         if (!program)
         {

@@ -173,6 +173,20 @@ void _update_processes(process_list_t *list)
         }
     }
     directory_lister_close(&lister);
+    for (int i = 0; i != list->processes.size; ++i)
+    {
+        process_data_t *process = es_container_get(&list->processes, i);
+        if (process->valid)
+        {
+            char stat_file[100];
+            sprintf(stat_file, "/proc/%d/stat", process->directory);
+            if (access(stat_file, F_OK) != 0)
+            {
+                process->valid = false;
+                ++n_invalid;
+            }
+        }
+    }
     if (n_invalid > 0.3 * list->processes.size)
     {
         list->_clear_next = true;
