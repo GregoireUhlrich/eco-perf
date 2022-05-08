@@ -16,6 +16,9 @@ void process_data_init(process_data_t *process)
     process->pid = -1;
     process->directory = -1;
     es_string_init(&process->executable);
+    process->prev_cpu_usage.user_time = 0;
+    process->prev_cpu_usage.sys_time = 0;
+    process->prev_cpu_usage.nice_time = 0;
     process->memory_usage.real = 0;
     process->memory_usage.virt = 0;
     process->memory_usage.shared = 0;
@@ -41,6 +44,35 @@ void process_data_get_cmdline(
     {
         return;
     }
+}
+
+es_size_t process_data_get_time_delta_ms(
+    process_data_t *process)
+{
+    double old_ms = 1e3 * (process->prev_time.tv_sec + 1e-9 * process->prev_time.tv_nsec);
+    double new_ms = 1e3 * (process->time.tv_sec + 1e-9 * process->time.tv_nsec);
+    return new_ms - old_ms;
+}
+
+memory_data_t process_data_get_cumulative_memory_s(
+    process_data_t *process)
+{
+    es_size_t t_delta_ms = process_data_get_time_delta_ms(process);
+    memory_data_t mem;
+    mem.real = process->memory_usage.real * 1e-3 * t_delta_ms;
+    mem.virt = process->memory_usage.virt * 1e-3 * t_delta_ms;
+    mem.shared = process->memory_usage.shared * 1e-3 * t_delta_ms;
+    return mem;
+}
+
+cpu_core_data_t process_data_get_cpu_diff(
+    process_data_t *process)
+{
+    cpu_core_data_t cpu_diff;
+    cpu_diff.nice_time = process->cpu_usage.nice_time - process->prev_cpu_usage.nice_time;
+    cpu_diff.user_time = process->cpu_usage.user_time - process->prev_cpu_usage.user_time;
+    cpu_diff.sys_time = process->cpu_usage.sys_time - process->prev_cpu_usage.sys_time;
+    return cpu_diff;
 }
 
 void process_data_summary(process_data_t *process)

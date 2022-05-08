@@ -13,8 +13,6 @@ typedef struct ProcessData
 {
     int valid;
     int directory;
-    time_t last_stat_modified;
-    time_t last_statm_modified;
 
     int pid;
     char state;
@@ -29,16 +27,16 @@ typedef struct ProcessData
     long nice_value;
     long num_threads;
     long long start_time;
-    unsigned long long accumulated_io_delay;
 
     unsigned long start_stack;
     unsigned long stack_pointer;
     unsigned long instruction_pointer;
 
+    struct timespec prev_time; // last recording time
+    struct timespec time;      // previous recorded time
+    cpu_core_data_t prev_cpu_usage;
     cpu_core_data_t cpu_usage;
     memory_data_t memory_usage;
-    unsigned long text_memory; // kB
-    unsigned long data_memory; // kB
 } process_data_t;
 
 void process_data_init(process_data_t *process);
@@ -49,6 +47,15 @@ void process_data_summary(process_data_t *process);
 
 void process_data_get_cmdline(
     char *destination,
+    process_data_t *process);
+
+es_size_t process_data_get_time_delta_ms(
+    process_data_t *process);
+
+memory_data_t process_data_get_cumulative_memory_s(
+    process_data_t *process);
+
+cpu_core_data_t process_data_get_cpu_diff(
     process_data_t *process);
 
 void list_processes();

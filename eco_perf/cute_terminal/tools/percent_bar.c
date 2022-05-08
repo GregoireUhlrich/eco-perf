@@ -72,7 +72,7 @@ int percent_bar_fill(
         double final_percentage = value_tot * 100. / config->bar_size;
         if (final_percentage < 10)
             sprintf(buffer, "  %.1f%%", final_percentage);
-        else if (final_percentage < 100)
+        else if (final_percentage < 99.95)
             sprintf(buffer, " %.1f%%", final_percentage);
         else
             sprintf(buffer, "  100%%");
