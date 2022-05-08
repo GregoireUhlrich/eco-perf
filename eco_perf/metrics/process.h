@@ -35,6 +35,7 @@ typedef struct ProcessData
 
     cpu_core_data_t cpu_usage;
     memory_data_t memory_usage;
+    cpu_core_data_t prev_cpu_usage;
     unsigned long text_memory; // kB
     unsigned long data_memory; // kB
 } process_data_t;

@@ -16,6 +16,9 @@ void process_data_init(process_data_t *process)
     process->pid = -1;
     process->directory = -1;
     es_string_init(&process->executable);
+    process->prev_cpu_usage.user_time = 0;
+    process->prev_cpu_usage.sys_time = 0;
+    process->prev_cpu_usage.nice_time = 0;
     process->memory_usage.real = 0;
     process->memory_usage.virt = 0;
     process->memory_usage.shared = 0;

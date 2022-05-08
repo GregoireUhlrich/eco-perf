@@ -7,8 +7,7 @@
 #include "process.h"
 typedef struct ProcessList
 {
-    es_vector_t processes;
-    es_container_t _processes_data;
+    es_container_t processes;
     es_map_t _dir_map;
     bool _clear_next;
 } process_list_t;
@@ -18,11 +17,6 @@ void process_list_init(process_list_t *list);
 void process_list_free(process_list_t *list);
 
 void process_list_update(process_list_t *list);
-
-void process_list_sort_view(
-    process_list_t *list,
-    es_comparator_t process_comp,
-    es_size_t sort_size);
 
 void process_list_print(process_list_t *list);
 

@@ -2,7 +2,7 @@
 #define ETOP_PROC_MONITOR_H_INCLUDED
 
 #include "eco_perf/cute_terminal/widgets/list.h"
-#include "eco_perf/metrics/process_list.h"
+#include "eco_perf/metrics/program_list.h"
 
 typedef struct ProcMonitorTwidgetConfig
 {
@@ -11,7 +11,7 @@ typedef struct ProcMonitorTwidgetConfig
 
 typedef struct ProcMonitorTwidgetData
 {
-    process_list_t process_list;
+    program_list_t programs;
 } proc_monitor_twidget_data_t;
 
 typedef struct ProcMonitorTStack

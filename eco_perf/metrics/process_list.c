@@ -17,16 +17,14 @@
 
 void process_list_init(process_list_t *list)
 {
-    es_container_init(&list->_processes_data, sizeof(process_data_t));
-    es_vector_init(&list->processes);
+    es_container_init(&list->processes, sizeof(process_data_t));
     es_map_init(&list->_dir_map, 500, false, es_int_hash, es_int_eq);
     list->_clear_next = false;
 }
 
 void process_list_free(process_list_t *list)
 {
-    es_container_free(&list->_processes_data);
-    es_vector_free(&list->processes);
+    es_container_free(&list->processes);
     es_map_free(&list->_dir_map);
 }
 
@@ -36,7 +34,7 @@ static void _update_processes(process_list_t *list);
 
 void process_list_update(process_list_t *list)
 {
-    if (list->_processes_data.size == 0 || list->_clear_next)
+    if (list->processes.size == 0 || list->_clear_next)
     {
         _read_processes(list);
         list->_clear_next = false;
@@ -45,32 +43,6 @@ void process_list_update(process_list_t *list)
     {
         _update_processes(list);
     }
-}
-
-void process_list_sort_view(
-    process_list_t *list,
-    es_comparator_t process_comp,
-    es_size_t sort_size)
-{
-    if (sort_size == ES_NPOS)
-    {
-        sort_size = list->processes.size;
-    }
-    es_partial_qsort(
-        es_vector_begin(&list->processes),
-        es_vector_end(&list->processes),
-        sort_size,
-        process_comp);
-}
-
-void process_list_print(process_list_t *list)
-{
-    for (int i = 0; i != list->processes.size; ++i)
-    {
-        process_data_t *process = list->processes.data[i];
-        process_data_summary(process);
-    }
-    printf("%u processes in total\n", list->processes.size);
 }
 
 int is_integer(char const *str)
@@ -108,39 +80,31 @@ es_size_t _get_n_processes()
     return n_processes;
 }
 
-void _set_process_view(process_list_t *list)
-{
-    const es_size_t size = list->_processes_data.size;
-    es_vector_resize(&list->processes, size);
-    list->processes.size = 0;
-    for (int i = 0; i != size; ++i)
-    {
-        process_data_t *process = es_container_get(&list->_processes_data, i);
-        if (process->valid)
-        {
-            es_vector_push(
-                &list->processes,
-                es_container_get(&list->_processes_data, i));
-        }
-    }
-}
-
 void _set_process_metadata(process_list_t *list)
 {
     es_map_clear(&list->_dir_map);
-    for (int i = 0; i != list->_processes_data.size; ++i)
+    for (int i = 0; i != list->processes.size; ++i)
     {
-        process_data_t *process = es_container_get(&list->_processes_data, i);
+        process_data_t *process = es_container_get(&list->processes, i);
         es_map_put(&list->_dir_map, &process->directory, process);
+    }
+}
+
+void process_list_print(process_list_t *list)
+{
+    for (int i = 0; i != list->processes.size; ++i)
+    {
+        process_data_t *process = es_container_get(&list->processes, i);
+        process_data_summary(process);
     }
 }
 
 void _read_processes(process_list_t *list)
 {
     const es_size_t n_processes = _get_n_processes();
-    es_container_free(&list->_processes_data);
-    es_container_init(&list->_processes_data, sizeof(process_data_t));
-    es_container_reserve(&list->_processes_data, 2 * n_processes);
+    es_container_free(&list->processes);
+    es_container_init(&list->processes, sizeof(process_data_t));
+    es_container_reserve(&list->processes, 2 * n_processes);
     directory_lister_t lister;
     directory_lister_open(&lister, "/proc");
     char const *next;
@@ -149,20 +113,19 @@ void _read_processes(process_list_t *list)
         if (is_integer(next))
         {
             const int directory = atoi(next);
-            es_container_push(&list->_processes_data, ES_NULL);
+            es_container_push(&list->processes, ES_NULL);
             process_data_t *process = es_container_get(
-                &list->_processes_data,
-                list->_processes_data.size - 1);
+                &list->processes,
+                list->processes.size - 1);
             process_data_init(process);
             process_data_read(process, directory);
             if (!process->valid)
             {
-                --(list->_processes_data.size);
+                --(list->processes.size);
             }
         }
     }
     directory_lister_close(&lister);
-    _set_process_view(list);
     _set_process_metadata(list);
 }
 
@@ -191,17 +154,18 @@ void _update_processes(process_list_t *list)
             }
             else
             {
-                int realloc = es_container_push(&list->_processes_data, ES_NULL);
+                int realloc = es_container_push(&list->processes, ES_NULL);
                 if (realloc)
                 {
                     // Objects have been moved: start over
                     // This should be rare as the memory is never released
                     _read_processes(list);
+                    directory_lister_close(&lister);
                     return;
                 }
                 process_data_t *process = es_container_get(
-                    &list->_processes_data,
-                    list->_processes_data.size - 1);
+                    &list->processes,
+                    list->processes.size - 1);
                 process_data_init(process);
                 process_data_read(process, directory);
                 es_map_put(&list->_dir_map, &process->directory, process);
@@ -209,8 +173,7 @@ void _update_processes(process_list_t *list)
         }
     }
     directory_lister_close(&lister);
-    _set_process_view(list);
-    if (n_invalid > 0.3 * list->_processes_data.size)
+    if (n_invalid > 0.3 * list->processes.size)
     {
         list->_clear_next = true;
     }
@@ -226,9 +189,15 @@ void process_data_read(process_data_t *process, int dir)
     sprintf(process_file_name, "/proc/%d/stat", dir);
     FILE *stat_file = fopen(process_file_name, "r");
     process->valid = 1;
+    bool no_previous = process->pid == -1;
+    process->prev_cpu_usage = process->cpu_usage;
     if (stat_file)
     {
         _read_process_stat_data(stat_file, process);
+        if (no_previous)
+        {
+            process->prev_cpu_usage = process->cpu_usage;
+        }
         fclose(stat_file);
     }
     else
@@ -297,8 +266,8 @@ void _read_process_stat_data(FILE *file, process_data_t *process)
     process->num_threads = num_threads;
     process->start_time = starttime;
     const double ticks_per_sec = sysconf(_SC_CLK_TCK);
-    process->cpu_usage.user_time = utime * 1. / ticks_per_sec;
-    process->cpu_usage.sys_time = stime * 1. / ticks_per_sec;
+    process->cpu_usage.user_time = utime * 1000. / ticks_per_sec;
+    process->cpu_usage.sys_time = stime * 1000. / ticks_per_sec;
     process->cpu_usage.nice_time = 0;
 
     n_scanned = fscanf(
