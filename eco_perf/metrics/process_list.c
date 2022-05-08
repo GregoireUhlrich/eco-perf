@@ -153,7 +153,7 @@ void _read_processes(process_list_t *list)
             process_data_t *process = es_container_get(
                 &list->_processes_data,
                 list->_processes_data.size - 1);
-            process->valid = 1;
+            process_data_init(process);
             process_data_read(process, directory);
             if (!process->valid)
             {
@@ -202,7 +202,7 @@ void _update_processes(process_list_t *list)
                 process_data_t *process = es_container_get(
                     &list->_processes_data,
                     list->_processes_data.size - 1);
-                process->valid = 1;
+                process_data_init(process);
                 process_data_read(process, directory);
                 es_map_put(&list->_dir_map, &process->directory, process);
             }
@@ -224,42 +224,29 @@ void process_data_read(process_data_t *process, int dir)
     process->directory = dir;
     char process_file_name[50];
     sprintf(process_file_name, "/proc/%d/stat", dir);
-    time_t last_stat_modified = get_file_time_last_modified(
-        process_file_name);
-    if (process->valid || last_stat_modified > process->last_stat_modified)
+    FILE *stat_file = fopen(process_file_name, "r");
+    process->valid = 1;
+    if (stat_file)
     {
-        process->valid = 1;
-        process->last_stat_modified = last_stat_modified;
-        FILE *stat_file = fopen(process_file_name, "r");
-        if (stat_file)
-        {
-            _read_process_stat_data(stat_file, process);
-            fclose(stat_file);
-        }
-        else
-        {
-            process->valid = 0;
-            return;
-        }
+        _read_process_stat_data(stat_file, process);
+        fclose(stat_file);
     }
-
-    sprintf(process_file_name, "/proc/%d/statm", dir);
-    time_t last_statm_modified = get_file_time_last_modified(
-        process_file_name);
-    if (!process->valid || last_statm_modified > process->last_statm_modified)
+    else
     {
-        process->last_statm_modified = last_statm_modified;
-        FILE *stat_file = fopen(process_file_name, "r");
-        if (stat_file)
-        {
-            _read_process_statm_data(stat_file, process);
-            fclose(stat_file);
-        }
-        else
-        {
-            process->valid = 0;
-            return;
-        }
+        process->valid = 0;
+        return;
+    }
+    sprintf(process_file_name, "/proc/%d/statm", dir);
+    stat_file = fopen(process_file_name, "r");
+    if (stat_file)
+    {
+        _read_process_statm_data(stat_file, process);
+        fclose(stat_file);
+    }
+    else
+    {
+        process->valid = 0;
+        return;
     }
 }
 
@@ -275,15 +262,19 @@ void _read_process_stat_data(FILE *file, process_data_t *process)
     unsigned long long starttime, delayacct_nlkio_ticks;
     char comm[NAME_MAX];
     char state;
+    fscanf(
+        file,
+        "%d %s %c",
+        &pid, comm, &state);
     int n_scanned = fscanf(
         file,
-        "%d %s %c %d %d %d %d %d %u %lu %lu %lu %lu %lu %lu "
+        "%d %d %d %d %d %u %lu %lu %lu %lu %lu %lu "
         "%ld %ld %ld %ld %ld %ld %llu",
-        &pid, comm, &state, &ppid, &pgrp, &session, &tty_nr,
+        &ppid, &pgrp, &session, &tty_nr,
         &tpgid, &flags, &minflt, &cminflt, &majflt, &cmajflt,
         &utime, &stime, &cutime, &cstime, &priority, &nice,
         &num_threads, &itrealvalue, &starttime);
-    if (n_scanned < 22)
+    if (n_scanned < 19)
     {
         process->valid = 0;
         return;
@@ -322,8 +313,8 @@ void _read_process_stat_data(FILE *file, process_data_t *process)
         process->instruction_pointer = 0;
         return;
     }
-    process->memory_usage.real = rss * UNIX_PAGE_SIZE / 1024; // in kB
-    process->memory_usage.virt = vsize / 1024;                // in kB
+    process->memory_usage.real = rss * _SC_PAGE_SIZE / 1024; // in kB
+    process->memory_usage.virt = vsize / 1024;               // in kB
     process->start_stack = startstack;
     process->stack_pointer = kstkesp;
     process->instruction_pointer = kstseip;
@@ -353,7 +344,7 @@ void _read_process_statm_data(FILE *file, process_data_t *process)
     unsigned long size, resident, shared, text, lib, data, dt;
     fscanf(file, "%lu %lu %lu %lu %lu %lu %lu",
            &size, &resident, &shared, &text, &lib, &data, &dt);
-    process->memory_usage.shared = shared * UNIX_PAGE_SIZE / 1024; // in kB
+    process->memory_usage.shared = shared * _SC_PAGE_SIZE / 1024; // in kB
     process->text_memory = text;
     process->data_memory = text;
 }

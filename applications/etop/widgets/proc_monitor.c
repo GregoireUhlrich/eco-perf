@@ -1,4 +1,5 @@
 #include "proc_monitor.h"
+#include "eco_perf/cute_terminal/io/format_definitions.h"
 #include "eco_perf/cute_terminal/io/string_utils.h"
 #include "eco_perf/cute_terminal/widgets/text_line.h"
 #include <stdio.h>
@@ -66,12 +67,40 @@ void _update_proc_monitor(twidget_t *twidget)
     {
         n_list_elements = stack->data.process_list.processes.size;
     }
+    if (n_list_elements != 0)
+    {
+        --n_list_elements;
+    }
     process_list_sort_view(
         &stack->data.process_list,
         _sort_cpu_decreasing,
         n_list_elements);
     es_container_clear(&stack->lines);
     es_vector_clear(&stack->list.twidget.children);
+    char buffer[1024];
+    sprintf(
+        buffer,
+        "%s%s"
+        "PROCESS NAME                  "
+        "STATE "
+        "CPU            "
+        "MEM(R)      "
+        "MEM(V)      "
+        "MEM(S)      "
+        "%s%s",
+        get_background_color(CT_GREEN),
+        get_format(CT_BOLD),
+        get_background_color(CT_DEFAULT_COLOR),
+        get_format(CT_DEFAULT_FORMAT));
+    int alloc = es_container_push(&stack->lines, NULL);
+    if (alloc)
+    {
+        return _update_proc_monitor(twidget);
+    }
+    text_line_tstack_t *line = es_container_get(&stack->lines, 0);
+    text_line_tstack_init(line);
+    text_line_set_content(line, buffer);
+    twidget_add_child(&stack->list.twidget, &line->twidget);
     for (int i = 0; i != n_list_elements; ++i)
     {
         int alloc = es_container_push(&stack->lines, NULL);
@@ -79,30 +108,25 @@ void _update_proc_monitor(twidget_t *twidget)
         {
             return _update_proc_monitor(twidget);
         }
-        text_line_tstack_t *line = es_container_get(&stack->lines, i);
+        text_line_tstack_t *line = es_container_get(&stack->lines, i + 1);
         text_line_tstack_init(line);
-        char buffer[1024];
         char *dest = buffer;
         process_data_t *process = stack->data.process_list.processes.data[i];
         sprintf(dest, "  > %s", es_string_get(&process->executable));
         dest = _align_str(dest, 30);
+        sprintf(dest, "%c", process->state);
+        dest = _align_str(dest, 6);
         sprintf(
             dest,
-            "cpu: %.2fs",
+            "%.2f s",
             process->cpu_usage.nice_time + process->cpu_usage.user_time + process->cpu_usage.sys_time);
-        dest = _align_str(dest, 20);
-        char const real_mem_name[] = "mem(R) ";
-        char const virt_mem_name[] = "mem(V) ";
-        char const shared_mem_name[] = "mem(S) ";
-        strcpy(dest, real_mem_name);
-        print_nice_memory(dest + sizeof(real_mem_name) - 1, process->memory_usage.real);
-        dest = _align_str(dest, 20);
-        strcpy(dest, virt_mem_name);
-        print_nice_memory(dest + sizeof(virt_mem_name) - 1, process->memory_usage.virt);
-        dest = _align_str(dest, 20);
-        strcpy(dest, shared_mem_name);
-        print_nice_memory(dest + sizeof(shared_mem_name) - 1, process->memory_usage.shared);
-        _align_str(dest, 20);
+        dest = _align_str(dest, 15);
+        print_nice_memory(dest, process->memory_usage.real);
+        dest = _align_str(dest, 12);
+        print_nice_memory(dest, process->memory_usage.virt);
+        dest = _align_str(dest, 12);
+        print_nice_memory(dest, process->memory_usage.shared);
+        _align_str(dest, 12);
         text_line_set_content(line, buffer);
         twidget_add_child(&stack->list.twidget, &line->twidget);
     }

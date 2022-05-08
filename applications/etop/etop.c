@@ -44,6 +44,7 @@ void display_cpu_data(unsigned short max_iter)
     twidget_t *main_widget = &main_stack.twidget;
     twidget_linear_layout_t layout;
     twidget_linear_layout_init(&layout, CT_VERTICAL);
+    layout.config.spacing = 1;
     twidget_set_layout(main_widget, &layout);
 
     // Init the terminal widget containing the main widget

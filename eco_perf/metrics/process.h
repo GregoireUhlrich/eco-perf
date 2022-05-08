@@ -13,8 +13,6 @@ typedef struct ProcessData
 {
     int valid;
     int directory;
-    time_t last_stat_modified;
-    time_t last_statm_modified;
 
     int pid;
     char state;
