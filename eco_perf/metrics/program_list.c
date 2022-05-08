@@ -7,16 +7,13 @@ void program_data_init(program_data_t *program)
     es_string_init(&program->name);
     program->cpu_time = 0;
     program->memory = 0;
+    program->begin_time_ms = 0;
+    program->current_time_ms = 0;
 }
 
 void program_data_free(program_data_t *program)
 {
     es_string_free(&program->name);
-}
-
-static void _get_time(struct timespec *time)
-{
-    timespec_get(time, TIME_UTC);
 }
 
 void program_list_init(program_list_t *list)
@@ -26,7 +23,6 @@ void program_list_init(program_list_t *list)
     es_container_init(&list->_programs, sizeof(program_data_t));
     es_container_reserve(&list->_programs, 500);
     es_map_init(&list->name_map, 500, false, es_string_hash, es_string_eq);
-    _get_time(&list->last_record);
 }
 
 void program_list_free(program_list_t *list)
@@ -53,11 +49,8 @@ void program_list_update(program_list_t *list, es_size_t n_sorted)
 static void _set_sorted_view(program_list_t *list, es_size_t n_sorted);
 static void _restore_map(program_list_t *list);
 
-#include <stdio.h>
 void _update_program_list(program_list_t *list, es_size_t n_sorted)
 {
-    struct timespec time;
-    _get_time(&time);
     for (int i = 0; i != list->processes.processes.size; ++i)
     {
         process_data_t *process = es_container_get(&list->processes.processes, i);
@@ -71,22 +64,22 @@ void _update_program_list(program_list_t *list, es_size_t n_sorted)
             }
             program = es_container_get(&list->_programs, list->_programs.size - 1);
             program_data_init(program);
+            program->begin_time_ms = 1e3 * (process->time.tv_sec + 1e-9 * process->time.tv_nsec);
+            program->current_time_ms = program->begin_time_ms;
             es_string_assign(&program->name, es_string_get(&process->executable));
-            program->time_ref = time;
-            program->time = time;
             es_map_put(&list->name_map, &program->name, program);
         }
         else
         {
-            program->cpu_time += process->cpu_usage.nice_time - process->prev_cpu_usage.nice_time;
-            program->cpu_time += process->cpu_usage.user_time - process->prev_cpu_usage.user_time;
-            program->cpu_time += process->cpu_usage.sys_time - process->prev_cpu_usage.sys_time;
-            int n_sec = time.tv_sec - program->time.tv_sec + 1e-9 * (time.tv_nsec - program->time.tv_nsec);
-            program->memory += process->memory_usage.real * n_sec;
-            program->time = time;
+            cpu_core_data_t cpu_time = process_data_get_cpu_diff(process);
+            memory_data_t mem = process_data_get_cumulative_memory_s(process);
+            program->cpu_time += cpu_time.nice_time;
+            program->cpu_time += cpu_time.user_time;
+            program->cpu_time += cpu_time.sys_time;
+            program->memory += mem.real;
+            program->current_time_ms = 1e3 * (process->time.tv_sec + 1e-9 * process->time.tv_nsec);
         }
     }
-    list->last_record = time;
     _set_sorted_view(list, n_sorted);
 }
 

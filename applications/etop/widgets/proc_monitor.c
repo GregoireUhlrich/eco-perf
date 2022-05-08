@@ -138,10 +138,7 @@ void _update_proc_monitor(twidget_t *twidget)
         program_data_t *program = stack->data.programs.programs.data[i];
         sprintf(dest, "  > %s", es_string_get(&program->name));
         dest = _align_str(dest, 30);
-        struct timespec diff;
-        diff.tv_sec = program->time.tv_sec - program->time_ref.tv_sec;
-        diff.tv_nsec = program->time.tv_nsec - program->time_ref.tv_nsec;
-        unsigned long long diff_time_ms = diff.tv_sec * 1e3 + 1e-6 * diff.tv_nsec;
+        es_size_t diff_time_ms = program->current_time_ms - program->begin_time_ms;
         if (diff_time_ms == 0)
         {
             sprintf(dest, "Initializing ...");

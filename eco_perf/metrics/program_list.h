@@ -8,16 +8,15 @@ typedef struct ProgramData
 {
     es_string_t name;
 
-    struct timespec time_ref; // start recording time
-    struct timespec time;     // last recorded time
-    time_t cpu_time;          // in s
-    es_size_t memory;         // in kB * s
+    es_size_t begin_time_ms;
+    es_size_t current_time_ms;
+    es_size_t cpu_time; // in ms
+    es_size_t memory;   // in kB * s
 } program_data_t;
 
 typedef struct ProgramList
 {
     es_vector_t programs;
-    struct timespec last_record;
     process_list_t processes;
     es_container_t _programs;
     es_map_t name_map;

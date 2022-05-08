@@ -180,7 +180,6 @@ void _update_processes(process_list_t *list)
 }
 
 void _read_process_stat_data(FILE *file, process_data_t *process);
-void _read_process_statm_data(FILE *file, process_data_t *process);
 
 void process_data_read(process_data_t *process, int dir)
 {
@@ -191,25 +190,15 @@ void process_data_read(process_data_t *process, int dir)
     process->valid = 1;
     bool no_previous = process->pid == -1;
     process->prev_cpu_usage = process->cpu_usage;
+    process->prev_time = process->time;
     if (stat_file)
     {
         _read_process_stat_data(stat_file, process);
         if (no_previous)
         {
             process->prev_cpu_usage = process->cpu_usage;
+            process->prev_time = process->time;
         }
-        fclose(stat_file);
-    }
-    else
-    {
-        process->valid = 0;
-        return;
-    }
-    sprintf(process_file_name, "/proc/%d/statm", dir);
-    stat_file = fopen(process_file_name, "r");
-    if (stat_file)
-    {
-        _read_process_statm_data(stat_file, process);
         fclose(stat_file);
     }
     else
@@ -221,6 +210,7 @@ void process_data_read(process_data_t *process, int dir)
 
 void _read_process_stat_data(FILE *file, process_data_t *process)
 {
+    timespec_get(&process->time, TIME_UTC);
     int pid, ppid, pgrp, session, tty_nr, tpgid, exit_signal, processor, exit_code;
     long cutime, cstime, priority, nice, num_threads, itrealvalue, rss, cguest_time;
     unsigned int flags, rt_priority, policy;
@@ -235,6 +225,16 @@ void _read_process_stat_data(FILE *file, process_data_t *process)
         file,
         "%d %s %c",
         &pid, comm, &state);
+    char *comm_ptr = comm;
+    while (*comm_ptr)
+    {
+        if (*comm_ptr == '/')
+        {
+            *comm_ptr = '\0';
+            break;
+        }
+        ++comm_ptr;
+    }
     int n_scanned = fscanf(
         file,
         "%d %d %d %d %d %u %lu %lu %lu %lu %lu %lu "
@@ -288,32 +288,14 @@ void _read_process_stat_data(FILE *file, process_data_t *process)
     process->stack_pointer = kstkesp;
     process->instruction_pointer = kstseip;
 
-    n_scanned = fscanf(
-        file,
-        "%lu %lu %lu %lu %lu %lu %lu %d %d %u "
-        "%u %llu %lu %ld %lu %lu %lu %lu %lu %lu %lu %d",
-        &signal, &blocked, &sigignore, &sigcatch,
-        &wchan, &nswap, &cnswap, &exit_signal, &processor,
-        &rt_priority, &policy, &delayacct_nlkio_ticks,
-        &guest_time, &cguest_time, &start_data, &end_data,
-        &start_brk, &arg_start, &arg_end, &env_start, &env_end,
-        &exit_code);
-    if (n_scanned < 12)
-    {
-        process->accumulated_io_delay = 0;
-    }
-    else
-    {
-        process->accumulated_io_delay = delayacct_nlkio_ticks;
-    }
-}
-
-void _read_process_statm_data(FILE *file, process_data_t *process)
-{
-    unsigned long size, resident, shared, text, lib, data, dt;
-    fscanf(file, "%lu %lu %lu %lu %lu %lu %lu",
-           &size, &resident, &shared, &text, &lib, &data, &dt);
-    process->memory_usage.shared = shared * _SC_PAGE_SIZE / 1024; // in kB
-    process->text_memory = text;
-    process->data_memory = text;
+    // n_scanned = fscanf(
+    //     file,
+    //     "%lu %lu %lu %lu %lu %lu %lu %d %d %u "
+    //     "%u %llu %lu %ld %lu %lu %lu %lu %lu %lu %lu %d",
+    //     &signal, &blocked, &sigignore, &sigcatch,
+    //     &wchan, &nswap, &cnswap, &exit_signal, &processor,
+    //     &rt_priority, &policy, &delayacct_nlkio_ticks,
+    //     &guest_time, &cguest_time, &start_data, &end_data,
+    //     &start_brk, &arg_start, &arg_end, &env_start, &env_end,
+    //     &exit_code);
 }
